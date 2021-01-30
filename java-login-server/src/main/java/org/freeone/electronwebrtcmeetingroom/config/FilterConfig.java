@@ -1,12 +1,13 @@
 package org.freeone.electronwebrtcmeetingroom.config;
 
+import org.freeone.electronwebrtcmeetingroom.config.filter.JwtFilter;
 import org.freeone.electronwebrtcmeetingroom.config.filter.CORSFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * @author lqq
+ * @author freeone
  */
 @Configuration
 public class FilterConfig {
@@ -21,6 +22,15 @@ public class FilterConfig {
         return filterRegistrationBean;
     }
 
+    @Bean
+    public FilterRegistrationBean authFilter(){
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(new JwtFilter());
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setName("authFilter");
+        filterRegistrationBean.setOrder(3);
+        return filterRegistrationBean;
+    }
 
 
 }
