@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会议室</title>
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
     <script src="../../static/layui-v2.5.7/layui.all.js"></script>
-</head>
-<body>
-    <div class="">
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
 
+        .layui-row,
+        .layui-xs-col10,
+        .layui-xs-col2,
+        div  {
+            width: 100%;
+            height: 100%;
+        }
+        .main-content{
+            background-color: black;
+            height: 85%;
+        }
+        .left-content{
+            background-color: grey;
+            height: 85%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-row">
+        <div class="layui-col-xs10 main-content">
+            <div class="main-audio-content">
+                <audio id="main-audio" ></audio>
+            </div>
+        </div>
+        <div class="layui-col-xs2 left-content">2</div>
     </div>
 </body>
 <script src="./meeting.js"></script>
+
 </html>
