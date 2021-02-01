@@ -12,6 +12,7 @@ layui.use(['form'],()=>{
         $.post(config.javaLoginServer+'/login.json',formData.field,(result)=>{
             if(result.success){
                 ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS,result.data);
+                 
             }else{
                 layui.layer.msg(result.msg);
             }
