@@ -46,6 +46,7 @@ export default class IpcMainListener{
                 }
             });
             this._meetingWindow.loadFile('./html/meeting/meeting.html');
+            this._meetingWindow.webContents.openDevTools()
             this._meetingWindow.on('ready-to-show',()=>{
                 this._meetingWindow.show();
                 this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber);
