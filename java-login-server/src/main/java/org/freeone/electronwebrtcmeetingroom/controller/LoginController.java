@@ -19,17 +19,16 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("/login.json")
-    public ResultModel login(String username, String password){
-        TbUser user = loginService.login( username, password);
-        if (user == null){
+    public ResultModel login(String username, String password) {
+        TbUser user = loginService.login(username, password);
+        if (user == null) {
             return ResultModel.failed("登陆失败");
         }
-        String token = JWTUtil.createToken(user.getId(),username);
-        return ResultModel.okWithData(new HashMap<String,String>(2){{
-            put("token",token);
-            put("nickname",user.getNickname());
+        String token = JWTUtil.createToken(user.getId(), username);
+        return ResultModel.okWithData(new HashMap<String, String>(2) {{
+            put("token", token);
+            put("nickname", user.getNickname());
         }});
-
     }
 
 }

@@ -2,7 +2,7 @@ package org.freeone.electronwebrtcmeetingroom.util;
 
 import java.util.HashMap;
 
-public class ResultModel extends HashMap {
+public class ResultModel {
 
 
     private Integer code = 0;
@@ -52,7 +52,7 @@ public class ResultModel extends HashMap {
     public static ResultModel failed(String msg){
         ResultModel resultModel = new ResultModel();
         resultModel.code = 1;
-        resultModel.msg = msg;
+        resultModel.setMsg(msg);
         resultModel.success = false;
         return resultModel;
     }
