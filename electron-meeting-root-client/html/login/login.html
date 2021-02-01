@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>会议室--登陆</title>
+    <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
+    <script src="../../static/layui-v2.5.7/layui.all.js"></script>
+    <style>
+        .layui-form{
+            margin-top: 120px;
+            padding-right: 25px;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" action="" onsubmit="return false"  >
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="请输入用户名" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" lay-verify="required" autocomplete="off" placeholder="请输入密码" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" class="layui-btn" lay-submit="" lay-filter="login-submit">立即提交</button>
+        </div>
+    </div>
+</form>
+</body>
+<script src="login.js"></script>
+</html>
