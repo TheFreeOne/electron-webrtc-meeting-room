@@ -30,7 +30,7 @@ function createWindow() {
         ipcMainListener = new IpcMainListener(mainWindow);
 
         // 注册调试快捷键
-        globalShortcut.register('CommandOrControl+Alt+P', function () {
+        globalShortcut.register('CommandOrControl+Alt+O', function () {
             BrowserWindow.getFocusedWindow().webContents.openDevTools();
         });
 

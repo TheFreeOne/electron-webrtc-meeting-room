@@ -1,6 +1,7 @@
 package org.freeone.electronwebrtcmeetingroom.util;
 
 import org.freeone.electronwebrtcmeetingroom.model.RoomModel;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 临时房间工具类
  */
+@Configuration
 public class TemporaryRoomUtil {
 
     public static ConcurrentHashMap ROOM = new ConcurrentHashMap<String, RoomModel>();
