@@ -7,6 +7,7 @@
     <title>会议室</title>
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
     <script src="../../static/layui-v2.5.7/layui.all.js"></script>
+    <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
     <style>
         html,
         body {
@@ -28,6 +29,9 @@
             background-color: grey;
             height: 100%;
         }
+        .layui-row{
+            height: 85% !important;
+        }
     </style>
 </head>
 
@@ -39,6 +43,20 @@
             </div>
         </div>
         <div class="layui-col-xs2 left-content">2</div>
+    </div>
+    <div class="botton-util">
+        <button class="layui-btn layui-btn-normal maikefeng"  title="麦克风">
+            <span class="iconfont  icon-maikefeng"></span>
+        </button>
+        <button class="layui-btn layui-btn-normal shexiangtou" title="摄像头">
+            <span class="iconfont  icon-shexiangtou"></span>
+        </button>
+        <button class="layui-btn layui-btn-normal pingmugongxiang" title="屏幕共享">
+            <span class="iconfont  icon-pingmugongxiang"></span>
+        </button>
+        <button class="layui-btn layui-btn-normal baibanwhiteboard10" title="白板">
+            <span class="iconfont  icon-baibanwhiteboard10"></span>
+        </button>
     </div>
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->

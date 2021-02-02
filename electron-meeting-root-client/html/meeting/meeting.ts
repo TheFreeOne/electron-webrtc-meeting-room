@@ -1,85 +1,41 @@
 import { ipcRenderer, desktopCapturer } from 'electron';
 import $ = require('jquery');
 import ChannelConstant from '../../util/ChannelConstant';
-import AudioMeeting from './audioMeeting'
+import AudioMeeting from './audioMeeting';
+import VideoMeeting from './vidioMeeting';
+import ScreenMeeting from './screenMeeting';
+import BoardMeeting from './boardMeeting';
+
 var roomNumber: string;
 var audioMeeting :AudioMeeting;
-
-
+var videoMeeting: VideoMeeting;
+var screenMeeting: ScreenMeeting;
+var boardMeeting: BoardMeeting;
 
 ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string) => {
   roomNumber = _roomNumber;
   audioMeeting = new AudioMeeting();
   audioMeeting.run();
- 
+  videoMeeting = new VideoMeeting();
+  screenMeeting = new ScreenMeeting();
+  boardMeeting = new BoardMeeting();
+
+  $('.maikefeng').on('click',()=>{
+    audioMeeting.run();
+  });
+
+  $('.shexiangtou').on('click',()=>{
+    videoMeeting.run();
+  });
+
+  $('.pingmugongxiang').on('click',()=>{
+    screenMeeting.run();
+  });
+
+  $('.baibanwhiteboard10').on('click',()=>{
+    boardMeeting.run();
+  });
 
 });
-
-
-
-// function audioRun() {
-//   // @ts-ignore
-  // navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-  // // 屏幕画面&系统声音
-  // // @ts-ignore
-  // navigator.mediaDevices.getDisplayMedia({ video: true, audio: false }).then(desktopStream => {
-  //   console.log('desktopStream');
-  //   console.log(desktopStream);
-
-  // }).catch(desktopError => {
-  //   console.log('desktopError');
-  //   console.log(desktopError);
-  // });
-  // // 麦克风声音
-  // navigator.mediaDevices.getUserMedia({ video: false, audio: true }).then(voiceStream => {
-  //   console.log('voiceStream');
-  //   console.log(voiceStream);
-
-
-  // }).catch(voiceError => {
-  //   console.log('voiceError');
-  //   console.log(voiceError);
-  // });
-
-//   desktopCapturer.getSources({ types: [  'screen'] }).then(async sources => {
-//     console.log(sources);
-
-     
-//     (window as any).desktopCapturer = desktopCapturer 
-
-//     //screen:0:0
-//     for (const source of sources) {
-//       if (source.id === 'screen:0:0') {
-//         try {
-//           const desktopStream = await navigator.mediaDevices.getUserMedia({
-//             audio: true,
-//             video: {
-//               //@ts-ignore
-//               mandatory: {
-//                 chromeMediaSource: 'desktop',
-//                 chromeMediaSourceId: 'screen:0:0',
-//                 minWidth: 1280,
-//                 maxWidth: 1280,
-//                 minHeight: 720,
-//                 maxHeight: 720
-//               }
-//             }
-//           }).catch(deskTopError =>{
-//             console.error(deskTopError);
-//           });
-
-//           (window as any).desktopStream = desktopStream;
-           
-//         } catch (e) {
-           
-//         }
-//         return
-//       }
-//     }
-
-//   });
-
-
-// }
 
 export = {}

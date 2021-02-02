@@ -12,9 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 public class TemporaryRoomUtil {
 
+    private Integer roomNumberSize = 9;
+
     public static ConcurrentHashMap ROOM = new ConcurrentHashMap<String, RoomModel>();
 
-    public static ConcurrentHashMap USER_CRETEED_ROOM = new ConcurrentHashMap<String, String>();
+    public static ConcurrentHashMap USER_CREATED_ROOM = new ConcurrentHashMap<String, String>();
 
 
     public synchronized boolean hasRoom(String roomNumber){
@@ -29,7 +31,7 @@ public class TemporaryRoomUtil {
         RoomModel roomModel = new RoomModel(userId,type);
         roomModel.setNumber(roomNumber);
         ROOM.put(roomNumber, ROOM);
-        USER_CRETEED_ROOM.put(userId, roomNumber);
+        USER_CREATED_ROOM.put(userId, roomNumber);
         return roomNumber;
     }
 
@@ -37,7 +39,7 @@ public class TemporaryRoomUtil {
         String numberString = "0123456789";
         String roomNumber = "";
         Random random = new Random();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < roomNumberSize; i++) {
             roomNumber += numberString.charAt(random.nextInt(10));
         }
 //        int number = (int)(Math.random()*100000*100000);// z这种方式,当超过int的最大值时只能返回int的最大值2147483647

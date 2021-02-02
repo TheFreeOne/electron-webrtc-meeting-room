@@ -2,9 +2,9 @@ import { desktopCapturer } from "electron";
 
 export default class ScreenMeeting {
     public run() {
-        desktopCapturer.getSources({ types: ['screen'] }).then(async sources => {
+        desktopCapturer.getSources({ types: ['window','screen'] }).then(async sources => {
             console.log(sources);
-            (window as any).desktopCapturer = desktopCapturer
+            
 
             //screen:0:0
             for (const source of sources) {
