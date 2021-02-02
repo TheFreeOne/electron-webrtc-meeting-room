@@ -18,6 +18,7 @@
     "@types/layui-src": "^2.5.0"
   },
   "dependencies": {
+    "electron-log": "^4.3.1",
     "jquery": "^3.5.1"
   },
   "keywords": [],
