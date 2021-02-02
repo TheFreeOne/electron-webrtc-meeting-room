@@ -54,7 +54,29 @@ layui.use(['form'], () => {
                 layui.layer.msg("请输入正确的房间号");
                 return;
             }
-            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,pass,"JOIN");
+            let token = ipcRenderer.sendSync(ChannelConstant.GET_TOKEN);
+            $.ajax({
+                url:`${config.javaLoginServer}/queryRoomExisted.json` ,
+                headers: {
+                    'token': token
+                },
+                data: {
+                    roomNumber:pass
+                },
+                type:'post',
+                success: (result)=>{
+                    if(result.data && result.data.existed == true ){
+                        ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,pass,"JOIN");
+                    }else{
+                        layui.layer.msg('不存在的房间');
+                    }
+                    layui.layer.closeAll();
+                },error:(err)=>{
+                    console.log(err);
+                    alert('请求错误');
+                }
+            })
+             
              
           });
         // ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,result.data.roomNumber,"CREATE");

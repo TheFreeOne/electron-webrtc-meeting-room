@@ -16,4 +16,11 @@ public class RoomServiceImpl implements RoomService {
         String roomNumber = roomUtil.createRoom(userId, type);
         return roomNumber;
     }
+
+    @Override
+    public boolean existed(String roomNumber) {
+        return roomUtil.hasRoom(roomNumber);
+    }
+
+
 }

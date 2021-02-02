@@ -14,11 +14,10 @@ var videoMeeting: VideoMeeting;
 var screenMeeting: ScreenMeeting;
 var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
-let config = require('../../config.json');
+var config = require('../../config.json');
 (window as any).config = config;
 
-let script = `<script src="${config.nodeRoomServer}/socket.io/socket.io.js"></script>`
-$(document.body).append(script);
+
 
 ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string,_actionType) => {
 

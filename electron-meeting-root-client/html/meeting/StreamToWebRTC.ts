@@ -1,28 +1,32 @@
 export default class StreamToWebRTC{
 
-    public roomNumber;
-    public remoteStream;
-    public rtcPeerConnection;
-    public isCaller;
-    public dataChannel;
-    public localStream;
-    public socket;
+
 
     public run(_localStream){
-        
-        this.localStream = _localStream;
+
+
+
+        (window as any).localStream = _localStream;
         // document.getElementById('callBtn').onclick = () => {
         //     socket.emit('create or join', roomInput.value);
         //     roomNumber = roomInput.value;
         // }
-        // 创建房间
-        this.isCaller = true;
-        this.socket.emit('create or join', this.roomNumber);
+
+
+        (window as any).socket.emit('create or join', (window as any).roomNumber);
 
     }
 
     constructor(number) {
-        this.roomNumber = number;
+
+        (window as any).roomNumber = number;
+        (window as any).remoteStream = null;
+        (window as any).rtcPeerConnection = null;
+        (window as any).isCaller = false;
+        (window as any).dataChannel  = null;
+        (window as any).localStream = null;
+        (window as any).socket = null;
+        (window as any).remoteVideo = document.getElementById('main-video');
         const iceServers = {
             iceServers: [
                 {urls: 'stun:192.168.0.142:13478'},
@@ -31,144 +35,164 @@ export default class StreamToWebRTC{
             ]
         };
 
-        let log = console.log;
+
 
         //@ts-ignore
         const _socket = io((window as any).config.nodeRoomServer,{path:'/socket.io'});
-        this.socket = _socket;
-        // @ts-ignore
-        // localVideo.onloadedmetadata = (e) => localVideo.play()
+        (window as any).socket = _socket;
+
+
+
+
+
+
         console.log('video will be played');
 
-        this.socket.on('created', room => {
-            log(`socket.on('created'`)
-            // @ts-ignore
-            // localVideo.srcObject = localStream
-            this.isCaller = true;
+        _socket.onopen = ()=>{
+            console.log('ok')
+        };
 
-        })
-        this.socket.on('joined', room => {
-            log(`socket.on('joined'`)
-            // @ts-ignore
-            // localVideo.srcObject = localStream
-            this.socket.emit('ready', this.roomNumber);
-        })
 
-        this.socket.on('ready', () => {
-            log(`socket.on('ready'`)
-            if (this.isCaller) {
-                this.rtcPeerConnection = new RTCPeerConnection(iceServers)
-                log(this.rtcPeerConnection)
-                this.rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
+
+        _socket.on('connection',function(socket) {
+            console.log('made socket connection');
+
+        });
+        (window as any).socket.on('created', room => {
+            console.log(`socket.on('created'`);
+            (window as any).isCaller = true;
+
+        });
+        (window as any).socket.on('joined', room => {
+            console.log(`socket.on('joined'`);
+            (window as any).socket.emit('ready', (window as any).roomNumber);
+        });
+
+        (window as any).socket.on('ready', () => {
+            console.log(`socket.on('ready'`);
+            if ((window as any).isCaller) {
+                // @ts-ignore
+                window.rtcPeerConnection = new RTCPeerConnection(iceServers);
+                console.log((window as any).rtcPeerConnection);
+                (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if(event.candidate) {
                         console.log('sending ice candidate', event.candidate);
-                        this.socket.emit('candidate', {
+                        (window as any).socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
                             id: event.candidate.sdMid,
                             candidate: event.candidate.candidate,
-                            room: this.roomNumber
+                            room: (window as any).roomNumber
                         })
                     }
-                }
-                this.rtcPeerConnection.ontrack = function onAddStream(event) {
+                };
+
+                (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
                     // @ts-ignore
-                    remoteVideo.srcObject = event.streams[0];
-                    this.remoteStream = event.streams[0];
+                    (window as any).remoteVideo.srcObject = event.streams[0];
+                    (window as any).remoteStream = event.streams[0];
                     try {
                         // @ts-ignore
-                        remoteVideo.play()
+                        (window as any).remoteVideo.play();
                     } catch (error) {
-
+                        console.error(error)
                     }
                 };
-                this.rtcPeerConnection.addTrack(this.localStream.getTracks()[0], this.localStream);
-                if(this.localStream.getTracks().length > 1) {
-                    this.rtcPeerConnection.addTrack(this.localStream.getTracks()[1], this.localStream);
-                }
-                this.rtcPeerConnection.createOffer()
+                (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[0], (window as any).localStream);
+                if((window as any).localStream.getTracks().length > 1) {
+                    (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[1], (window as any).localStream);
+                };
+                (window as any).rtcPeerConnection.createOffer()
                     .then(sessionDescription => {
-                        this.rtcPeerConnection.setLocalDescription(sessionDescription);
-                        this.socket.emit('offer', {
+                        (window as any).rtcPeerConnection.setLocalDescription(sessionDescription);
+                        (window as any).socket.emit('offer', {
                             type: 'offer',
                             sdp: sessionDescription,
-                            room: this.roomNumber
+                            room: (window as any).roomNumber
                         })
                     })
                     .catch(err => {
                         console.log('error here');
-                    })
-                this.dataChannel = this.rtcPeerConnection.createDataChannel(this.roomNumber);
-                this.dataChannel.onmessage = event => {
+                    });
+                    (window as any).dataChannel = (window as any).rtcPeerConnection.createDataChannel((window as any).roomNumber);
+                (window as any).dataChannel.onmessage = event => {
                     console.log(event.data, "rollercoaster");
                     // h2CallName.innerText = event.data
                 }
             }
-        })
+        });
 
-        this.socket.on('offer', (event) => {
-            log(` socket.on('offer'`)
-            if (!this.isCaller) {
-                this.rtcPeerConnection = new RTCPeerConnection(iceServers)
-                log(this.rtcPeerConnection)
-                this.rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
+        (window as any).socket.on('offer', (event) => {
+            console.log(` socket.on('offer'`);
+            if (!(window as any).isCaller) {
+                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers);
+                console.log((window as any).rtcPeerConnection);
+                (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if(event.candidate) {
                         console.log('sending ice candidate', event.candidate);
-                        this.socket.emit('candidate', {
+                        (window as any).socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
                             id: event.candidate.sdMid,
                             candidate: event.candidate.candidate,
-                            room: this.roomNumber
+                            room: (window as any).roomNumber
                         })
                     }
-                }
-                this.rtcPeerConnection.ontrack = function onAddStream(event) {
-                    // @ts-ignore
-                    this.remoteVideo.srcObject = event.streams[0];
-                    this.remoteStream = event.streams[0];
                 };
-                this.rtcPeerConnection.addTrack(this.localStream.getTracks()[0], this.localStream);
-                if(this.localStream.getTracks().length > 1){
-                    this.rtcPeerConnection.addTrack(this.localStream.getTracks()[1], this.localStream);
+                // @ts-ignore
+                (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
+                    // @ts-ignore
+                    console.log('rtcPeerConnection.ontrack');
+                    console.log(event);
+                    (window as any).remoteVideo.srcObject = event.streams[0];
+                    (window as any).remoteStream = event.streams[0];
+                    try {
+                        // @ts-ignore
+                        (window as any).remoteVideo.play();
+                    } catch (error) {
+                        console.error(error)
+                    }
+                };
+                (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[0], (window as any).localStream);
+                if((window as any).localStream.getTracks().length > 1){
+                    (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[1], (window as any).localStream);
                 }
-                this.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
-                this.rtcPeerConnection.createAnswer()
+                (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+                (window as any).rtcPeerConnection.createAnswer()
                     .then(sessionDescription => {
-                        this.rtcPeerConnection.setLocalDescription(sessionDescription);
-                        this.socket.emit('answer', {
+                        (window as any).rtcPeerConnection.setLocalDescription(sessionDescription);
+                        (window as any).socket.emit('answer', {
                             type: 'answer',
                             sdp: sessionDescription,
-                            room: this.roomNumber
+                            room: (window as any).roomNumber
                         })
                     })
                     .catch(err => {
                         console.log('error here');
-                    })
-                this.rtcPeerConnection.ondatachannel = event => {
-                    this.dataChannel = event.channel;
-                    this.dataChannel.onmessage = event => {
+                    });
+                    (window as any).rtcPeerConnection.ondatachannel = event => {
+                    (window as any).dataChannel = event.channel;
+                    (window as any).dataChannel.onmessage = event => {
                         // h2CallName.innerText = event.data
                     }
                 }
             }
-        })
-
-        this.socket.on('answer', (event) => {
-            log(`socket.on('answer'`)
-            console.log('answered done');
-            this.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
         });
 
-        this.socket.on('candidate', event => {
-            log(`socket.on('candidate'`)
+        (window as any).socket.on('answer', (event) => {
+            console.log(`socket.on('answer'`);
+            console.log('answered done');
+            (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+        });
+
+        (window as any).socket.on('candidate', event => {
+            console.log(`socket.on('candidate'`);
             console.log('am her for Ice', event);
             const candidate = new RTCIceCandidate({
                 sdpMLineIndex: event.label,
                 candidate: event.candidate
             });
-            this.rtcPeerConnection.addIceCandidate(candidate);
+            (window as any).rtcPeerConnection.addIceCandidate(candidate);
         })
-
     }
 }

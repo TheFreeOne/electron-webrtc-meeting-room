@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
     <script src="../../static/layui-v2.5.7/layui.all.js"></script>
     <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
+    <script>
+        (function () {
+            let config = require('../../config.json');
+            window.config = config;
+            let script = document.createElement("script");
+            script.src = `${config.nodeRoomServer}/socket.io/socket.io.js`
+            console.dir(script)
+            document.write( script.outerHTML);
+        })()
+    </script>
     <style>
         html,
         body {
@@ -68,6 +78,9 @@
             bottom: 0;
             width: 100%;
         }
+        #main-video {
+            width: 90%;
+        }
 
         #left-video {
             display: inline-block;
@@ -113,15 +126,7 @@
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->
 
-<script>
-    (function () {
-        let config = require('../../config.json');
-        window.config = config;
-        let script = document.createElement("script");
-        script.src = `${config.nodeRoomServer}/socket.io/socket.io.js`
-        document.body.appendChild(script);
-    })()
-</script>
+
 
 <script src="./meeting.js"></script>
 </html>

@@ -33,4 +33,11 @@ public class RoomController {
             put("roomNumber", roomNumber);
         }});
     }
+    @PostMapping("queryRoomExisted.json")
+    public ResultModel exist(@RequestParam String roomNumber){
+        boolean existed = roomService.existed(roomNumber);
+        return ResultModel.okWithData(new HashMap<String,Object>(){{
+            put("existed", existed);
+        }});
+    }
 }
