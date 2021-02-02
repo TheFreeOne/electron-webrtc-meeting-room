@@ -1,7 +1,24 @@
 import { desktopCapturer } from "electron";
 
 export default class AudioMeeting {
+
+
     public async run() {
+
+    //     navigator.permissions.query(
+    //         { name: 'camera' }
+    //        //{ name: 'microphone' }
+    //        // { name: 'geolocation' }
+    //        // { name: 'notifications' }
+    //        // { name: 'midi', sysex: false }
+    //        // { name: 'midi', sysex: true }
+    //        // { name: 'push', userVisibleOnly: true }
+    //    ).then(function(permissionStatus){
+    //      console.log(permissionStatus.state); // granted, denied, prompt
+    //        permissionStatus.onchange = function(){
+    //            console.log("Permission changed to " + this.state);
+    //        }    
+    //    })
         //@ts-ignore
         navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
         // 屏幕画面&系统声音
