@@ -5,8 +5,24 @@ export default class StreamToWebRTC{
     public rtcPeerConnection;
     public isCaller;
     public dataChannel;
-    public run(localStream){
-        // 目前是局域网内，iceServers不生效
+    public localStream;
+    public socket;
+
+    public run(_localStream){
+        
+        this.localStream = _localStream;
+        // document.getElementById('callBtn').onclick = () => {
+        //     socket.emit('create or join', roomInput.value);
+        //     roomNumber = roomInput.value;
+        // }
+        // 创建房间
+        this.isCaller = true;
+        this.socket.emit('create or join', this.roomNumber);
+
+    }
+
+    constructor(number) {
+        this.roomNumber = number;
         const iceServers = {
             iceServers: [
                 {urls: 'stun:192.168.0.142:13478'},
@@ -18,27 +34,27 @@ export default class StreamToWebRTC{
         let log = console.log;
 
         //@ts-ignore
-        const socket = io((window as any).config.nodeRoomServer,{path:'/socket.io'});
-
+        const _socket = io((window as any).config.nodeRoomServer,{path:'/socket.io'});
+        this.socket = _socket;
         // @ts-ignore
-        localVideo.onloadedmetadata = (e) => localVideo.play()
+        // localVideo.onloadedmetadata = (e) => localVideo.play()
         console.log('video will be played');
 
-        socket.on('created', room => {
+        this.socket.on('created', room => {
             log(`socket.on('created'`)
             // @ts-ignore
             // localVideo.srcObject = localStream
             this.isCaller = true;
 
         })
-        socket.on('joined', room => {
+        this.socket.on('joined', room => {
             log(`socket.on('joined'`)
             // @ts-ignore
             // localVideo.srcObject = localStream
-            socket.emit('ready', this.roomNumber);
+            this.socket.emit('ready', this.roomNumber);
         })
 
-        socket.on('ready', () => {
+        this.socket.on('ready', () => {
             log(`socket.on('ready'`)
             if (this.isCaller) {
                 this.rtcPeerConnection = new RTCPeerConnection(iceServers)
@@ -46,7 +62,7 @@ export default class StreamToWebRTC{
                 this.rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if(event.candidate) {
                         console.log('sending ice candidate', event.candidate);
-                        socket.emit('candidate', {
+                        this.socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
                             id: event.candidate.sdMid,
@@ -66,14 +82,14 @@ export default class StreamToWebRTC{
 
                     }
                 };
-                this.rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
-                if(localStream.getTracks().length > 1) {
-                    this.rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
+                this.rtcPeerConnection.addTrack(this.localStream.getTracks()[0], this.localStream);
+                if(this.localStream.getTracks().length > 1) {
+                    this.rtcPeerConnection.addTrack(this.localStream.getTracks()[1], this.localStream);
                 }
                 this.rtcPeerConnection.createOffer()
                     .then(sessionDescription => {
                         this.rtcPeerConnection.setLocalDescription(sessionDescription);
-                        socket.emit('offer', {
+                        this.socket.emit('offer', {
                             type: 'offer',
                             sdp: sessionDescription,
                             room: this.roomNumber
@@ -90,7 +106,7 @@ export default class StreamToWebRTC{
             }
         })
 
-        socket.on('offer', (event) => {
+        this.socket.on('offer', (event) => {
             log(` socket.on('offer'`)
             if (!this.isCaller) {
                 this.rtcPeerConnection = new RTCPeerConnection(iceServers)
@@ -98,7 +114,7 @@ export default class StreamToWebRTC{
                 this.rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if(event.candidate) {
                         console.log('sending ice candidate', event.candidate);
-                        socket.emit('candidate', {
+                        this.socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
                             id: event.candidate.sdMid,
@@ -112,15 +128,15 @@ export default class StreamToWebRTC{
                     this.remoteVideo.srcObject = event.streams[0];
                     this.remoteStream = event.streams[0];
                 };
-                this.rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
-                if(localStream.getTracks().length > 1){
-                    this.rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
+                this.rtcPeerConnection.addTrack(this.localStream.getTracks()[0], this.localStream);
+                if(this.localStream.getTracks().length > 1){
+                    this.rtcPeerConnection.addTrack(this.localStream.getTracks()[1], this.localStream);
                 }
                 this.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
                 this.rtcPeerConnection.createAnswer()
                     .then(sessionDescription => {
                         this.rtcPeerConnection.setLocalDescription(sessionDescription);
-                        socket.emit('answer', {
+                        this.socket.emit('answer', {
                             type: 'answer',
                             sdp: sessionDescription,
                             room: this.roomNumber
@@ -138,13 +154,13 @@ export default class StreamToWebRTC{
             }
         })
 
-        socket.on('answer', (event) => {
+        this.socket.on('answer', (event) => {
             log(`socket.on('answer'`)
             console.log('answered done');
             this.rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
-        })
+        });
 
-        socket.on('candidate', event => {
+        this.socket.on('candidate', event => {
             log(`socket.on('candidate'`)
             console.log('am her for Ice', event);
             const candidate = new RTCIceCandidate({
@@ -154,17 +170,5 @@ export default class StreamToWebRTC{
             this.rtcPeerConnection.addIceCandidate(candidate);
         })
 
-        document.getElementById('callBtn').onclick = () => {
-            // @ts-ignore
-            socket.emit('create or join', roomInput.value);
-            // @ts-ignore
-            roomNumber = roomInput.value;
-        }
-
-
-    }
-
-    constructor(number) {
-        this.roomNumber = number;
     }
 }

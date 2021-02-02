@@ -74,8 +74,8 @@
             width: 100%;
             box-sizing: border-box;
             padding: 5px;
-            
-            }
+
+        }
     </style>
 </head>
 
@@ -112,6 +112,16 @@
     </div>
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->
-<script src="./meeting.js"></script>
 
+<script>
+    (function () {
+        let config = require('../../config.json');
+        window.config = config;
+        let script = document.createElement("script");
+        script.src = `${config.nodeRoomServer}/socket.io/socket.io.js`
+        document.body.appendChild(script);
+    })()
+</script>
+
+<script src="./meeting.js"></script>
 </html>

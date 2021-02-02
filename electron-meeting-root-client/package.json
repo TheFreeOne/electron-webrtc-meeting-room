@@ -53,7 +53,8 @@
       ],
       "asar": true,
       "asarUnpack": [
-        "./*.dll"
+        "./*.dll",
+        "./config.json"
       ]
     }
   }

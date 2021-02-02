@@ -88,6 +88,7 @@ export default class ScreenMeeting {
                         // @ts-ignore
                         leftVideo.onloadedmetadata = (e) => leftVideo.play();
                         layui.layer.closeAll();
+                        (window as any).streamToWebRTC.run(desktopStream);
                     });
 
                 } catch (error) {

@@ -6,7 +6,7 @@ let config = require('./config.json');
 
 layui.use(['form'], () => {
     let form = layui.form;
-    form.on('submit(join-meeting)', () => {
+    form.on('submit(create-meeting)', () => {
         layui.layer.open({
             type: 1,
             area: ['280px', '180px'],
@@ -29,8 +29,7 @@ layui.use(['form'], () => {
                     type:'post',
                     success: (result)=>{
                         if(result.success){
-                            sessionStorage.setItem('roomNumber',result.data.roomNumber);
-                            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,result.data.roomNumber)
+                            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,result.data.roomNumber,"CREATE");
                         }
                         layui.layer.closeAll();
                     },error:(err)=>{
@@ -41,7 +40,26 @@ layui.use(['form'], () => {
 
             }
         });
-    })
+    });
+
+
+
+    form.on('submit(join-meeting)', () => {
+        layui.layer.prompt({title: '输入9位房间号，并确认', formType: 0,success:()=>{
+            console.log(1);
+            
+            $('.layui-layer-btn').css('top', '-5px');
+        }}, function(pass, index){
+            if(pass.length < 9){
+                layui.layer.msg("请输入正确的房间号");
+                return;
+            }
+            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,pass,"JOIN");
+             
+          });
+        // ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,result.data.roomNumber,"CREATE");
+    });
+
 });
 
 export = {}
