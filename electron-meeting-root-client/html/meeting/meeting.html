@@ -17,21 +17,65 @@
 
         .layui-row,
         .layui-xs-col10,
-        .layui-xs-col2   {
+        .layui-xs-col2 {
             width: 100%;
             height: 100%;
         }
-        .main-content{
+
+        .main-content {
             background-color: black;
             height: 100%;
         }
-        .left-content{
+
+        .left-content {
             background-color: grey;
             height: 100%;
         }
-        .layui-row{
+
+        .layui-row {
             height: 85% !important;
         }
+
+        .window-item,
+        .window-item>img {
+            display: inline-block;
+
+            position: relative;
+            margin: 4px;
+        }
+
+        .window-item {
+            width: 192px;
+            height: 120px;
+            border: 2px solid darkgray;
+            float: left;
+            text-align: center;
+            box-sizing: border-box;
+            padding-bottom: 2px;
+        }
+
+        .window-item>img {
+            height: 100%;
+            max-width: 100%;
+        }
+
+        .window-item p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            position: absolute;
+            background: white;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #left-video {
+            display: inline-block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            
+            }
     </style>
 </head>
 
@@ -39,13 +83,21 @@
     <div class="layui-row">
         <div class="layui-col-xs10 main-content">
             <div class="main-audio-content">
-                <audio id="main-audio" ></audio>
+                <audio id="main-audio"></audio>
+            </div>
+
+            <div class="main-video-content">
+                <video id="main-video"></video>
             </div>
         </div>
-        <div class="layui-col-xs2 left-content">2</div>
+        <div class="layui-col-xs2 left-content">
+            <div class="left-video-content">
+                <video id="left-video"></video>
+            </div>
+        </div>
     </div>
     <div class="botton-util">
-        <button class="layui-btn layui-btn-normal maikefeng"  title="麦克风">
+        <button class="layui-btn layui-btn-normal maikefeng" title="麦克风">
             <span class="iconfont  icon-maikefeng"></span>
         </button>
         <button class="layui-btn layui-btn-normal shexiangtou" title="摄像头">
