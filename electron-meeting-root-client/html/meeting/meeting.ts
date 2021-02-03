@@ -39,7 +39,7 @@ var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
 var config = require('../../config.json');
 (window as any).config = config;
-
+var audioStream;
 
 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
@@ -50,7 +50,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   document.title = '会议室--' + roomNumber
   actionType = _actionType;
   audioMeeting = new AudioMeeting();
-  audioMeeting.run();
+  audioStream = await audioMeeting.run();
   videoMeeting = new VideoMeeting();
   screenMeeting = new ScreenMeeting();
   boardMeeting = new BoardMeeting();
@@ -58,6 +58,9 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   $(function () {
     streamToWebRTC = new StreamToWebRTC(_roomNumber);
     (window as any).streamToWebRTC = streamToWebRTC;
+    if(audioStream){
+      streamToWebRTC.run(audioStream);
+    }
   });
 
 
@@ -78,6 +81,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   });
 
   $('.permissionQuery').off().on('click', () => {
+    // @ts-ignore
     navigator.permissions.query(
       { name: 'camera' }
       //{ name: 'microphone' }
@@ -90,7 +94,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
       console.log(permissionStatus.state); // granted, denied, prompt
       toastr.info('相机权限'+permissionStatus.state);
     });
-
+    // @ts-ignore
     navigator.permissions.query(
       // { name: 'camera' }
       { name: 'microphone' }
