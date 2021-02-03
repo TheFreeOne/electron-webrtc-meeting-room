@@ -42,7 +42,7 @@ export default class IpcMainListener{
                 minWidth: 830,
                 minHeight: 560,
                 icon: 'icon.ico',
-                parent: this._mainWindow,
+                // parent: this._mainWindow,
                 // modal: true,
                 autoHideMenuBar:true,
                 maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
@@ -51,7 +51,8 @@ export default class IpcMainListener{
                 useContentSize: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    webSecurity:false
                 }
             });
             this._meetingWindow.loadFile('./html/meeting/meeting.html');

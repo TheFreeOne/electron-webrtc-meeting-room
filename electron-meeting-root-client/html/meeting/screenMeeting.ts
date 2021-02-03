@@ -15,13 +15,17 @@ export default class ScreenMeeting {
             area: ['640px', '500px'],
             content: html[0].outerHTML
         })
+
+        var supported = navigator.mediaDevices.getSupportedConstraints();
+        (window as any).supported =supported;
         // navigator.webkitGetUserMedia 时创建一个约束对象，如果使用 desktopCapturer 的资源，
         // 必须设置 chromeMediaSource 为 "desktop" ，并且 audio 为 false.
         //如果你想捕获整个桌面的 audio 和 video，你可以设置 chromeMediaSource 为 "screen" ，和 audio
         // 为 true. 当使用这个
         //的时候，不可以指定一个 chromeMediaSourceId.
 
-
+ var supported = navigator.mediaDevices.getSupportedConstraints();
+                        (window as any).supported =supported;
         // 这个方法不会不做最小化的软件窗口，即使任务栏有图标
         desktopCapturer.getSources({ types: ['window', 'screen'], fetchWindowIcons: true }).then(async sources => {
             console.log(sources);
@@ -41,54 +45,121 @@ export default class ScreenMeeting {
                     $('.window-item-content').append(windowVideoItem);
 
                     $(`input[value="${source.id}"]`).parents('.window-item').off().on('click', async () => {
+
+                       
+                        var constraints = {};
+
                         let sourceId = $(`input[value="${source.id}"]`).val();
                         console.log(sourceId);
                         let desktopStream = null;
-                        if (sourceId == 'screen:0:0') {
+                        if ((sourceId as string).startsWith('screen:')) {
+                            console.log("准备获取【有声屏幕】的流");
+                            
                             // 获取的是窗口，做特殊处理
-                            desktopStream = await navigator.mediaDevices.getUserMedia(
-                                {
+                            try {
+                                desktopStream = await navigator.mediaDevices.getUserMedia(
+                                    {
+                                        audio: {
+                                            //@ts-ignore
+                                            mandatory: {
+                                                chromeMediaSource: 'desktop',
+                                                chromeMediaSourceId: source.id
+                                            }
+                                        },
+                                        video: {
+                                            //@ts-ignore
+                                            mandatory: {
+                                                chromeMediaSource: 'screen'
+                                            }
+                                        }
+                                    }
+                                );
+                                console.log("获取【有声屏幕】的流 ==》 成功");
+                            } catch (deskTopError) {
+
+                                console.error(deskTopError);
+                                console.log("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
+                                desktopStream = await navigator.mediaDevices.getUserMedia(
+                                    {
+                                        audio: false,
+                                        video: {
+                                            //@ts-ignore
+                                            mandatory: {
+                                                chromeMediaSource: 'screen'
+                                            }
+                                        }
+                                    }
+                                );
+                                console.log("获取【无声屏幕】的流 ==》成功");
+                            }
+
+                        } else {
+                            console.log('准备获取【有声应用】的流');
+                            
+                            try {
+                                desktopStream = await navigator.mediaDevices.getUserMedia({
+                                    audio:  {
+                                        // echoCancellation:supported.echoCancellation || false,
+                                        // noiseSuppression: true,
+                                        // deviceId:   source.id,
+                                        //@ts-ignore
+                                        mandatory: {
+                                            chromeMediaSource: 'desktop',
+                                            chromeMediaSourceId: source.id
+                                        }
+                                    },
+                                    video: {
+                                        //@ts-ignore
+                                        mandatory: {
+                                            chromeMediaSource: 'desktop',
+                                            chromeMediaSourceId: sourceId,
+                                            minWidth: screen.width,
+                                            maxWidth: screen.width,
+                                            minHeight: screen.height,
+                                            maxHeight: screen.height
+                                        }
+                                    }
+                                });
+                                console.log('获取【有声应用】的流 ==》 成功');
+                                
+                            } catch (deskTopError) {
+                                console.error(deskTopError);
+                                console.log('获取【有声应用】的流 ==》 失败，切换成 【无声应用】的流');
+                                desktopStream = await navigator.mediaDevices.getUserMedia({
                                     audio: false,
                                     video: {
                                         //@ts-ignore
                                         mandatory: {
-                                            chromeMediaSource: 'screen'
+                                            chromeMediaSource: 'desktop',
+                                            chromeMediaSourceId: sourceId,
+                                            minWidth: screen.width,
+                                            maxWidth: screen.width,
+                                            minHeight: screen.height,
+                                            maxHeight: screen.height
                                         }
                                     }
-                                }
-                            ).catch(deskTopError => {
-                                console.error(deskTopError);
-                            });
-                        } else {
+                                });
 
-                            desktopStream = await navigator.mediaDevices.getUserMedia({
-                                audio: false,
-                                video: {
-                                    //@ts-ignore
-                                    mandatory: {
-                                        chromeMediaSource: 'desktop',
-                                        chromeMediaSourceId: sourceId,
-                                        minWidth: screen.width,
-                                        maxWidth: screen.width,
-                                        minHeight: screen.height,
-                                        maxHeight: screen.height
-                                    }
-                                }
-                            }).catch(deskTopError => {
-                                console.error(deskTopError);
-                            });
+                                console.log('获取【无声应用】的流 ==>成功');
+                                
+
+                            }
+
                         }
 
                         if (desktopStream == null) {
-                            return ;
+                            return;
                         }
                         let leftVideo = document.getElementById('left-video');
                         // 将捕获的流放到右上角的video中
                         // @ts-ignore
                         leftVideo.srcObject = desktopStream;
                         // @ts-ignore
+                        leftVideo.volume = 0.0;
+                        // @ts-ignore
                         leftVideo.onloadedmetadata = (e) => leftVideo.play();
                         layui.layer.closeAll();
+
                         (window as any).streamToWebRTC.run(desktopStream);
                     });
 
@@ -103,4 +174,3 @@ export default class ScreenMeeting {
     }
 }
 
-   

@@ -1,4 +1,4 @@
-import {app, BrowserWindow, globalShortcut, screen} from 'electron';
+import {app, BrowserWindow, globalShortcut, screen, session} from 'electron';
 import IpcMainListener from './IpcMainListener';
 import * as log from 'electron-log';
 // const log = require('electron-log');
@@ -56,6 +56,23 @@ function createWindow() {
 
 app.on('ready', () => {
     createWindow();
+
+    session.fromPartition("default").setPermissionRequestHandler((webContents, permission, callback) => {
+        let allowedPermissions = ["audioCapture"]; 
+        // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest
+        console.log('setPermissionRequestHandler ');
+        
+        if (allowedPermissions.includes(permission)) {
+            callback(true); // Approve permission request
+        } else {
+            console.error(
+                `The application tried to request permission for '${permission}'. This permission was not whitelisted and has been blocked.`
+            );
+    
+            callback(false); // Deny
+        }
+    });
+    
 });
 
 app.on("window-all-closed", () => {
@@ -67,3 +84,5 @@ app.on("window-all-closed", () => {
 app.on('will-quit', function () {
     globalShortcut.unregisterAll();
 })
+
+
