@@ -16,7 +16,7 @@
 - [ ] 开发electron客户端
   - [ ] electron客户端支持双人房间
   - [ ] electron客户端支持讲话
-  - [ ] electron客户端支持桌面演示模式
+  - [x] electron客户端支持桌面/应用演示模式
   - [ ] electron客户端支持白板
   - [ ] electron客户端支持摄像头获取
 
