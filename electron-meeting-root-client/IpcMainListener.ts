@@ -14,6 +14,8 @@ export default class IpcMainListener{
     
 
     public startListen(){
+
+        // 登陆成功
         ipcMain.on(ChannelConstant.LOGIN_SUCCESS,(event,data)=>{
             this._token = data.token;
             this._nickname = data.nickname;
@@ -21,20 +23,27 @@ export default class IpcMainListener{
 
         });
 
+        // 获取token
         ipcMain.on(ChannelConstant.GET_TOKEN,(event)=>{
             event.returnValue = this._token;
         });
 
+        // 获取昵称
+        ipcMain.on(ChannelConstant.GET_NICKNAME,(event)=>{
+            event.returnValue = this._nickname;
+        });
+
+        // 创建会议窗口
         ipcMain.on(ChannelConstant.CREATE_MEETING_WINDOW,(event,roomNumber,actionType)=>{
             this._meetingWindow = new BrowserWindow({
                 title: '会议室--会议中：'+roomNumber,
-                width: 1366,
-                height: 768,
-                minWidth: 1366,
-                minHeight: 768,
+                width: 830,
+                height: 560,
+                minWidth: 830,
+                minHeight: 560,
                 icon: 'icon.ico',
                 parent: this._mainWindow,
-                modal: true,
+                // modal: true,
                 autoHideMenuBar:true,
                 maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
                 maxHeight: screen.getPrimaryDisplay().workAreaSize.height,

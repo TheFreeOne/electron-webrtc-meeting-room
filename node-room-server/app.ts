@@ -14,7 +14,9 @@ http.listen(port, () => {
 
 io.on('connection', socket => {
     console.log('a user is connected');
-    socket.on('create or join', room => {
+    // 创建或这是加入服务器
+    socket.on('create or join', event => {
+        let room = event.room;
         console.log('create or join a room', room);
         let  myRoom = { length: 0 };
         if (io.sockets.adapter.rooms.has(room)) {
@@ -49,5 +51,9 @@ io.on('connection', socket => {
 
     socket.on('answer', event => {
         socket.broadcast.to(event.room).emit('answer', event.sdp);
-    })
+    });
+    // 用户退出房间
+    socket.on('out of room',event => {
+        socket.broadcast.to(event.room).emit('out of room',event);
+    });
 })

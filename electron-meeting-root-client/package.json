@@ -11,15 +11,16 @@
     "start": "electron ."
   },
   "devDependencies": {
-    "electron-builder": "^22.9.1",
-    "electron": "^10.3.0",
-    "electron-rebuild": "^2.3.4",
     "@types/jquery": "^3.5.5",
-    "@types/layui-src": "^2.5.0"
+    "@types/layui-src": "^2.5.0",
+    "electron": "^10.3.0",
+    "electron-builder": "^22.9.1",
+    "electron-rebuild": "^2.3.4"
   },
   "dependencies": {
     "electron-log": "^4.3.1",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "toastr": "^2.1.4"
   },
   "keywords": [],
   "author": "",
