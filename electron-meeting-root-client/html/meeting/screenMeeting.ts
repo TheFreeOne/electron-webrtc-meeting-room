@@ -6,7 +6,7 @@ export default class ScreenMeeting {
 
 
     public run() {
-        console.log('run');
+
 
         let html = $('<div class="window-item-content"></div>');
         layui.layer.open({
@@ -17,15 +17,15 @@ export default class ScreenMeeting {
         })
 
         var supported = navigator.mediaDevices.getSupportedConstraints();
-        (window as any).supported =supported;
+        (window as any).supported = supported;
         // navigator.webkitGetUserMedia 时创建一个约束对象，如果使用 desktopCapturer 的资源，
         // 必须设置 chromeMediaSource 为 "desktop" ，并且 audio 为 false.
         //如果你想捕获整个桌面的 audio 和 video，你可以设置 chromeMediaSource 为 "screen" ，和 audio
         // 为 true. 当使用这个
         //的时候，不可以指定一个 chromeMediaSourceId.
 
- var supported = navigator.mediaDevices.getSupportedConstraints();
-                        (window as any).supported =supported;
+        var supported = navigator.mediaDevices.getSupportedConstraints();
+        (window as any).supported = supported;
         // 这个方法不会不做最小化的软件窗口，即使任务栏有图标
         desktopCapturer.getSources({ types: ['window', 'screen'], fetchWindowIcons: true }).then(async sources => {
             console.log(sources);
@@ -46,7 +46,7 @@ export default class ScreenMeeting {
 
                     $(`input[value="${source.id}"]`).parents('.window-item').off().on('click', async () => {
 
-                       
+
                         var constraints = {};
 
                         let sourceId = $(`input[value="${source.id}"]`).val();
@@ -54,7 +54,7 @@ export default class ScreenMeeting {
                         let desktopStream = null;
                         if ((sourceId as string).startsWith('screen:')) {
                             console.log("准备获取【有声屏幕】的流");
-                            
+
                             // 获取的是窗口，做特殊处理
                             try {
                                 desktopStream = await navigator.mediaDevices.getUserMedia(
@@ -74,11 +74,11 @@ export default class ScreenMeeting {
                                         }
                                     }
                                 );
-                                console.log("获取【有声屏幕】的流 ==》 成功");
+                                (window as any).toastr.info("获取【有声屏幕】的流 ==》 成功");
                             } catch (deskTopError) {
 
                                 console.error(deskTopError);
-                                console.log("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
+                                (window as any).toastr.info("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
                                 desktopStream = await navigator.mediaDevices.getUserMedia(
                                     {
                                         audio: false,
@@ -90,15 +90,15 @@ export default class ScreenMeeting {
                                         }
                                     }
                                 );
-                                console.log("获取【无声屏幕】的流 ==》成功");
+                                (window as any).toastr.info("获取【无声屏幕】的流 ==》成功");
                             }
 
                         } else {
-                            console.log('准备获取【有声应用】的流');
-                            
+                            (window as any).toastr.info('准备获取【有声应用】的流');
+
                             try {
                                 desktopStream = await navigator.mediaDevices.getUserMedia({
-                                    audio:  {
+                                    audio: {
                                         // echoCancellation:supported.echoCancellation || false,
                                         // noiseSuppression: true,
                                         // deviceId:   source.id,
@@ -120,11 +120,11 @@ export default class ScreenMeeting {
                                         }
                                     }
                                 });
-                                console.log('获取【有声应用】的流 ==》 成功');
-                                
+                                (window as any).toastr.info('获取【有声应用】的流 ==》 成功');
+
                             } catch (deskTopError) {
                                 console.error(deskTopError);
-                                console.log('获取【有声应用】的流 ==》 失败，切换成 【无声应用】的流');
+                                (window as any).toastr.info('获取【有声应用】的流 ==》 失败，切换成 【无声应用】的流');
                                 desktopStream = await navigator.mediaDevices.getUserMedia({
                                     audio: false,
                                     video: {
@@ -140,8 +140,8 @@ export default class ScreenMeeting {
                                     }
                                 });
 
-                                console.log('获取【无声应用】的流 ==>成功');
-                                
+                                (window as any).toastr.info('获取【无声应用】的流 ==>成功');
+
 
                             }
 
@@ -160,7 +160,34 @@ export default class ScreenMeeting {
                         leftVideo.onloadedmetadata = (e) => leftVideo.play();
                         layui.layer.closeAll();
 
-                        (window as any).streamToWebRTC.run(desktopStream);
+                        // (window as any).streamToWebRTC.run(desktopStream);
+                        try {
+                            ((window as any).localStream as MediaStream).addTrack((desktopStream as MediaStream).getVideoTracks()[0]);
+                            let videoTrack = (window as any).desktopAudioStream.getVideoTracks()[0];
+
+                            var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
+                                return s.track.kind == videoTrack.kind;
+                            });
+                            console.log('found sender:', sender);
+                            if(sender){
+                                sender.replaceTrack(videoTrack);
+                            }else{
+                                ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
+                            }
+                            
+
+                            
+                            // ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
+
+                      
+
+                                
+
+                        } catch (error) {
+                            console.error(error);
+                        }
+
+
                     });
 
                 } catch (error) {

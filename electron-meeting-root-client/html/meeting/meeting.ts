@@ -1,4 +1,4 @@
-import { ipcRenderer, desktopCapturer } from 'electron';
+import { ipcRenderer, desktopCapturer, clipboard } from 'electron';
 import $ = require('jquery');
 import ChannelConstant from '../../util/ChannelConstant';
 import AudioMeeting from './audioMeeting';
@@ -28,9 +28,11 @@ toastr.options = {
   "hideMethod": "fadeOut"
 };
 (window as any).toastr = toastr;
-
+// 房间号
 var roomNumber: string;
+// 昵称
 var nickname: string;
+// 创建会议还是加入会议
 var actionType: string;
 var audioMeeting: AudioMeeting;
 var videoMeeting: VideoMeeting;
@@ -40,7 +42,7 @@ var streamToWebRTC: StreamToWebRTC;
 var config = require('../../config.json');
 (window as any).config = config;
 var audioStream;
-
+var streamType:string = 'audio';
 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
 
@@ -50,7 +52,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   document.title = '会议室--' + roomNumber
   actionType = _actionType;
   audioMeeting = new AudioMeeting();
-  audioStream = await audioMeeting.run();
+  audioStream = await audioMeeting.getStream();
   videoMeeting = new VideoMeeting();
   screenMeeting = new ScreenMeeting();
   boardMeeting = new BoardMeeting();
@@ -64,19 +66,24 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   });
 
 
-  $('.maikefeng').off().on('click', () => {
-    audioMeeting.run();
+  $('.maikefeng').off().on('click', async () => {
+    streamType = 'audio';
+    audioStream = await audioMeeting.getStream() ;
+    ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((audioStream as MediaStream).getAudioTracks()[0],(window as any).localStream ); 
   });
 
   $('.shexiangtou').off().on('click', () => {
+    streamType = 'video';
     videoMeeting.run();
   });
 
   $('.pingmugongxiang').off().on('click', () => {
+    streamType = 'screen';
     screenMeeting.run();
   });
 
   $('.baibanwhiteboard10').off().on('click', () => {
+    streamType = 'board';
     boardMeeting.run();
   });
 
@@ -110,6 +117,11 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
 
 
 
+  });
+
+  $('.copy-room-number').off().on('click',()=>{
+    clipboard.writeText(roomNumber, 'clipboard');
+    layui.layer.msg('复制房间号成功');
   });
 
 });

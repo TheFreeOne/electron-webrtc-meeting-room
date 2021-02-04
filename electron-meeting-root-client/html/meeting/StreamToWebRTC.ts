@@ -13,7 +13,7 @@ export default class StreamToWebRTC {
         // }
 
 
-        (window as any).socket.emit('create or join', {room: (window as any).roomNumber ,nickname: (window as any).nickname});
+        (window as any).socket.emit('create or join', { room: (window as any).roomNumber, nickname: (window as any).nickname });
 
     }
 
@@ -95,11 +95,17 @@ export default class StreamToWebRTC {
                 };
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
                 // rtcPeerConnection收到流
-                (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
+                (window as any).rtcPeerConnection.ontrack = function onAddStream(event: RTCTrackEvent) {
                     console.log('rtcPeerConnection get stream ');
                     console.log(event);
-                    ; (window as any).remoteVideo.srcObject = event.streams[0];
-                    (window as any).remoteStream = event.streams[0];
+                    let stream = event.streams[0];
+                    // 麦克风流
+                    // 麦克风流
+                    let voiceStream = new MediaStream([stream.getAudioTracks()[0]]);
+
+
+                    ; (window as any).remoteVideo.srcObject = voiceStream;
+                    (window as any).remoteStream = stream;
                     try {
                         (window as any).remoteVideo.play();
                     } catch (error) {
@@ -109,10 +115,14 @@ export default class StreamToWebRTC {
 
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/addTrack
                 // rtcPeerConnection
-                (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[0], (window as any).localStream);
-                if ((window as any).localStream.getTracks().length > 1) {
-                    (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[1], (window as any).localStream);
-                };
+
+                let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
+                mediaStreamTrackArray.forEach(mediaStreamTrack => {
+
+                    (window as any).rtcRtpSender = (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
+
+                });
+
 
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createOffer
                 // RTCPeerConnection接口的createOffer（）方法启动创建一个SDP offer，目的是启动一个新的WebRTC去连接远程端点。
@@ -142,7 +152,7 @@ export default class StreamToWebRTC {
             console.log(` socket.on('offer'`);
             if (!(window as any).isCaller) {
                 (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers);
-             
+
                 (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if (event.candidate) {
                         console.log('sending ice candidate', event.candidate);
@@ -155,25 +165,34 @@ export default class StreamToWebRTC {
                         })
                     }
                 };
-                 
+
                 (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
-                     
+
+
                     console.log('rtcPeerConnection.ontrack');
                     console.log(event);
-                    (window as any).remoteVideo.srcObject = event.streams[0];
-                    (window as any).remoteStream = event.streams[0];
+                    let stream = event.streams[0];
+                    // 麦克风流
+                    let voiceStream = new MediaStream([stream.getAudioTracks()[0]]);
+
+                    ; (window as any).remoteVideo.srcObject = voiceStream;
+                    (window as any).remoteStream = stream;
                     try {
-                       
+
                         (window as any).remoteVideo.play();
                     } catch (error) {
                         console.error(error)
                     }
                 };
 
-                (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[0], (window as any).localStream);
-                if ((window as any).localStream.getTracks().length > 1) {
-                    (window as any).rtcPeerConnection.addTrack((window as any).localStream.getTracks()[1], (window as any).localStream);
-                }
+
+                let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
+                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
+                mediaStreamTrackArray.forEach(mediaStreamTrack => {
+
+                    (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
+
+                });
 
                 (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
                 (window as any).rtcPeerConnection.createAnswer()
@@ -183,10 +202,11 @@ export default class StreamToWebRTC {
                             type: 'answer',
                             sdp: sessionDescription,
                             room: (window as any).roomNumber
-                        })
+                        });
                     })
                     .catch(err => {
-                        console.log('error here');
+
+                        console.error(err);
                     });
                 (window as any).rtcPeerConnection.ondatachannel = event => {
                     (window as any).dataChannel = event.channel;
@@ -213,11 +233,15 @@ export default class StreamToWebRTC {
                 candidate: event.candidate
             });
             (window as any).rtcPeerConnection.addIceCandidate(candidate);
-        })
+        });
+
+        (window as any).socket.on('out of room', (event) => {
+            (window as any).toastr.info(event.nickname + '离开了会议');
+        });
 
         // 页面关闭之后
-        window.onunload = function windowClose(){
-            if((window as any).socket){
+        window.onunload = function windowClose() {
+            if ((window as any).socket) {
                 (window as any).socket.emit('out of room', {
                     room: (window as any).roomNumber,
                     nickname: (window as any).nickname
