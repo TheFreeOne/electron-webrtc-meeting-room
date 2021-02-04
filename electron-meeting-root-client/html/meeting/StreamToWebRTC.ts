@@ -42,6 +42,8 @@ export default class StreamToWebRTC {
         // soket.io创建的socket
         (window as any).socket = null;
 
+        (window as any).voiceStream = new MediaStream();
+
         // 页面中用于远程传输过来的流的video标签
         (window as any).remoteVideo = document.getElementById('main-video');
 
@@ -101,10 +103,13 @@ export default class StreamToWebRTC {
                     let stream = event.streams[0];
                     // 麦克风流
                     // 麦克风流
-                    let voiceStream = new MediaStream([stream.getAudioTracks()[0]]);
+                    let AudioTrack = stream.getAudioTracks()[0];
+                    let videoTrack = stream.getVideoTracks()[0];
+ 
+                    (window as any).voiceStream.addTrack(AudioTrack);
+                    (window as any).voiceStream.addTrack(videoTrack);
 
-
-                    ; (window as any).remoteVideo.srcObject = voiceStream;
+                    ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
                     try {
                         (window as any).remoteVideo.play();
@@ -172,10 +177,14 @@ export default class StreamToWebRTC {
                     console.log('rtcPeerConnection.ontrack');
                     console.log(event);
                     let stream = event.streams[0];
-                    // 麦克风流
-                    let voiceStream = new MediaStream([stream.getAudioTracks()[0]]);
-
-                    ; (window as any).remoteVideo.srcObject = voiceStream;
+                  
+                    let AudioTrack = stream.getAudioTracks()[0];
+                    let videoTrack = stream.getVideoTracks()[0];
+                    
+                    (window as any).voiceStream.addTrack(AudioTrack);
+                    (window as any).voiceStream.addTrack(videoTrack);
+                    
+                    ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
                     try {
 
