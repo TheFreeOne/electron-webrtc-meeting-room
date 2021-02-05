@@ -42,6 +42,7 @@ var streamToWebRTC: StreamToWebRTC;
 var config = require('../../config.json');
 (window as any).config = config;
 var audioStream;
+var videoStream;
 var streamType: string = 'audio';
 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
@@ -85,10 +86,10 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
       }
     }
   });
-
-  $('.shexiangtou').off().on('click', () => {
+  // 摄像头
+  $('.shexiangtou').off().on('click',async () => {
     streamType = 'video';
-    videoMeeting.run();
+    videoStream = await videoMeeting.run();
   });
 
   $('.pingmugongxiang').off().on('click', () => {

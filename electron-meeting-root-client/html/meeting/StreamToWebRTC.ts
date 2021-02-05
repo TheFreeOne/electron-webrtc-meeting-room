@@ -99,11 +99,11 @@ export default class StreamToWebRTC {
                 // rtcPeerConnection收到流
                 (window as any).rtcPeerConnection.ontrack = function onAddStream(event: RTCTrackEvent) {
                     // console.log('rtcPeerConnection get stream ');
-                    // console.log(event);
+                    console.log(event);
                     let stream = event.streams[0];
                     // 麦克风流
                     // 麦克风流
-                    
+
 
                     ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
@@ -118,6 +118,7 @@ export default class StreamToWebRTC {
                 // rtcPeerConnection
 
                 let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
+                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
                 mediaStreamTrackArray.forEach(mediaStreamTrack => {
 
                     (window as any).rtcRtpSender = (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
@@ -171,8 +172,8 @@ export default class StreamToWebRTC {
 
 
                     // console.log('rtcPeerConnection.ontrack');
-                    // console.log(event);
-                    let stream = event.streams[0];    
+                    console.log(event);
+                    let stream = event.streams[0];
                     ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
                     try {
@@ -185,7 +186,7 @@ export default class StreamToWebRTC {
 
 
                 let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
-                // console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
+                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
                 mediaStreamTrackArray.forEach(mediaStreamTrack => {
 
                     (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);

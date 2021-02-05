@@ -163,7 +163,7 @@ export default class ScreenMeeting {
                         // (window as any).streamToWebRTC.run(desktopStream);
                         try {
              
-                            let videoTrack =  desktopStream.getVideoTracks()[0];
+                            let videoTrack =  (desktopStream as MediaStream).getVideoTracks()[0];
                             
                             var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
                                 return s.track.kind == videoTrack.kind;
