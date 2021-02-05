@@ -62,20 +62,20 @@ export default class StreamToWebRTC {
 
         // 收到created，说明房间已经创建好了
         (window as any).socket.on('created', room => {
-            console.log(`socket.on('created'`);
+            console.log(`${room} 房间已经创建完成`);
             (window as any).isCaller = true;
 
         });
         // 收到joined，说明成功加入一个房间
         (window as any).socket.on('joined', room => {
-            console.log(`socket.on('joined'`);
+            console.log(`${room}房间加入成功`);
             // 被动的一方/收到邀请的一方向服务器发送消息，说明客人已经准备好进行通讯
             (window as any).socket.emit('ready', (window as any).roomNumber);
         });
 
         // 房间创建者/发起方/主人  收到已经准备好的消息，
         (window as any).socket.on('ready', () => {
-            console.log(`socket.on('ready'`);
+            console.log(`对方准备完成`);
             if ((window as any).isCaller) {
 
                 // 创建rtcPeerConnection用于音视频相关的传输
@@ -85,7 +85,7 @@ export default class StreamToWebRTC {
                 // 只要本地代理ICE 需要通过信令服务器传递信息给其他对等端时就会触发
                 (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if (event.candidate) {
-                        console.log('sending ice candidate', event.candidate);
+                        // console.log('sending ice candidate', event.candidate);
                         (window as any).socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
@@ -98,16 +98,12 @@ export default class StreamToWebRTC {
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
                 // rtcPeerConnection收到流
                 (window as any).rtcPeerConnection.ontrack = function onAddStream(event: RTCTrackEvent) {
-                    console.log('rtcPeerConnection get stream ');
-                    console.log(event);
+                    // console.log('rtcPeerConnection get stream ');
+                    // console.log(event);
                     let stream = event.streams[0];
                     // 麦克风流
                     // 麦克风流
-                    let AudioTrack = stream.getAudioTracks()[0];
-                    let videoTrack = stream.getVideoTracks()[0];
- 
-                    (window as any).voiceStream.addTrack(AudioTrack);
-                    (window as any).voiceStream.addTrack(videoTrack);
+                    
 
                     ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
@@ -160,7 +156,7 @@ export default class StreamToWebRTC {
 
                 (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if (event.candidate) {
-                        console.log('sending ice candidate', event.candidate);
+                        // console.log('sending ice candidate', event.candidate);
                         (window as any).socket.emit('candidate', {
                             type: 'candidate',
                             label: event.candidate.sdpMLineIndex,
@@ -174,16 +170,9 @@ export default class StreamToWebRTC {
                 (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
 
 
-                    console.log('rtcPeerConnection.ontrack');
-                    console.log(event);
-                    let stream = event.streams[0];
-                  
-                    let AudioTrack = stream.getAudioTracks()[0];
-                    let videoTrack = stream.getVideoTracks()[0];
-                    
-                    (window as any).voiceStream.addTrack(AudioTrack);
-                    (window as any).voiceStream.addTrack(videoTrack);
-                    
+                    // console.log('rtcPeerConnection.ontrack');
+                    // console.log(event);
+                    let stream = event.streams[0];    
                     ; (window as any).remoteVideo.srcObject = stream;
                     (window as any).remoteStream = stream;
                     try {
@@ -196,7 +185,7 @@ export default class StreamToWebRTC {
 
 
                 let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
-                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
+                // console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
                 mediaStreamTrackArray.forEach(mediaStreamTrack => {
 
                     (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
@@ -229,14 +218,14 @@ export default class StreamToWebRTC {
 
 
         (window as any).socket.on('answer', (event) => {
-            console.log(`socket.on('answer'`);
-            console.log('answered done');
+            // console.log(`socket.on('answer'`);
+            // console.log('answered done');
             (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
         });
 
         (window as any).socket.on('candidate', event => {
-            console.log(`socket.on('candidate'`);
-            console.log('am her for Ice', event);
+            // console.log(`socket.on('candidate'`);
+            // console.log('am her for Ice', event);
             const candidate = new RTCIceCandidate({
                 sdpMLineIndex: event.label,
                 candidate: event.candidate

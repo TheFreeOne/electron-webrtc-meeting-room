@@ -162,20 +162,27 @@ export default class ScreenMeeting {
 
                         // (window as any).streamToWebRTC.run(desktopStream);
                         try {
-                            ((window as any).localStream as MediaStream).addTrack((desktopStream as MediaStream).getVideoTracks()[0]);
-                            let videoTrack = (window as any).desktopAudioStream.getVideoTracks()[0];
-
+             
+                            let videoTrack =  desktopStream.getVideoTracks()[0];
+                            
                             var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
                                 return s.track.kind == videoTrack.kind;
                             });
-                            console.log('found sender:', sender);
+                            
                             if(sender){
-                                sender.replaceTrack(videoTrack);
+                                console.log(sender);
+                                
+                                console.log('sender 替换 视频轨道');
+                                try {
+                                    let trackReplacedPromise  = await sender.replaceTrack(videoTrack);
+                                    console.log(trackReplacedPromise);
+                                    
+                                } catch (error) {
+                                    console.error(error);
+                                }
                             }else{
                                 ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
                             }
-                            
-
                             
                             // ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
 

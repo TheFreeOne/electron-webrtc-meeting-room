@@ -73,7 +73,7 @@ export default class AudioMeeting {
                 }
             }
 
-
+            (audioStream as MediaStream).getVideoTracks()[0].enabled =false;
             return audioStream;
         } catch (voiceError) {
             ; (window as any).toastr.error('获取麦克风出错');

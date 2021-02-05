@@ -42,7 +42,7 @@ var streamToWebRTC: StreamToWebRTC;
 var config = require('../../config.json');
 (window as any).config = config;
 var audioStream;
-var streamType:string = 'audio';
+var streamType: string = 'audio';
 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
 
@@ -60,7 +60,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
   $(function () {
     streamToWebRTC = new StreamToWebRTC(_roomNumber);
     (window as any).streamToWebRTC = streamToWebRTC;
-    if(audioStream){
+    if (audioStream) {
       streamToWebRTC.run(audioStream);
     }
   });
@@ -68,8 +68,22 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
 
   $('.maikefeng').off().on('click', async () => {
     streamType = 'audio';
-    audioStream = await audioMeeting.getStream() ;
-    ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((audioStream as MediaStream).getAudioTracks()[0],(window as any).localStream ); 
+    audioStream = await audioMeeting.getStream();
+    let videoTrack = audioStream.getVideoTracks()[0];
+    // 此处获取的视频轨道时黑屏的
+    var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
+      return s.track.kind == videoTrack.kind;
+    });
+
+    if (sender) {
+
+      try {
+        let trackReplacedPromise = await sender.replaceTrack(videoTrack);
+        toastr.info('切换成只播放音轨');
+      } catch (error) {
+        console.error(error);
+      }
+    }
   });
 
   $('.shexiangtou').off().on('click', () => {
@@ -99,7 +113,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
       // { name: 'push', userVisibleOnly: true }
     ).then(function (permissionStatus) {
       console.log(permissionStatus.state); // granted, denied, prompt
-      toastr.info('相机权限'+permissionStatus.state);
+      toastr.info('相机权限' + permissionStatus.state);
     });
     // @ts-ignore
     navigator.permissions.query(
@@ -112,14 +126,14 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
       // { name: 'push', userVisibleOnly: true }
     ).then(function (permissionStatus) {
       console.log(permissionStatus.state); // granted, denied, prompt
-      toastr.info('麦克风权限'+permissionStatus.state);
+      toastr.info('麦克风权限' + permissionStatus.state);
     });
 
 
 
   });
 
-  $('.copy-room-number').off().on('click',()=>{
+  $('.copy-room-number').off().on('click', () => {
     clipboard.writeText(roomNumber, 'clipboard');
     layui.layer.msg('复制房间号成功');
   });
