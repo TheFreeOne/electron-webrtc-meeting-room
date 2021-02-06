@@ -39,6 +39,7 @@ var videoMeeting: VideoMeeting;
 var screenMeeting: ScreenMeeting;
 var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
+var disabledTrack: MediaStreamTrack = null;
 var config = require('../../config.json');
 (window as any).config = config;
 var audioStream;
@@ -62,6 +63,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         streamToWebRTC = new StreamToWebRTC(_roomNumber);
         (window as any).streamToWebRTC = streamToWebRTC;
         if (audioStream) {
+            disabledTrack = (audioStream as MediaStream).getVideoTracks()[0].clone();
             streamToWebRTC.run(audioStream);
         }
     });
@@ -91,25 +93,49 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         streamType = 'video';
         videoStream = await videoMeeting.run() as MediaStream;
         var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[1];
-        if(sender){
+        if($('.shexiangtou').hasClass('layui-btn-disabled')){
            
-            
-            console.log('sender 替换 视频轨道');
-            try {
-                let trackReplacedPromise  = await sender.replaceTrack((videoStream as MediaStream).getVideoTracks()[0]);
-                console.log(trackReplacedPromise);
-                
-            } catch (error) {
-                console.error(error);
+            if (sender) {
+                console.log('sender 替换 视频轨道');
+    
+                let trackReplacedPromise = await sender.replaceTrack((videoStream as MediaStream).getVideoTracks()[0]);
+    
+                $('.shexiangtou').removeClass('layui-btn-disabled')
+    
+            } else {
+                (window as any).toastr.error('无法获取Sender');
             }
         }else{
-           (window as any ).toastr.error('无法获取Sender');
+            
+            console.log('sender 替换 视频轨道');
+    
+            let trackReplacedPromise = await sender.replaceTrack(disabledTrack.clone());
+
+            $('.shexiangtou').addClass('layui-btn-disabled')
         }
+        
     });
 
-    $('.pingmugongxiang').off().on('click', () => {
-        streamType = 'screen';
-        screenMeeting.run();
+    $('.pingmugongxiang').off().on('click', async () => {
+       
+        // 没有disabled
+        if(!$('.pingmugongxiang').hasClass('layui-btn-disabled')){
+            var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
+            if (sender) {
+                console.log('sender 替换 视频轨道');
+    
+                let trackReplacedPromise = await sender.replaceTrack(disabledTrack.clone());
+    
+                $('.pingmugongxiang').addClass('layui-btn-disabled')
+    
+            } else {
+                (window as any).toastr.error('无法获取Sender');
+            }
+        }else{
+            streamType = 'screen';
+            screenMeeting.run();
+        }
+        
     });
 
     $('.baibanwhiteboard10').off().on('click', async () => {

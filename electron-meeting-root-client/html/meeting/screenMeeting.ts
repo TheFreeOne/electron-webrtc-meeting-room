@@ -162,32 +162,44 @@ export default class ScreenMeeting {
 
                         // (window as any).streamToWebRTC.run(desktopStream);
                         try {
-             
-                            let desktopTrack =  (desktopStream as MediaStream).getVideoTracks()[0];
-                            
+
+                            let desktopTrack = (desktopStream as MediaStream).getVideoTracks()[0];
+
                             var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
-                           
-                            
-                            if(sender){
-                                console.log(sender);
-                                
-                                console.log('sender 替换 视频轨道');
-                                try {
-                                    let trackReplacedPromise  = await sender.replaceTrack(desktopTrack);
+
+
+
+                            if ($('.pingmugongxiang').hasClass('layui-btn-disabled')) {
+                                if (sender) {
+                                    console.log(sender);
+
+                                    console.log('sender 替换 视频轨道');
+
+                                    let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
                                     console.log(trackReplacedPromise);
-                                    
-                                } catch (error) {
-                                    console.error(error);
+
+                                    $('.pingmugongxiang').removeClass('layui-btn-disabled')
                                 }
-                            }else{
-                               (window as any ).toastr.error('无法获取Sender');
+                            } else {
+                                if (sender) {
+                                    console.log(sender);
+
+                                    console.log('sender 替换 视频轨道');
+                                    desktopTrack.enabled = false;
+                                    let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
+                                    console.log(trackReplacedPromise);
+
+                                    $('.pingmugongxiang').addClass('layui-btn-disabled')
+                                }
                             }
-                            
-                       
 
-                      
 
-                                
+
+
+
+
+
+
 
                         } catch (error) {
                             console.error(error);
