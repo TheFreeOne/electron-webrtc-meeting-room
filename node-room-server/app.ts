@@ -1,7 +1,11 @@
-const express = require('express');
-const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
+import express = require('express');
+
+import * as HTTP from 'http';
+import * as socket from 'socket.io';
+
+const app:express.Application = express();
+const http:HTTP.Server = require('http').Server(app);
+const io:socket.Server = require('socket.io')(http);
 
 const port = process.env.PORT || 3004;
 
@@ -12,6 +16,8 @@ http.listen(port, () => {
 });
 
 io.on('connection', socket => {
+
+        
     console.log(socket.id)
     console.log('a user is connected');
     // 创建或这是加入服务器
@@ -41,6 +47,10 @@ io.on('connection', socket => {
         }
 
         console.log(io.sockets.adapter.rooms);
+
+        console.log(io.sockets);
+        
+
     });
 
     socket.on('ready', room => {
