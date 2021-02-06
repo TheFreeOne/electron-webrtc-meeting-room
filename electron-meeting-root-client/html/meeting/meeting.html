@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会议室</title>
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
- 
+
     <script src="../../static/layui-v2.5.7/layui.all.js"></script>
     <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
-    <link href="../../static/toastr/toastr.css" rel="stylesheet"/>
-    
+    <link href="../../static/toastr/toastr.css" rel="stylesheet" />
+
     <script>
         (function () {
             let config = require('../../config.json');
@@ -20,9 +20,8 @@
             console.dir(script)
             document.write(script.outerHTML);
         })()
-       
     </script>
- 
+
     <style>
         html,
         body {
@@ -115,11 +114,22 @@
             box-sizing: border-box;
             background-color: black;
         }
-        #main-video{
-            width: 100%;
+
+        #main-video {
+            width: 50%;
             height: 100%;
         }
-        .bottom-util{
+
+        #camera-video {
+            width: 50%;
+            height: 100%;
+            z-index: 1;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+
+        .bottom-util {
             height: 15%;
         }
     </style>
@@ -134,7 +144,10 @@
 
             <div class="main-video-content">
                 <video id="main-video" controls></video>
+                <video id="camera-video" controls></video>
             </div>
+
+
         </div>
         <div class="layui-col-xs2 left-content">
             <div class="left-video-content">

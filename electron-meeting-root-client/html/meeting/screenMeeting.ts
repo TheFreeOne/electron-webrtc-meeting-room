@@ -163,28 +163,27 @@ export default class ScreenMeeting {
                         // (window as any).streamToWebRTC.run(desktopStream);
                         try {
              
-                            let videoTrack =  (desktopStream as MediaStream).getVideoTracks()[0];
+                            let desktopTrack =  (desktopStream as MediaStream).getVideoTracks()[0];
                             
-                            var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
-                                return s.track.kind == videoTrack.kind;
-                            });
+                            var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
+                           
                             
                             if(sender){
                                 console.log(sender);
                                 
                                 console.log('sender 替换 视频轨道');
                                 try {
-                                    let trackReplacedPromise  = await sender.replaceTrack(videoTrack);
+                                    let trackReplacedPromise  = await sender.replaceTrack(desktopTrack);
                                     console.log(trackReplacedPromise);
                                     
                                 } catch (error) {
                                     console.error(error);
                                 }
                             }else{
-                                ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
+                               (window as any ).toastr.error('无法获取Sender');
                             }
                             
-                            // ((window as any).rtcPeerConnection as RTCPeerConnection).addTrack((desktopStream as MediaStream).getVideoTracks()[0], (window as any).localStream);
+                       
 
                       
 

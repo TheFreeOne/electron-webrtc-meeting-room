@@ -51,7 +51,7 @@ export default class IpcMainListener{
                 useContentSize: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: false,
+                    enableRemoteModule: true,
                     webSecurity:false
                 }
             });
@@ -62,11 +62,49 @@ export default class IpcMainListener{
                 this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
             });
         });
+
+        ipcMain.on(ChannelConstant.CREATE_BOARD_WINODW,(event)=>{
+            let uuid = this.generateUUID();
+            let boardWindow = new BrowserWindow({
+                title: uuid,
+                width: 830,
+                height: 560,
+                minWidth: 830,
+                minHeight: 560,
+                icon:  '/icon.ico',
+                parent:this._mainWindow,
+                // modal:true,
+                autoHideMenuBar: true,
+                show: true,
+                frame: true,
+                useContentSize: true,
+                webPreferences: {
+                    nodeIntegration: true,
+                    enableRemoteModule: false,
+                    webSecurity: false
+                }
+            });
+            boardWindow.loadFile("./html/meeting/board.html");
+            event.returnValue = uuid;
+        });
     }
 
     constructor(mainWindow:BrowserWindow){
         this._mainWindow = mainWindow;
         this.startListen();
+    }
+
+    generateUUID() {
+        let d = new Date().getTime();
+        if (window.performance && typeof window.performance.now === "function") {
+            d += performance.now(); //use high-precision timer if available
+        }
+        let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            let r = (d + Math.random() * 16) % 16 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
     }
     
 }

@@ -24,7 +24,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "build": {
     "productName": "会议室electron客户端",
     "appId": "org.freeone.electron-webrtc-meeting-room",
@@ -52,7 +52,7 @@
         "nsis",
         "zip"
       ],
-      "asar": true,
+      "asar": false,
       "asarUnpack": [
         "./*.dll",
         "./config.json"

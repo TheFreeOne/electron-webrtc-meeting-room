@@ -43,9 +43,18 @@ export default class StreamToWebRTC {
         (window as any).socket = null;
 
         (window as any).voiceStream = new MediaStream();
+        //@ts-ignore
 
+        (window as any).mainVideoStream = new MediaStream();
+
+        (window as any).cameraVideoStream = new MediaStream();
+
+
+        (window as any).voiceAudio = document.getElementById('main-audio');
         // 页面中用于远程传输过来的流的video标签
         (window as any).remoteVideo = document.getElementById('main-video');
+
+        (window as any).cameraVideo = document.getElementById('camera-video');
 
         // 打洞服务器的相关配置，局域网或者是单机环境下，这个配置不会生效
         const iceServers = {
@@ -101,17 +110,64 @@ export default class StreamToWebRTC {
                     // console.log('rtcPeerConnection get stream ');
                     console.log(event);
                     let stream = event.streams[0];
-                    // 麦克风流
-                    // 麦克风流
+                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
 
 
-                    ; (window as any).remoteVideo.srcObject = stream;
+
+                     
+                    let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
+                    let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
+
+                    ((window as any).cameraVideoStream as MediaStream).addTrack(stream.getVideoTracks()[0]);
+                    ((window as any).mainVideoStream as MediaStream).addTrack(stream.getVideoTracks()[1]);
+
+                    (window as any).voiceAudio.srcObject = (window as any).voiceStream;
+                    ; (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
+                    (window as any).cameraVideo.srcObject = (window as any).cameraVideoStream;
                     (window as any).remoteStream = stream;
+
+                    try {
+                        (window as any).voiceAudio.play();
+                    } catch (error) {
+                        console.error(error);
+                    }
                     try {
                         (window as any).remoteVideo.play();
                     } catch (error) {
                         console.error(error);
                     }
+
+                    try {
+                        (window as any).cameraVideo.play();
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    setInterval(() => {
+                        let cameraValid = cameraTrack.getSettings().width != 2;
+                        let desktopValid = desktopTrack.getSettings().width != 2;
+                        if (cameraValid && desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '25%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '25%';
+                        } else if (cameraValid && !desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '100%';
+                        } else if (!cameraValid && desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                        } else if (!cameraValid && !desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                        }
+                    }, 1000);
                 };
 
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/addTrack
@@ -164,7 +220,7 @@ export default class StreamToWebRTC {
                             id: event.candidate.sdMid,
                             candidate: event.candidate.candidate,
                             room: (window as any).roomNumber
-                        })
+                        });
                     }
                 };
 
@@ -174,14 +230,62 @@ export default class StreamToWebRTC {
                     // console.log('rtcPeerConnection.ontrack');
                     console.log(event);
                     let stream = event.streams[0];
-                    ; (window as any).remoteVideo.srcObject = stream;
-                    (window as any).remoteStream = stream;
-                    try {
+                    let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
+                    let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
+                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
+                    ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
 
+                    (window as any).voiceAudio.srcObject = (window as any).voiceStream;
+                    ; (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
+                    (window as any).cameraVideo.srcObject = (window as any).cameraVideoStream;
+
+
+                    (window as any).remoteStream = stream;
+
+                    try {
+                        (window as any).voiceAudio.play();
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    try {
                         (window as any).remoteVideo.play();
                     } catch (error) {
                         console.error(error)
                     }
+                    try {
+
+                        (window as any).cameraVideo.play();
+                    } catch (error) {
+                        console.error(error)
+                    }
+                    console.warn('cameraTrack', cameraTrack);
+                    setInterval(() => {
+                        let cameraValid = cameraTrack.getSettings().width != 2;
+                        let desktopValid = desktopTrack.getSettings().width != 2;
+                        if (cameraValid && desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '25%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '25%';
+                        } else if (cameraValid && !desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '100%';
+                        } else if (!cameraValid && desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                        } else if (!cameraValid && !desktopValid) {
+                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
+                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
+                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                        }
+                    }, 1000);
                 };
 
 
