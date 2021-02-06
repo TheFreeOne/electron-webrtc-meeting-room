@@ -110,19 +110,17 @@ export default class StreamToWebRTC {
                     // console.log('rtcPeerConnection get stream ');
                     console.log(event);
                     let stream = event.streams[0];
-                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    
 
-
-
-                     
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
-
-                    ((window as any).cameraVideoStream as MediaStream).addTrack(stream.getVideoTracks()[0]);
-                    ((window as any).mainVideoStream as MediaStream).addTrack(stream.getVideoTracks()[1]);
+                    
+                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
+                    ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
 
                     (window as any).voiceAudio.srcObject = (window as any).voiceStream;
-                    ; (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
+                    (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
                     (window as any).cameraVideo.srcObject = (window as any).cameraVideoStream;
                     (window as any).remoteStream = stream;
 
@@ -232,6 +230,7 @@ export default class StreamToWebRTC {
                     let stream = event.streams[0];
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
+
                     ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
                     ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
                     ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
