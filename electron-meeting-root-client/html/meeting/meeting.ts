@@ -45,6 +45,8 @@ var config = require('../../config.json');
 var audioStream;
 var videoStream;
 var streamType: string = 'audio';
+var leftVideo = document.getElementById('left-video');
+var leftCameraVideo = document.getElementById('left-camera-video');
 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
 
@@ -99,9 +101,29 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                 console.log('sender 替换 视频轨道');
     
                 let trackReplacedPromise = await sender.replaceTrack((videoStream as MediaStream).getVideoTracks()[0]);
+                // @ts-ignore
+                leftCameraVideo.srcObject = videoStream;
     
-                $('.shexiangtou').removeClass('layui-btn-disabled')
-    
+                $('.shexiangtou').removeClass('layui-btn-disabled');
+
+                if($('.pingmugongxiang').hasClass('layui-btn-disabled')){
+                    leftCameraVideo.style.width = '100%';
+                    leftCameraVideo.style.height = '100%';
+                    leftVideo.style.width = '0%';
+                    leftVideo.style.height = '0%';
+
+                }else{
+                    leftCameraVideo.style.width = '25%';
+                    leftCameraVideo.style.height = '25%';
+                    leftVideo.style.width = '100%';
+                    leftVideo.style.height = '100%';
+                }
+                try {
+                    // @ts-ignore
+                    leftCameraVideo.play();
+                } catch (error) {
+                    
+                }
             } else {
                 (window as any).toastr.error('无法获取Sender');
             }
@@ -110,8 +132,24 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             console.log('sender 替换 视频轨道');
     
             let trackReplacedPromise = await sender.replaceTrack(disabledTrack.clone());
+            let disabledVideoStream = new MediaStream();
+            disabledVideoStream.addTrack(disabledTrack.clone());
+            //@ts-ignore
+            leftCameraVideo.srcObject = disabledVideoStream;
+            $('.shexiangtou').addClass('layui-btn-disabled');
 
-            $('.shexiangtou').addClass('layui-btn-disabled')
+            if($('.pingmugongxiang').hasClass('layui-btn-disabled')){
+                leftCameraVideo.style.width = '0%';
+                leftCameraVideo.style.height = '0%';
+                leftVideo.style.width = '0%';
+                leftVideo.style.height = '0%';
+
+            }else{
+                leftCameraVideo.style.width = '0%';
+                leftCameraVideo.style.height = '0%';
+                leftVideo.style.width = '100%';
+                leftVideo.style.height = '100%';
+            }
         }
         
     });
@@ -128,6 +166,18 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     
                 $('.pingmugongxiang').addClass('layui-btn-disabled')
     
+                if($('.shexiangtou').hasClass('layui-btn-disabled')){
+                    leftCameraVideo.style.width = '0%';
+                    leftCameraVideo.style.height = '0%';
+                    leftVideo.style.width = '0%';
+                    leftVideo.style.height = '0%';
+    
+                }else{
+                    leftCameraVideo.style.width = '100%';
+                    leftCameraVideo.style.height = '100%';
+                    leftVideo.style.width = '0%';
+                    leftVideo.style.height = '0%';
+                }
             } else {
                 (window as any).toastr.error('无法获取Sender');
             }
