@@ -1,3 +1,5 @@
+import { dialog } from "electron";
+
 export default class StreamToWebRTC {
 
 
@@ -81,6 +83,12 @@ export default class StreamToWebRTC {
             // 被动的一方/收到邀请的一方向服务器发送消息，说明客人已经准备好进行通讯
             (window as any).socket.emit('ready', (window as any).roomNumber);
         });
+        // 房间已经满
+        (window as any).socket.on('full', room => {
+            (window as any).toastr.info('加入失败，房间已满');
+            require('electron').remote.dialog.showMessageBoxSync({type:'info',message:'房间已满',title:'提示'});
+            window.close();
+        });
 
         // 房间创建者/发起方/主人  收到已经准备好的消息，
         (window as any).socket.on('ready', () => {
@@ -114,7 +122,7 @@ export default class StreamToWebRTC {
 
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
-                    
+
                     ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
                     ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
                     ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
@@ -196,10 +204,11 @@ export default class StreamToWebRTC {
                     .catch(err => {
                         console.log('error here');
                     });
-                (window as any).dataChannel = (window as any).rtcPeerConnection.createDataChannel((window as any).roomNumber);
+                (window as any).dataChannel = ( (window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber);
                 (window as any).dataChannel.onmessage = event => {
                     console.log(event.data, "rollercoaster");
                 }
+                
             }
         });
 
@@ -310,12 +319,16 @@ export default class StreamToWebRTC {
 
                         console.error(err);
                     });
-                (window as any).rtcPeerConnection.ondatachannel = event => {
-                    (window as any).dataChannel = event.channel;
-                    (window as any).dataChannel.onmessage = event => {
-                        // h2CallName.innerText = event.data
+
+                    (window as any).dataChannel = ( (window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber);
+                    
+                    (window as any).rtcPeerConnection.ondatachannel = event => {
+                        (window as any).dataChannel = event.channel;
+                        (window as any).dataChannel.onmessage = event => {
+                            // h2CallName.innerText = event.data
+                            console.log(event.data)
+                        }
                     }
-                }
             }
         });
 

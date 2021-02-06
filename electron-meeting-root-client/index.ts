@@ -50,7 +50,7 @@ layui.use(['form'], () => {
             
             $('.layui-layer-btn').css('top', '-5px');
         }}, function(pass, index){
-            if(pass.length < 9){
+            if(pass.length != 9){
                 layui.layer.msg("请输入正确的房间号");
                 return;
             }
@@ -65,12 +65,13 @@ layui.use(['form'], () => {
                 },
                 type:'post',
                 success: (result)=>{
+                    layui.layer.closeAll();
                     if(result.data && result.data.existed == true ){
                         ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW,pass,"JOIN");
                     }else{
                         layui.layer.msg('不存在的房间');
                     }
-                    layui.layer.closeAll();
+                    
                 },error:(err)=>{
                     console.log(err);
                     alert('请求错误');
