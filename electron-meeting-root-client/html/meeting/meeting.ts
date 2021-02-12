@@ -28,6 +28,9 @@ toastr.options = {
     "hideMethod": "fadeOut"
 };
 (window as any).toastr = toastr;
+
+var rtcPeerConnection: RTCPeerConnection;
+
 // 房间号
 var roomNumber: string;
 // 昵称
@@ -42,7 +45,7 @@ var streamToWebRTC: StreamToWebRTC;
 var disabledTrack: MediaStreamTrack = null;
 var config = require('../../config.json');
 (window as any).config = config;
-var audioStream;
+var audioStream: MediaStream;
 var videoStream;
 var streamType: string = 'audio';
 var leftVideo = document.getElementById('left-video');
@@ -56,63 +59,81 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     document.title = '会议室--' + roomNumber
     actionType = _actionType;
     audioMeeting = new AudioMeeting();
-    audioStream = await audioMeeting.getStream();
+
     videoMeeting = new VideoMeeting();
     screenMeeting = new ScreenMeeting();
     boardMeeting = new BoardMeeting();
 
-    $(function () {
+    $(async function () {
+
+        // 获取所有设备
+        await renderInputDevice();
+
+        layui.form.render();
+        try {
+            audioStream = await audioMeeting.getMicrophoneStream();
+        } catch (error) {
+            toastr.info('无法获取麦克风，切换为系统声音');
+            audioStream = await audioMeeting.getSystemStream();
+        }
+
         streamToWebRTC = new StreamToWebRTC(_roomNumber);
         (window as any).streamToWebRTC = streamToWebRTC;
         if (audioStream) {
-            disabledTrack = (audioStream as MediaStream).getVideoTracks()[0].clone();
             streamToWebRTC.run(audioStream);
         }
     });
+    // 监听音频切换
+    layui.form.on('select(voice-select)', async (data) => {
+        if (data.value == 'default') {
+            audioStream = await audioMeeting.getSystemStream() as MediaStream;
 
+        } else {
+            audioStream = await audioMeeting.getMicrophoneStream();
+        }
 
-    $('.maikefeng').off().on('click', async () => {
-        streamType = 'audio';
-        audioStream = await audioMeeting.getStream();
-        let videoTrack = audioStream.getVideoTracks()[0];
-        // 此处获取的视频轨道时黑屏的
-        var sender = (window as any).rtcPeerConnection.getSenders().find(function (s) {
-            return s.track.kind == videoTrack.kind;
-        });
-
-        if (sender) {
-
-            try {
-                let trackReplacedPromise = await sender.replaceTrack(videoTrack);
-                toastr.info('切换成只播放音轨');
-            } catch (error) {
-                console.error(error);
+        if (rtcPeerConnection) {
+            let sender = rtcPeerConnection.getSenders().find(s => {
+                return s.track.kind == 'audio';
+            });
+            if (sender) {
+                sender.replaceTrack(audioStream.getAudioTracks()[0]);
             }
         }
+
     });
+
+    layui.form.on('select(voice-select)', async (data) => {
+        // 关闭
+        if (data.value == 'close') {
+
+        }
+    });
+
+
     // 摄像头
     $('.shexiangtou').off().on('click', async () => {
         streamType = 'video';
         videoStream = await videoMeeting.run() as MediaStream;
         var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[1];
-        if($('.shexiangtou').hasClass('layui-btn-disabled')){
-           
+        if ($('.shexiangtou').hasClass('layui-btn-disabled')) {
+
             if (sender) {
                 console.log('sender 替换 视频轨道');
-    
+
                 let trackReplacedPromise = await sender.replaceTrack((videoStream as MediaStream).getVideoTracks()[0]);
                 // @ts-ignore
                 leftCameraVideo.srcObject = videoStream;
-    
+
                 $('.shexiangtou').removeClass('layui-btn-disabled');
 
-                if($('.pingmugongxiang').hasClass('layui-btn-disabled')){
+                if ($('.pingmugongxiang').hasClass('layui-btn-disabled')) {
                     leftCameraVideo.style.width = '100%';
                     leftCameraVideo.style.height = '100%';
                     leftVideo.style.width = '0%';
                     leftVideo.style.height = '0%';
 
-                }else{
+                } else {
                     leftCameraVideo.style.width = '25%';
                     leftCameraVideo.style.height = '25%';
                     leftVideo.style.width = '100%';
@@ -122,15 +143,15 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                     // @ts-ignore
                     leftCameraVideo.play();
                 } catch (error) {
-                    
+
                 }
             } else {
                 (window as any).toastr.error('无法获取Sender');
             }
-        }else{
-            
+        } else {
+
             console.log('sender 替换 视频轨道');
-    
+
             let trackReplacedPromise = await sender.replaceTrack(disabledTrack.clone());
             let disabledVideoStream = new MediaStream();
             disabledVideoStream.addTrack(disabledTrack.clone());
@@ -138,41 +159,45 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             leftCameraVideo.srcObject = disabledVideoStream;
             $('.shexiangtou').addClass('layui-btn-disabled');
 
-            if($('.pingmugongxiang').hasClass('layui-btn-disabled')){
+            if ($('.pingmugongxiang').hasClass('layui-btn-disabled')) {
                 leftCameraVideo.style.width = '0%';
                 leftCameraVideo.style.height = '0%';
                 leftVideo.style.width = '0%';
                 leftVideo.style.height = '0%';
 
-            }else{
+            } else {
                 leftCameraVideo.style.width = '0%';
                 leftCameraVideo.style.height = '0%';
                 leftVideo.style.width = '100%';
                 leftVideo.style.height = '100%';
             }
         }
-        
+
+    });
+
+    layui.form.on('select()', (data) => {
+
     });
 
     $('.pingmugongxiang').off().on('click', async () => {
-       
+
         // 没有disabled
-        if(!$('.pingmugongxiang').hasClass('layui-btn-disabled')){
+        if (!$('.pingmugongxiang').hasClass('layui-btn-disabled')) {
             var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
             if (sender) {
                 console.log('sender 替换 视频轨道');
-    
+
                 let trackReplacedPromise = await sender.replaceTrack(disabledTrack.clone());
-    
+
                 $('.pingmugongxiang').addClass('layui-btn-disabled')
-    
-                if($('.shexiangtou').hasClass('layui-btn-disabled')){
+
+                if ($('.shexiangtou').hasClass('layui-btn-disabled')) {
                     leftCameraVideo.style.width = '0%';
                     leftCameraVideo.style.height = '0%';
                     leftVideo.style.width = '0%';
                     leftVideo.style.height = '0%';
-    
-                }else{
+
+                } else {
                     leftCameraVideo.style.width = '100%';
                     leftCameraVideo.style.height = '100%';
                     leftVideo.style.width = '0%';
@@ -181,11 +206,11 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             } else {
                 (window as any).toastr.error('无法获取Sender');
             }
-        }else{
+        } else {
             streamType = 'screen';
             screenMeeting.run();
         }
-        
+
     });
 
     $('.baibanwhiteboard10').off().on('click', async () => {
@@ -233,5 +258,30 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     });
 
 });
+
+
+async function renderInputDevice() {
+    let deviceArray = await navigator.mediaDevices.enumerateDevices();
+    let videoInputDeviceArray: MediaDeviceInfo[] = [];
+    deviceArray.forEach(item => {
+        if (item.kind == 'audioinput' && item.deviceId != 'default' && item.deviceId != 'communications') {
+            console.log(item);
+            $('#voice-select').append(`<option value="${item.groupId}" groupid="${item.groupId}" deviceid="${item.deviceId}" selected="selected">${item.label}</option>`);
+        } else if (item.kind == 'videoinput') {
+            videoInputDeviceArray.push(item);
+        }
+    });
+
+    if (videoInputDeviceArray.length > 0) {
+        $('select[id=video-select]').empty();
+        $('select[id=video-select]').append(`<option value="close">关闭</option>`);
+        videoInputDeviceArray.forEach((videoInputDeviceItem) => {
+            $('select[id=video-select]').append(`<option value="${videoInputDeviceItem.groupId}" groupid="${videoInputDeviceItem.groupId}" deviceid="${videoInputDeviceItem.deviceId}"  >${videoInputDeviceItem.label}</option>`);
+        });
+    }
+
+
+    layui.form.render();
+}
 
 export = {}

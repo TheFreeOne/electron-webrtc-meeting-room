@@ -18,13 +18,13 @@ import java.util.List;
 @RestController
 public class RoomController {
 
-    List<String> typeList = Arrays.asList("audio","screen","video","board");
+    List<String> typeList = Arrays.asList("default","audio","screen","video","board");
 
     @Autowired
     private RoomService roomService;
 
     @PostMapping("createRoom.json")
-    public ResultModel create(@RequestAttribute String userId, @RequestParam String type){
+    public ResultModel create(@RequestAttribute String userId, @RequestParam(defaultValue = "default") String type){
         if (!typeList.contains(type)){
             return ResultModel.failed("不支持的类型");
         }

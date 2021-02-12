@@ -7,7 +7,7 @@
     <title>会议室</title>
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
 
-    <script src="../../static/layui-v2.5.7/layui.all.js"></script>
+    
     <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
     <link href="../../static/toastr/toastr.css" rel="stylesheet" />
 
@@ -143,8 +143,8 @@
             </div>
 
             <div class="main-video-content">
-                <video id="main-video" ></video>
-                <video id="camera-video" ></video>
+                <video id="main-video"></video>
+                <video id="camera-video"></video>
             </div>
 
 
@@ -153,39 +153,85 @@
             <div class="left-video-content" style="position: relative;height: 100%;">
                 <div class="left-video-item" style="position: relative;height: 25%;">
                     <video id="left-video" style="max-width: 100%;"></video>
-                    <video id="left-camera-video" style="position: absolute;right: 0;bottom: 0;max-width: 100%;"></video>
+                    <video id="left-camera-video"
+                        style="position: absolute;right: 0;bottom: 0;max-width: 100%;"></video>
                 </div>
-               
+
             </div>
         </div>
     </div>
-    <div class="bottom-util">
-        <button class="layui-btn layui-btn-normal maikefeng" title="麦克风">
-            <span class="iconfont  icon-maikefeng"></span>
-        </button>
-        <button class="layui-btn layui-btn-normal layui-btn-disabled shexiangtou" title="摄像头">
-            <span class="iconfont  icon-shexiangtou"></span>
-        </button>
-        <button class="layui-btn layui-btn-normal layui-btn-disabled pingmugongxiang" title="屏幕共享">
-            <span class="iconfont  icon-pingmugongxiang"></span>
-        </button>
-        <button class="layui-btn layui-btn-normal layui-btn-disabled baibanwhiteboard10" title="白板">
-            <span class="iconfont  icon-baibanwhiteboard10"></span>
-        </button>
+    <div class="bottom-util layui-form" lay-filter="bottom-form">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label"><span class="iconfont  icon-maikefeng" remark="麦克风"></span></label>
+                <div class="layui-input-inline">
+                    <select name="" id="voice-select" lay-filter="voice-select">
+                        <option value="default">系统声音</option>
+                    </select>
+                </div>
+            </div>
 
-        <button class="layui-btn layui-btn-normal permissionQuery" title="设备权限检测">
-            设备权限检测
-        </button>
+            <div class="layui-inline">
+                <label class="layui-form-label"><span class="iconfont  icon-shexiangtou" remark="摄像头"></span></label>
+                <div class="layui-input-inline">
+                    <select name="" id="video-select" lay-filter="video-select">
+                        <option value="NotFound">没有找到设备</option>
+                    </select>
+                </div>
+            </div>
 
-        <button class="layui-btn layui-btn-normal copy-room-number" title="复制房间号">
-            复制房间号
-        </button>
+            <div class="layui-inline">
+                <label class="layui-form-label"><span class="iconfont  icon-pingmugongxiang"></span></label>
+                <div class="layui-input-inline">
+                    <select name="" id="screen-select" lay-filter="video-select">
+                        <option value="close">关闭</option>
+                        <option value="share screen">分享屏幕</option>
+                    </select>
+                   
+                    
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label"> </label>
+                <div class="layui-input-inline">
+                    
+                     
+                    <button class="layui-btn    layui-btn-normal baibanwhiteboard10" title="白板"><span class="iconfont  icon-baibanwhiteboard10"></span></button>
+                    
+                </div>
+            </div>
+ 
+            <div class="layui-inline">
+                <label class="layui-form-label"> </label>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal permissionQuery" title="设备权限检测">
+                        设备权限检测
+                    </button>
+            
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label"> </label>
+                <div class="layui-input-inline">
+                    <button class="layui-btn layui-btn-normal copy-room-number" title="复制房间号">
+                        复制房间号
+                    </button>
+            
+                </div>
+            </div>
+        </div>
+  
+          
+       
+        
     </div>
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->
 
 
-
+<script src="../../static/layui-v2.5.7/layui.all.js"></script>
 <script src="./meeting.js"></script>
 
 </html>
