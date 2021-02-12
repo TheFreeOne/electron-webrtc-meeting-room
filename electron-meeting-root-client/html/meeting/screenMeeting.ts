@@ -161,6 +161,7 @@ export default class ScreenMeeting {
                         layui.layer.closeAll();
 
                         // (window as any).streamToWebRTC.run(desktopStream);
+                        (window as any).desktopStream = desktopStream;
                         try {
 
                             let desktopTrack = (desktopStream as MediaStream).getVideoTracks()[0];
@@ -169,7 +170,7 @@ export default class ScreenMeeting {
 
 
 
-                            if ($('.pingmugongxiang').hasClass('layui-btn-disabled')) {
+                         
                                 if (sender) {
                                     console.log(sender);
 
@@ -178,28 +179,15 @@ export default class ScreenMeeting {
                                     let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
                                     console.log(trackReplacedPromise);
 
-                                    $('.pingmugongxiang').removeClass('layui-btn-disabled')
+                                    
                                 }
-                            } else {
-                                if (sender) {
-                                    console.log(sender);
-
-                                    console.log('sender 替换 视频轨道');
-                                    desktopTrack.enabled = false;
-                                    let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
-                                    console.log(trackReplacedPromise);
-
-                                    $('.pingmugongxiang').addClass('layui-btn-disabled')
-                                }
-                            }
+                           
+                         
 
 
 
 
-
-
-
-
+                            (window as any).localStream.getVideoTracks()[1] = desktopTrack;
 
                         } catch (error) {
                             console.error(error);
