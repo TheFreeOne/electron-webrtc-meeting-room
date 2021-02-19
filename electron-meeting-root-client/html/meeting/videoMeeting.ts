@@ -1,9 +1,10 @@
 import { desktopCapturer } from "electron";
 
 export default class VideoMeeting {
-    
-    public async getStream():Promise<MediaStream> {
+
+    public async getStream(): Promise<MediaStream> {
         try {
+            // https://blog.csdn.net/keith837/article/details/44818841
             const streamConstraints = {
 
                 audio: false,
@@ -24,6 +25,6 @@ export default class VideoMeeting {
             console.dir(error);
             (window as any).toastr.error('无法获取摄像头<br>请检查麦克风权限和摄像头！！！');
         }
-         
+
     }
 }
