@@ -3,12 +3,12 @@ import ChannelConstant from "../../util/ChannelConstant";
 
 export default class BoardMeeting {
     public async run() {
+
         let uuid = ipcRenderer.sendSync(ChannelConstant.CREATE_BOARD_WINODW);
-        
-     
+
+
         let sources = await desktopCapturer.getSources({ types: ['window'] });
-   
-    
+
         let source = sources.find(s =>{
             return s.name == uuid;
         });
@@ -19,7 +19,7 @@ export default class BoardMeeting {
                 mandatory: {
                     chromeMediaSource: 'desktop',
                     chromeMediaSourceId: source.id,
-               
+
                 }
             }
         });
@@ -30,5 +30,5 @@ export default class BoardMeeting {
 
     }
 
-    
+
 }

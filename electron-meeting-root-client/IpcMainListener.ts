@@ -11,7 +11,7 @@ export default class IpcMainListener{
 
     private _meetingWindow:BrowserWindow ;
 
-    
+
 
     public startListen(){
 
@@ -72,7 +72,7 @@ export default class IpcMainListener{
                 minWidth: 830,
                 minHeight: 560,
                 icon:  '/icon.ico',
-                parent:this._mainWindow,
+                // parent:this._mainWindow,
                 // modal:true,
                 autoHideMenuBar: true,
                 show: true,
@@ -84,8 +84,12 @@ export default class IpcMainListener{
                     webSecurity: false
                 }
             });
-            boardWindow.loadFile("./html/meeting/board.html");
-            event.returnValue = uuid;
+            boardWindow.loadFile("./html/whiteboard/board.html");
+            boardWindow.on('ready-to-show',()=>{
+                event.returnValue = uuid;
+            });
+                
+
         });
     }
 
@@ -100,7 +104,7 @@ export default class IpcMainListener{
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
-      
+
     }
-    
+
 }

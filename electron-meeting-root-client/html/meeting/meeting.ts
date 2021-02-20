@@ -74,7 +74,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         layui.form.render();
         try {
             audioStream = await audioMeeting.getMicrophoneStream();
-            
+
             disabledTrack = audioStream.getVideoTracks()[0].clone();
         } catch (error) {
             toastr.info('无法获取麦克风，切换为系统声音');
@@ -93,7 +93,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             audioStream = await audioMeeting.getSystemStream() as MediaStream;
         } else {
             audioStream = await audioMeeting.getMicrophoneStream();
-            
+
         }
         localStream.getAudioTracks()[0] = audioStream.getAudioTracks()[0];
         if (rtcPeerConnection) {
@@ -131,7 +131,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                 }
             }
             console.log(videoStream);
-            
+
             // @ts-ignore
             leftCameraVideo.scrObject = videoStream;
             // @ts-ignore
@@ -139,7 +139,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             // @ts-ignore
             cameraVideo.scrObject = videoStream;
             localStream.getVideoTracks()[0] = videoStream.getVideoTracks()[0];
-             
+
         }
         renderLocalVideoElement();
     });
@@ -169,7 +169,12 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         streamType = 'board';
         let boardStream = await boardMeeting.run();
         let rtcPeerConnection = (window as any).rtcPeerConnection as RTCPeerConnection;
-        let sender2 = rtcPeerConnection.getSenders()[2];
+        if(rtcPeerConnection){
+            let sender2 = rtcPeerConnection.getSenders()[2];
+            sender2.replaceTrack(boardStream.getVideoTracks()[0]);
+        }
+
+
     });
 
     $('.permissionQuery').off().on('click', () => {
