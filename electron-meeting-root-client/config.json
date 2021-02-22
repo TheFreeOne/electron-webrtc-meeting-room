@@ -1,4 +1,4 @@
 {
   "javaLoginServer": "http://192.168.0.142:8080/",
-  "nodeRoomServer": "http://192.168.0.142:3004"
+  "nodeRoomServer": "http://119.29.16.187:3004"
 }

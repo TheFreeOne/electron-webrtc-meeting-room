@@ -61,8 +61,8 @@ export default class StreamToWebRTC {
         // 打洞服务器的相关配置，局域网或者是单机环境下，这个配置不会生效
         const iceServers = {
             iceServers: [
-                { urls: 'stun:192.168.0.142:13478' },
-                { urls: 'stun:192.168.0.142:13479' }
+                { urls: 'stun:119.29.16.187:3478' },
+                { urls: 'turn:119.29.16.187:3478',username :'username',credential:'password' }
             ]
         };
 
@@ -118,12 +118,16 @@ export default class StreamToWebRTC {
                     // console.log('rtcPeerConnection get stream ');
                     console.log(event);
                     let stream = event.streams[0];
-                    
+
 
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
 
-                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    try{
+                        ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    }catch(e){
+
+                    };
                     ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
                     ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
 
@@ -208,7 +212,7 @@ export default class StreamToWebRTC {
                 (window as any).dataChannel.onmessage = event => {
                     console.log(event.data, "rollercoaster");
                 }
-                
+
             }
         });
 
@@ -240,7 +244,12 @@ export default class StreamToWebRTC {
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
 
-                    ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    try{
+                        ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
+                    }catch(e){
+
+                    };
+
                     ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
                     ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
 
@@ -321,7 +330,7 @@ export default class StreamToWebRTC {
                     });
 
                     (window as any).dataChannel = ( (window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber);
-                    
+
                     (window as any).rtcPeerConnection.ondatachannel = event => {
                         (window as any).dataChannel = event.channel;
                         (window as any).dataChannel.onmessage = event => {
