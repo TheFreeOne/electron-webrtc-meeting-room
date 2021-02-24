@@ -57,12 +57,12 @@ export default class StreamToWebRTC {
         (window as any).remoteVideo = document.getElementById('main-video');
 
         (window as any).cameraVideo = document.getElementById('camera-video');
-
+        let config = require('../../config.json');
         // 打洞服务器的相关配置，局域网或者是单机环境下，这个配置不会生效
         const iceServers = {
             iceServers: [
-                { urls: 'stun:119.29.16.187:3478' },
-                { urls: 'turn:119.29.16.187:3478',username :'username',credential:'password' }
+                { urls: config.sturnserver },
+                { urls: config.turnserver,username : config.turnusername,credential: config.turncredential }
             ]
         };
 
