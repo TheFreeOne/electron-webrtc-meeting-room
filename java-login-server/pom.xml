@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.freeone</groupId>
 	<artifactId>electron-webrtc-meeting-room</artifactId>
-	<version>1.0.1</version>
+	<version>0.1.0</version>
 	<name>electron-webrtc-meeting-room</name>
 	<description>用于登陆会议室的服务器</description>
 	<properties>
