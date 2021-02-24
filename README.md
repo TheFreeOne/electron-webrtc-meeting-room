@@ -25,9 +25,11 @@
    - 台式机需要安装摄像头，可以使用虚拟摄像头e2eSoft VCam
    - 需要提前开放电脑的麦克风权限和摄像头权限
  - 启动登陆服务器
-   -   进入java-login-server 找到sql文件创建数据库并在application.properties配置相关参数
+   - 进入java-login-server 找到sql文件创建数据库并在application.properties配置相关参数
+   - springboot方式启动项目，注意端口
  - 启动房间服务器
    - 安装nodejs 和 typescript
+   - 修改config.json的登陆服务器的地址用于回收房间号
    - 进入node-room-server,执行`npm install `下载依赖，执行`npm run start`开启房间服务器
  - 启动客户端
    - 进入electron-meeting-root-client，找到config.json文件，配置登陆服务器和房间服务器的地址，
