@@ -29,3 +29,5 @@
    - 进入electron-meeting-root-client，找到config.json文件，配置登陆服务器和房间服务器的地址，
    - `npm run start `启动客户端
    - 你可以在单机情况下使用单个客户端打开同一个会议室的两个会议窗口
+   - 两个客户端在非局域网下需要去StreamToWebRTC.ts中修改iceServers的stun/turn 服务器
+   - 本人的stun/turn服务器是使用docker的zolochevska/turn-server
