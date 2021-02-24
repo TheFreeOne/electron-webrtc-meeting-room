@@ -33,6 +33,7 @@ public class JwtFilter implements Filter {
             , "/**/*.js"
             , "/**/*.woff"
             , "/dev/**"
+            , "/imserver/**"
             , "/api/**");
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();

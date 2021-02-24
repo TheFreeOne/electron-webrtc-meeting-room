@@ -56,7 +56,7 @@ function createWindow() {
 
 app.on('ready', () => {
     createWindow();
-
+    
     session.fromPartition("default").setPermissionRequestHandler((webContents, permission, callback) => {
         let allowedPermissions = ["audioCapture"]; 
         // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest

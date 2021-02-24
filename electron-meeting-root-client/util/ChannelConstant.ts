@@ -12,4 +12,8 @@ export default class ChannelConstant{
 
     static CREATE_BOARD_WINODW = 'create_board_window';
 
+    static LOGOUT = 'logout';
+
+    static LOGIN_IN_OTHER_PLACES = 'login in other places';
+
 }

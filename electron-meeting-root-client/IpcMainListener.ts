@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain,screen} from "electron";
+import { BrowserWindow, dialog, ipcMain,ipcRenderer,screen} from "electron";
 import ChannelConstant from "./util/ChannelConstant";
 
 export default class IpcMainListener{
@@ -20,6 +20,36 @@ export default class IpcMainListener{
             this._token = data.token;
             this._nickname = data.nickname;
             this._mainWindow.loadFile('index.html');
+            /**
+             * 创建websocket，实现其他地方登陆退出
+             */
+            let webSocketWindow = new BrowserWindow({
+                title: 'WebSocket',
+                // width: 830,
+                // height: 560,
+                // minWidth: 830,
+                // minHeight: 560,
+                icon: 'icon.ico',
+                // parent: this._mainWindow,
+                // modal: true,
+                autoHideMenuBar:true,
+                // maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
+                // maxHeight: screen.getPrimaryDisplay().workAreaSize.height,
+                show: false,
+                useContentSize: true,
+                webPreferences: {
+                    nodeIntegration: true,
+                    enableRemoteModule: true,
+                    webSecurity:false
+                }
+            });
+            webSocketWindow.loadFile('./html/webSocket/webSocket.html');
+            
+            webSocketWindow.on('ready-to-show',()=>{
+                // webSocketWindow.show();
+                // webSocketWindow.webContents.openDevTools();
+                webSocketWindow.webContents.send('token',this._token);
+            });
 
         });
 
@@ -62,7 +92,9 @@ export default class IpcMainListener{
                 this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
             });
         });
-
+        /**
+         * 创建白板窗口
+         */
         ipcMain.on(ChannelConstant.CREATE_BOARD_WINODW,(event)=>{
             let uuid = this.generateUUID();
             let boardWindow = new BrowserWindow({
@@ -90,6 +122,22 @@ export default class IpcMainListener{
             });
                 
 
+        });
+
+        ipcMain.on(ChannelConstant.LOGIN_IN_OTHER_PLACES,()=>{
+            dialog.showMessageBoxSync(this._mainWindow,{
+                message: '该账号在其他地方登陆'
+            });
+
+            let windows = BrowserWindow.getAllWindows();
+            windows.forEach(windowItem =>{
+               if( windowItem.id !== this._mainWindow.id){
+                windowItem.close();
+               }
+            });
+            this._token = null;
+            this._nickname = null;
+            this._mainWindow.loadFile('./html/login/login.html');
         });
     }
 
