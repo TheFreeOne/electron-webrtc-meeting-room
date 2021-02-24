@@ -112,17 +112,17 @@
             top: 5%;
             left: 5%;
             box-sizing: border-box;
-            background-color: black;
+            background-color: #c3c2c2;
         }
 
         #main-video {
-            width: 50%;
-            height: 100%;
+            width: 0%;
+            height: 0%;
         }
 
         #camera-video {
-            width: 50%;
-            height: 100%;
+            width: 0%;
+            height: 0%;
             z-index: 1;
             position: absolute;
             right: 0;
@@ -131,6 +131,12 @@
 
         .bottom-util {
             height: 15%;
+        }
+        .talking-now-btn{
+            position: absolute;
+            left:50%;
+            top:50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -143,8 +149,9 @@
             </div>
 
             <div class="main-video-content">
-                <video id="main-video"></video>
-                <video id="camera-video"></video>
+                <button class="layui-btn layui-btn-normal talking-now-btn" style="z-index: 0;display: none;" >正在说话</button>
+                <video id="main-video" style="z-index: 1;"></video>
+                <video id="camera-video" style="z-index: 1;"></video>
             </div>
 
 
@@ -195,10 +202,7 @@
             <div class="layui-inline">
                 <label class="layui-form-label"> </label>
                 <div class="layui-input-inline">
-                    
-                     
                     <button class="layui-btn    layui-btn-normal baibanwhiteboard10" title="白板"><span class="iconfont  icon-baibanwhiteboard10"></span></button>
-                    
                 </div>
             </div>
  
@@ -217,8 +221,7 @@
                 <div class="layui-input-inline">
                     <button class="layui-btn layui-btn-normal copy-room-number" title="复制房间号">
                         复制房间号
-                    </button>
-            
+                    </button> 
                 </div>
             </div>
         </div>
@@ -229,7 +232,7 @@
     </div>
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->
-
+ 
 
 <script src="../../static/layui-v2.5.7/layui.all.js"></script>
 <script src="./meeting.js"></script>

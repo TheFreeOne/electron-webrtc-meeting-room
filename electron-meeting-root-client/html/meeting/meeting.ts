@@ -1,4 +1,4 @@
-import { ipcRenderer, desktopCapturer, clipboard } from 'electron';
+import { ipcRenderer, desktopCapturer, clipboard, ipcMain } from 'electron';
 import $ = require('jquery');
 import ChannelConstant from '../../util/ChannelConstant';
 import AudioMeeting from './audioMeeting';
@@ -116,11 +116,12 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                 });
                 if (sender) {
                     sender.replaceTrack(disabledTrack.clone());
+                    localStream.getVideoTracks()[0] = disabledTrack;
                 }
             }
 
             // @ts-ignore
-            leftCameraVideo.scrObject = new MediaStream([disabledTrack]);
+            leftCameraVideo.srcObject = new MediaStream([disabledTrack]);
             localStream.getVideoTracks()[0] = disabledTrack;
         } else {
             videoStream = await videoMeeting.getStream();
@@ -130,15 +131,17 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                     sender.replaceTrack(videoStream.getVideoTracks()[0]);
                 }
             }
+            
             console.log(videoStream);
-
+         
             // @ts-ignore
-            leftCameraVideo.scrObject = videoStream;
+            leftCameraVideo.srcObject = videoStream;
             // @ts-ignore
             leftCameraVideo.play();
             // @ts-ignore
             cameraVideo.scrObject = videoStream;
-            localStream.getVideoTracks()[0] = videoStream.getVideoTracks()[0];
+            (localStream.getVideoTracks()[0] as MediaStreamTrack).applyConstraints
+            localStream = new MediaStream([localStream.getTracks()[0],videoStream.getVideoTracks()[0],localStream.getTracks()[2]]);
 
         }
         renderLocalVideoElement();
@@ -151,7 +154,8 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             if (rtcPeerConnection) {
                 let sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
                 if (sender) {
-                    await sender.replaceTrack(disabledTrack.clone());
+                    await sender.replaceTrack(disabledTrack.clone()); 
+                    localStream = new MediaStream([localStream.getTracks()[0],localStream.getTracks()[1],disabledTrack]);
                 }
             }
 
@@ -214,11 +218,25 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         layui.layer.msg('复制房间号成功');
     });
 
+    ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED,()=>{
+        console.log(ChannelConstant.BOARDWINDOW_CLOSED);
+        
+        if(rtcPeerConnection){
+            rtcPeerConnection.getSenders()[2].replaceTrack(disabledTrack.clone());
+            $('#screen-select').find('option[value="close"]').first().attr('selected','selected');
+            layui.form.render();
+             
+            localStream = new MediaStream([localStream.getTracks()[0],localStream.getTracks()[1],disabledTrack]);
+        }
+    });
+
 });
 
 function renderLocalVideoElement() {
     let screenValid = $('#screen-select').val() != 'close';
     let videoValid = $('#video-select').val() != 'close';
+    console.log(screenValid,videoValid);
+    
     if (!screenValid && !videoValid) {
         leftVideo.style.width = '0%';
         leftVideo.style.height = '0%';
@@ -274,5 +292,23 @@ async function renderInputDevice() {
 
     layui.form.render();
 }
+
+function talkingNowBtnLook(){
+        
+    let mainVideo = $('#main-video');
+    let cameraVideo = $('#main-video');
+    let talkingNowBtn = $('.talking-now-btn');
+    setInterval(()=>{
+        if(mainVideo.width() != 0 || cameraVideo.width()){
+            talkingNowBtn.hide();
+        }else{
+            talkingNowBtn.show();
+        }
+       
+    },1);
+
+ 
+}
+talkingNowBtnLook();
 
 export = {}

@@ -161,16 +161,21 @@ export default class StreamToWebRTC {
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '25%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '25%';
+                             
                         } else if (cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '100%';
+
+                           
+                            
                         } else if (!cameraValid && desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '100%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                            
                         } else if (!cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
@@ -286,16 +291,20 @@ export default class StreamToWebRTC {
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '25%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '25%';
+                             
                         } else if (cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '100%';
+                             
+                            
                         } else if (!cameraValid && desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '100%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '0%';
+                             
                         } else if (!cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';

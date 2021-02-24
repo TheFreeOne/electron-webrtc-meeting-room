@@ -52,6 +52,10 @@ function createWindow() {
         });
         log.debug('创建了一个窗口');
     });
+
+    mainWindow.on('closed',()=>{
+        app.quit();
+    });
 }
 
 app.on('ready', () => {

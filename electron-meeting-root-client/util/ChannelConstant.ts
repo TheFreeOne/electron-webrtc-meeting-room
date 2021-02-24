@@ -16,4 +16,6 @@ export default class ChannelConstant{
 
     static LOGIN_IN_OTHER_PLACES = 'login in other places';
 
+    static BOARDWINDOW_CLOSED = 'boardWindow closed';
+
 }

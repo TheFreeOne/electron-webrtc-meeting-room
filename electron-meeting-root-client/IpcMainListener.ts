@@ -116,9 +116,12 @@ export default class IpcMainListener{
                     webSecurity: false
                 }
             });
-            boardWindow.loadFile("./html/whiteboard/board.html");
+            boardWindow.loadFile("./html/whiteboard/index.html");
             boardWindow.on('ready-to-show',()=>{
                 event.returnValue = uuid;
+            });
+            boardWindow.on('closed',()=>{
+                this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
             });
                 
 
