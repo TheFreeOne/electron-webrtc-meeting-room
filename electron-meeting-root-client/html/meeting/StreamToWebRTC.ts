@@ -1,4 +1,5 @@
-import { dialog } from "electron";
+import { dialog, ipcRenderer } from "electron";
+import ChannelConstant from "../../util/ChannelConstant";
 
 export default class StreamToWebRTC {
 
@@ -110,6 +111,14 @@ export default class StreamToWebRTC {
                             candidate: event.candidate.candidate,
                             room: (window as any).roomNumber
                         })
+                    }
+                };
+
+                (window as any).rtcPeerConnection.oniceconnectionstatechange = function(){
+                    console.log('rtcPeerConnection.iceConnectionState',(window as any).rtcPeerConnection.iceConnectionState);
+                    
+                    if((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
+                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
                     }
                 };
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
@@ -237,6 +246,14 @@ export default class StreamToWebRTC {
                             candidate: event.candidate.candidate,
                             room: (window as any).roomNumber
                         });
+                    }
+                };
+
+                (window as any).rtcPeerConnection.oniceconnectionstatechange = function(){
+                    console.log('rtcPeerConnection.iceConnectionState',(window as any).rtcPeerConnection.iceConnectionState);
+                    
+                    if((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
+                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
                     }
                 };
 

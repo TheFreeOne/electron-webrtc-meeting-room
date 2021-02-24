@@ -18,4 +18,6 @@ export default class ChannelConstant{
 
     static BOARDWINDOW_CLOSED = 'boardWindow closed';
 
+    static RTCPEERCONNECTION_DISCONNECTED = 'RTCPeerConnection disconnected';
+
 }

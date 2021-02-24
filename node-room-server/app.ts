@@ -2,8 +2,11 @@ import express = require('express');
 
 import * as HTTP from 'http';
 import * as socket from 'socket.io';
+import axios from "axios";
 
 const app:express.Application = express();
+
+let config = require('./config.json');
 
 app.all("*",function(req,res,next){
     console.log('app.all')
@@ -49,7 +52,7 @@ http.listen(port, () => {
 io.on('connection', socket => {
 
 
-    console.log(socket.id)
+
     console.log('a user is connected');
     // 创建或这是加入服务器
     socket.on('create or join', event => {
@@ -77,9 +80,7 @@ io.on('connection', socket => {
             socket.emit('full', room);
         }
 
-        console.log(io.sockets.adapter.rooms);
 
-        console.log(io.sockets);
 
 
     });
@@ -102,5 +103,22 @@ io.on('connection', socket => {
     // 用户退出房间
     socket.on('out of room',event => {
         socket.broadcast.to(event.room).emit('out of room',event);
+        socket.leave(event.room);
+        let hasRoom = io.sockets.adapter.rooms.has(event.room)
+        if(!hasRoom){
+
+
+            axios.get(config.javaLoginServer+"/recycleRoom.json?roomNumber="+event.room)
+                .then(function(res) {
+
+
+                }).then(error =>{
+
+            });
+
+
+
+
+        }
     });
 })

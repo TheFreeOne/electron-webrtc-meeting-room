@@ -45,4 +45,8 @@ public class TemporaryRoomUtil {
 //        int number = (int)(Math.random()*100000*100000);// z这种方式,当超过int的最大值时只能返回int的最大值2147483647
         return roomNumber;
     }
+
+    public void recycleRoom(String roomNumber){
+        ROOM.remove(roomNumber);
+    }
 }

@@ -34,6 +34,7 @@ public class JwtFilter implements Filter {
             , "/**/*.woff"
             , "/dev/**"
             , "/imserver/**"
+            , "/recycleRoom.json"
             , "/api/**");
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();

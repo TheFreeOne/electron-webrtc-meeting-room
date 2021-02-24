@@ -44,7 +44,7 @@ export default class IpcMainListener{
                 }
             });
             webSocketWindow.loadFile('./html/webSocket/webSocket.html');
-            
+
             webSocketWindow.on('ready-to-show',()=>{
                 // webSocketWindow.show();
                 // webSocketWindow.webContents.openDevTools();
@@ -123,10 +123,12 @@ export default class IpcMainListener{
             boardWindow.on('closed',()=>{
                 this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
             });
-                
+
 
         });
-
+        /**
+         * 账号在其他地方登陆
+         */
         ipcMain.on(ChannelConstant.LOGIN_IN_OTHER_PLACES,()=>{
             dialog.showMessageBoxSync(this._mainWindow,{
                 message: '该账号在其他地方登陆'
@@ -141,6 +143,17 @@ export default class IpcMainListener{
             this._token = null;
             this._nickname = null;
             this._mainWindow.loadFile('./html/login/login.html');
+        });
+        //ChannelConstant.RTCPEERCONNECTION_DISCONNECTED
+        ipcMain.on(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED,()=>{
+            dialog.showMessageBoxSync(this._mainWindow,{
+                message: '对方已退出，会议即将关闭'
+            });
+
+            if(this._meetingWindow){
+                this._meetingWindow.close();
+            }
+
         });
     }
 

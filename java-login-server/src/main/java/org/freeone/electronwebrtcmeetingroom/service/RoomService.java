@@ -6,6 +6,6 @@ public interface RoomService {
 
     boolean existed(String roomNumber);
 
-
+    void recycleRoom(String roomNumber);
 
 }
