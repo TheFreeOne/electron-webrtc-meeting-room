@@ -39,6 +39,8 @@ export default class StreamToWebRTC {
         // 用于传输数据
         (window as any).dataChannel = null;
 
+        (window as any).receiveChannel = null;
+
         // 本地流，音视频流，屏幕留
         (window as any).localStream = null;
 
@@ -87,7 +89,7 @@ export default class StreamToWebRTC {
         // 房间已经满
         (window as any).socket.on('full', room => {
             (window as any).toastr.info('加入失败，房间已满');
-            require('electron').remote.dialog.showMessageBoxSync({type:'info',message:'房间已满',title:'提示'});
+            require('electron').remote.dialog.showMessageBoxSync({ type: 'info', message: '房间已满', title: '提示' });
             window.close();
         });
 
@@ -97,7 +99,8 @@ export default class StreamToWebRTC {
             if ((window as any).isCaller) {
 
                 // 创建rtcPeerConnection用于音视频相关的传输
-                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers);
+                // @ts-ignore
+                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers, { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] });
 
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onicecandidate
                 // 只要本地代理ICE 需要通过信令服务器传递信息给其他对等端时就会触发
@@ -113,12 +116,35 @@ export default class StreamToWebRTC {
                         })
                     }
                 };
+                //@ts-ignore
+                (window as any).dataChannel = ((window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber, {reliable: false});
+                console.log('createDataChannel');
 
-                (window as any).rtcPeerConnection.oniceconnectionstatechange = function(){
-                    console.log('rtcPeerConnection.iceConnectionState',(window as any).rtcPeerConnection.iceConnectionState);
-                    
-                    if((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
+                (window as any).dataChannel.onopen = function (event) {
+
+                        console.log('dataChannel open');
+                };
+                (window as any).dataChannel.onmessage = event => {
+                    console.log('dataChannel onmessage',event.data);
+                }
+                (window as any).dataChannel.onclose = function(){console.log("dataChannel closed! ")};
+                (window as any).dataChannel.onerror = function(){console.log("dataChannel ERROR!!!")};
+
+                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
+                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
+
+                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
                         ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+                    }
+                };
+
+                (window as any).rtcPeerConnection.ondatachannel = function (ev) {
+
+                    ev.channel.onopen = function() {
+                        console.log('Data channel is open and ready to be used.');
+                    };
+                    ev.channel.onmessage = function(e){
+                        console.log("DC from  :" +e.data);
                     }
                 };
                 // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
@@ -132,9 +158,9 @@ export default class StreamToWebRTC {
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
 
-                    try{
+                    try {
                         ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
-                    }catch(e){
+                    } catch (e) {
 
                     };
                     ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
@@ -170,21 +196,21 @@ export default class StreamToWebRTC {
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '25%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '25%';
-                             
+
                         } else if (cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '100%';
 
-                           
-                            
+
+
                         } else if (!cameraValid && desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '100%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-                            
+
                         } else if (!cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
@@ -222,10 +248,8 @@ export default class StreamToWebRTC {
                     .catch(err => {
                         console.log('error here');
                     });
-                (window as any).dataChannel = ( (window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber);
-                (window as any).dataChannel.onmessage = event => {
-                    console.log(event.data, "rollercoaster");
-                }
+                // @ts-ignore
+
 
             }
         });
@@ -234,7 +258,8 @@ export default class StreamToWebRTC {
         (window as any).socket.on('offer', (event) => {
             console.log(` socket.on('offer'`);
             if (!(window as any).isCaller) {
-                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers);
+                // @ts-ignore
+                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers, { optional: [{ RtpDataChannels: true }] });
 
                 (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
                     if (event.candidate) {
@@ -249,11 +274,45 @@ export default class StreamToWebRTC {
                     }
                 };
 
-                (window as any).rtcPeerConnection.oniceconnectionstatechange = function(){
-                    console.log('rtcPeerConnection.iceConnectionState',(window as any).rtcPeerConnection.iceConnectionState);
-                    
-                    if((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
+                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
+                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
+
+                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
                         ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+                    }
+                };
+
+                //@ts-ignore
+                (window as any).dataChannel = ((window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber, {reliable: false});
+                console.log('createDataChannel');
+
+                (window as any).dataChannel.onopen = function (event) {
+
+                        console.log('dataChannel open');
+
+
+                };
+                (window as any).dataChannel.onmessage = event => {
+                    console.log('dataChannel onmessage',event.data);
+                }
+                (window as any).dataChannel.onclose = function(){console.log("dataChannel closed! ")};
+                (window as any).dataChannel.onerror = function(){console.log("dataChannel ERROR!!!")};
+
+                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
+                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
+
+                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
+                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+                    }
+                };
+
+                (window as any).rtcPeerConnection.ondatachannel = function (ev) {
+
+                    ev.channel.onopen = function() {
+                        console.log('Data channel is open and ready to be used.');
+                    };
+                    ev.channel.onmessage = function(e){
+                        console.log("DC from  :" +e.data);
                     }
                 };
 
@@ -266,9 +325,9 @@ export default class StreamToWebRTC {
                     let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
                     let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
 
-                    try{
+                    try {
                         ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
-                    }catch(e){
+                    } catch (e) {
 
                     };
 
@@ -299,7 +358,7 @@ export default class StreamToWebRTC {
                     } catch (error) {
                         console.error(error)
                     }
-                    console.warn('cameraTrack', cameraTrack);
+
                     setInterval(() => {
                         let cameraValid = cameraTrack.getSettings().width != 2;
                         let desktopValid = desktopTrack.getSettings().width != 2;
@@ -308,20 +367,20 @@ export default class StreamToWebRTC {
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '25%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '25%';
-                             
+
                         } else if (cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '100%';
-                             
-                            
+
+
                         } else if (!cameraValid && desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '100%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '100%';
                             ((window as any).cameraVideo as HTMLElement).style.width = '0%';
                             ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-                             
+
                         } else if (!cameraValid && !desktopValid) {
                             ((window as any).remoteVideo as HTMLElement).style.width = '0%';
                             ((window as any).remoteVideo as HTMLElement).style.height = '0%';
@@ -355,15 +414,7 @@ export default class StreamToWebRTC {
                         console.error(err);
                     });
 
-                    (window as any).dataChannel = ( (window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber);
 
-                    (window as any).rtcPeerConnection.ondatachannel = event => {
-                        (window as any).dataChannel = event.channel;
-                        (window as any).dataChannel.onmessage = event => {
-                            // h2CallName.innerText = event.data
-                            console.log(event.data)
-                        }
-                    }
             }
         });
 
