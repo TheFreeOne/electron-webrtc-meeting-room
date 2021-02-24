@@ -10,12 +10,12 @@
 - [x] 创建java服务器
   - [x] 实现登陆
   - [x] 返回token
-  - [ ] 登陆服务器回收房间号
+  - [x] 登陆服务器回收房间号
 - [x] 分离房间服务器
 - [x] 开发electron客户端
   - [ ] electron客户端支持多人房间
   - [ ] 会议结束相关事件
-  - [x] electron客户端支持讲话
+  - [x] electron客户端支持讲话X
   - [x] electron客户端支持桌面/应用演示模式
   - [X] electron客户端支持白板
   - [x] electron客户端支持摄像头获取
