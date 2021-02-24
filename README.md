@@ -18,4 +18,14 @@
   - [X] electron客户端支持白板
   - [x] electron客户端支持摄像头获取
 
+#### 使用
 
+ - 启动登陆服务器
+   -   进入java-login-server 找到sql文件创建数据库并在application.properties配置相关参数
+ - 启动房间服务器
+   - 安装nodejs 和 typescript
+   - 进入node-room-server,执行`npm install `下载依赖，执行`npm run start`开启房间服务器
+ - 启动客户端
+   - 进入electron-meeting-root-client，找到config.json文件，配置登陆服务器和房间服务器的地址，
+   - `npm run start `启动客户端
+   - 你可以在单机情况下使用单个客户端打开同一个会议室的两个会议窗口
