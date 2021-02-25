@@ -7,7 +7,7 @@
     <title>会议室</title>
     <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
 
-    
+
     <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
     <link href="../../static/toastr/toastr.css" rel="stylesheet" />
 
@@ -47,7 +47,7 @@
         }
 
         .layui-row {
-            height: calc(100% - 150px );
+            height: calc(100% - 150px);
         }
 
         .window-item,
@@ -87,17 +87,7 @@
             width: 100%;
         }
 
-        #main-video {
-            width: 90%;
-        }
 
-        #left-video {
-            display: inline-block;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 5px;
-
-        }
 
         .window-item-content {
             display: grid;
@@ -106,51 +96,77 @@
         }
 
         .main-video-content {
-            width: 90%;
-            height: 90%;
+            padding-left: 20px;
+            width: 100%;
+            height: 100%;
             position: relative;
-            top: 5%;
-            left: 5%;
             box-sizing: border-box;
             background-color: #c3c2c2;
-        }
-
-        #main-video {
-            width: 0%;
-            height: 0%;
-        }
-
-        #camera-video {
-            width: 0%;
-            height: 0%;
-            z-index: 1;
-            position: absolute;
-            right: 0;
-            bottom: 0;
+            display: grid;
+            grid-gap: 10px;
+            grid-template-rows: repeat(3, 33.33%);
+            grid-template-columns: repeat(3, 33.33%);
         }
 
         .bottom-util {
             height: 15%;
         }
-        .talking-now-btn{
+
+        .talking-now-btn {
             position: absolute;
-            left:50%;
-            top:50%;
+            left: 50%;
+            top: 50%;
             transform: translate(-50%, -50%);
         }
-        #audio-wave-canvas{
+
+        #audio-wave-canvas {
             position: absolute;
             width: 100%;
             height: 100%;
-            z-index:1;
+            z-index: 1;
         }
-        .local-audio-wave-div{
+
+        .local-audio-wave-div {
             position: absolute;
             bottom: 0;
             width: 100%;
             height: 100px;
             max-height: 100px;
         }
+        .person-video-item {
+            position: relative;
+            box-sizing: border-box;
+            background-color: #000;;
+        }
+        .person-video-item .screen-video{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .person-video-item .camera-video{
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            bottom: 25px;
+            right: 0;
+            z-index: 2;
+        }
+
+        .person-video-item .person-info{
+            height: 25px;
+            background-color: rebeccapurple;
+            position: absolute;
+            width: 100%;
+            z-index: 3;
+            left: 0;
+            bottom: 0;
+        }
+        .person-video-item audio{
+            display: none;
+        }
+
+
     </style>
 </head>
 
@@ -161,22 +177,23 @@
                 <audio id="main-audio"></audio>
             </div>
 
-            <div class="main-video-content">
-                <!-- <button class="layui-btn layui-btn-normal talking-now-btn" style="z-index: 0;display: none;" >正在说话</button> -->
-                
-                <video id="main-video" style="z-index: 1;"></video>
-                <video id="camera-video" style="z-index: 1;"></video>
+            <div class="main-video-content" id="main-video-content">
+                <div class="person-video-item" id="persion-me">
+
+                    <video class="screen-video"  ></video>
+                    <video class="camera-video" ></video>
+                    <div class="person-info">
+                        <span class="person-name" >我：</span>
+                        <span class="person-status" >发言中</span>
+                    </div>
+                </div>
             </div>
 
 
         </div>
         <div class="layui-col-xs2 left-content">
             <div class="left-video-content" style="position: relative;height: calc(100% - 100px);">
-                <div class="left-video-item" style="position: relative;height: 25%;">
-                    <video id="left-video" style="max-width: 100%;"></video>
-                    <video id="left-camera-video"
-                        style="position: absolute;right: 0;bottom: 0;max-width: 100%;"></video>
-                </div>
+
 
             </div>
             <div class="local-audio-wave-div">
@@ -184,7 +201,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="bottom-util layui-form" lay-filter="bottom-form">
         <div class="layui-form-item">
             <div class="layui-inline">
@@ -212,25 +229,26 @@
                         <option value="close">关闭</option>
                         <option value="share screen">分享屏幕</option>
                     </select>
-                   
-                    
+
+
                 </div>
             </div>
 
             <div class="layui-inline">
                 <label class="layui-form-label"> </label>
                 <div class="layui-input-inline">
-                    <button class="layui-btn    layui-btn-normal baibanwhiteboard10" title="白板"><span class="iconfont  icon-baibanwhiteboard10"></span></button>
+                    <button class="layui-btn    layui-btn-normal baibanwhiteboard10" title="白板"><span
+                            class="iconfont  icon-baibanwhiteboard10"></span></button>
                 </div>
             </div>
- 
+
             <div class="layui-inline">
                 <label class="layui-form-label"> </label>
                 <div class="layui-input-inline">
                     <button class="layui-btn layui-btn-normal permissionQuery" title="设备权限检测">
                         设备权限检测
                     </button>
-            
+
                 </div>
             </div>
 
@@ -239,18 +257,18 @@
                 <div class="layui-input-inline">
                     <button class="layui-btn layui-btn-normal copy-room-number" title="复制房间号">
                         复制房间号
-                    </button> 
+                    </button>
                 </div>
             </div>
         </div>
-  
-          
-       
-        
+
+
+
+
     </div>
 </body>
 <!-- <script src="./audioMeeting.js"></script> -->
- 
+
 
 <script src="../../static/layui-v2.5.7/layui.all.js"></script>
 <script src="./meeting.js"></script>

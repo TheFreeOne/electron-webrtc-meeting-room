@@ -5,6 +5,7 @@ export default class StreamToWebRTC {
 
 
 
+
     public run(_localStream) {
 
 
@@ -15,6 +16,7 @@ export default class StreamToWebRTC {
         //     roomNumber = roomInput.value;
         // }
 
+        console.log('create or join');
 
         (window as any).socket.emit('create or join', { room: (window as any).roomNumber, nickname: (window as any).nickname });
 
@@ -27,47 +29,39 @@ export default class StreamToWebRTC {
         // 房间号
         (window as any).roomNumber = number;
 
-        // 远程对象传输过来的流
-        (window as any).remoteStream = null;
+        let rtcPcArray = (window as any).rtcPcArray as Array<RTCPeerConnection>;
 
-        // 用于视频流/音频流、以及数据的传输
-        (window as any).rtcPeerConnection = null;
-
-        // 是否在童话
-        (window as any).isCaller = false;
-
-        // 用于传输数据
-        (window as any).dataChannel = null;
-
-        (window as any).receiveChannel = null;
-
-        // 本地流，音视频流，屏幕留
-        (window as any).localStream = null;
+         
 
         // soket.io创建的socket
         (window as any).socket = null;
 
-        (window as any).voiceStream = new MediaStream();
-        //@ts-ignore
+        let personVideoItem = document.createElement('div');
+        personVideoItem.setAttribute('class', 'person-video-item');
+        let screenVideo = document.createElement("video");
+        screenVideo.setAttribute('class', 'screen-video');
+        let cameraVideo = document.createElement("video");
+        cameraVideo.setAttribute('class', 'camera-video');
+        personVideoItem.appendChild(screenVideo);
+        personVideoItem.appendChild(cameraVideo);
+        let personInfo = document.createElement('div');
+        personInfo.setAttribute('class', 'person-info');
+        let personName = document.createElement('span');
+        let personStatus = document.createElement('span');
+        personStatus.innerHTML = '发言中...';
+        personInfo.appendChild(personName);
+        personInfo.appendChild(personStatus);
+        personVideoItem.appendChild(personInfo);
 
-        (window as any).mainVideoStream = new MediaStream();
-
-        (window as any).cameraVideoStream = new MediaStream();
-
-
-        (window as any).voiceAudio = document.getElementById('main-audio');
-        // 页面中用于远程传输过来的流的video标签
-        (window as any).remoteVideo = document.getElementById('main-video');
-
-        (window as any).cameraVideo = document.getElementById('camera-video');
         let config = require('../../config.json');
         // 打洞服务器的相关配置，局域网或者是单机环境下，这个配置不会生效
         const iceServers = {
             iceServers: [
                 { urls: config.sturnserver },
-                { urls: config.turnserver,username : config.turnusername,credential: config.turncredential }
+                { urls: config.turnserver, username: config.turnusername, credential: config.turncredential }
             ]
         };
+        (window as any).iceServers = iceServers;
 
         // 链接房间服务器
         //@ts-ignore
@@ -75,14 +69,22 @@ export default class StreamToWebRTC {
         (window as any).socket = _socket;
 
         // 收到created，说明房间已经创建好了
-        (window as any).socket.on('created', room => {
-            console.log(`${room} 房间已经创建完成`);
-            (window as any).isCaller = true;
+        (window as any).socket.on('created', data => {
+            console.log('created');
+            console.log(data);
+            (window as any).socketId = data.socketId;
+            (window as any).personInRoom = data.personInRoom;
+            console.log(`${data.room} 房间已经创建完成`);
+            
 
         });
         // 收到joined，说明成功加入一个房间
-        (window as any).socket.on('joined', room => {
-            console.log(`${room}房间加入成功`);
+        (window as any).socket.on('joined', data => {
+            console.log('joined');
+            console.log(data);
+            (window as any).socketId = data.socketId;
+            (window as any).personInRoom = data.personInRoom;
+            console.log(`${data.room}房间加入成功`);
             // 被动的一方/收到邀请的一方向服务器发送消息，说明客人已经准备好进行通讯
             (window as any).socket.emit('ready', (window as any).roomNumber);
         });
@@ -94,346 +96,56 @@ export default class StreamToWebRTC {
         });
 
         // 房间创建者/发起方/主人  收到已经准备好的消息，
-        (window as any).socket.on('ready', () => {
+        (window as any).socket.on('ready', (data) => {
+            console.log('this');
+            console.log(this);
             console.log(`对方准备完成`);
-            if ((window as any).isCaller) {
 
-                // 创建rtcPeerConnection用于音视频相关的传输
-                // @ts-ignore
-                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers, { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] });
+            this.olderCreateRTCPeerConnection(data.fromSocketId);
 
-                // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onicecandidate
-                // 只要本地代理ICE 需要通过信令服务器传递信息给其他对等端时就会触发
-                (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
-                    if (event.candidate) {
-                        // console.log('sending ice candidate', event.candidate);
-                        (window as any).socket.emit('candidate', {
-                            type: 'candidate',
-                            label: event.candidate.sdpMLineIndex,
-                            id: event.candidate.sdMid,
-                            candidate: event.candidate.candidate,
-                            room: (window as any).roomNumber
-                        })
-                    }
-                };
-                //@ts-ignore
-                (window as any).dataChannel = ((window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber, {reliable: false});
-                console.log('createDataChannel');
-
-                (window as any).dataChannel.onopen = function (event) {
-
-                        console.log('dataChannel open');
-                };
-                (window as any).dataChannel.onmessage = event => {
-                    console.log('dataChannel onmessage',event.data);
-                }
-                (window as any).dataChannel.onclose = function(){console.log("dataChannel closed! ")};
-                (window as any).dataChannel.onerror = function(){console.log("dataChannel ERROR!!!")};
-
-                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
-                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
-
-                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
-                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
-                    }
-                };
-
-                (window as any).rtcPeerConnection.ondatachannel = function (ev) {
-
-                    ev.channel.onopen = function() {
-                        console.log('Data channel is open and ready to be used.');
-                    };
-                    ev.channel.onmessage = function(e){
-                        console.log("DC from  :" +e.data);
-                    }
-                };
-                // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
-                // rtcPeerConnection收到流
-                (window as any).rtcPeerConnection.ontrack = function onAddStream(event: RTCTrackEvent) {
-                    // console.log('rtcPeerConnection get stream ');
-                    console.log(event);
-                    let stream = event.streams[0];
-
-
-                    let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
-                    let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
-
-                    try {
-                        ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
-                    } catch (e) {
-
-                    };
-                    ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
-                    ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
-
-                    (window as any).voiceAudio.srcObject = (window as any).voiceStream;
-                    (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
-                    (window as any).cameraVideo.srcObject = (window as any).cameraVideoStream;
-                    (window as any).remoteStream = stream;
-
-                    try {
-                        (window as any).voiceAudio.play();
-                    } catch (error) {
-                        console.error(error);
-                    }
-                    try {
-                        (window as any).remoteVideo.play();
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    try {
-                        (window as any).cameraVideo.play();
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    setInterval(() => {
-                        let cameraValid = cameraTrack.getSettings().width != 2;
-                        let desktopValid = desktopTrack.getSettings().width != 2;
-                        if (cameraValid && desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '25%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '25%';
-
-                        } else if (cameraValid && !desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '100%';
-
-
-
-                        } else if (!cameraValid && desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-
-                        } else if (!cameraValid && !desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-                        }
-                    }, 1000);
-                };
-
-                // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/addTrack
-                // rtcPeerConnection
-
-                let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
-                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
-                mediaStreamTrackArray.forEach(mediaStreamTrack => {
-
-                    (window as any).rtcRtpSender = (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
-
-                });
-
-
-                // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createOffer
-                // RTCPeerConnection接口的createOffer（）方法启动创建一个SDP offer，目的是启动一个新的WebRTC去连接远程端点。
-                // SDP offer包含有关已附加到WebRTC会话，浏览器支持的编解码器和选项的所有MediaStreamTracks信息，以及ICE 代理，目的是通过信令信道发送给潜在远程端点，以请求连接或更新现有连接的配置。
-                // 返回值是一个Promise，创建 offer 后，将使用包含新创建的要约的RTCSessionDescription对象来解析该返回值。
-                (window as any).rtcPeerConnection.createOffer()
-                    .then(sessionDescription => {
-                        (window as any).rtcPeerConnection.setLocalDescription(sessionDescription);
-                        (window as any).socket.emit('offer', {
-                            type: 'offer',
-                            sdp: sessionDescription,
-                            room: (window as any).roomNumber
-                        })
-                    })
-                    .catch(err => {
-                        console.log('error here');
-                    });
-                // @ts-ignore
-
-
-            }
         });
 
         // 收到邀请的一方收到offer
-        (window as any).socket.on('offer', (event) => {
+        (window as any).socket.on('offer', async (event) => {
             console.log(` socket.on('offer'`);
-            if (!(window as any).isCaller) {
-                // @ts-ignore
-                (window as any).rtcPeerConnection = new RTCPeerConnection(iceServers, { optional: [{ RtpDataChannels: true }] });
 
-                (window as any).rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
-                    if (event.candidate) {
-                        // console.log('sending ice candidate', event.candidate);
-                        (window as any).socket.emit('candidate', {
-                            type: 'candidate',
-                            label: event.candidate.sdpMLineIndex,
-                            id: event.candidate.sdMid,
-                            candidate: event.candidate.candidate,
-                            room: (window as any).roomNumber
-                        });
-                    }
-                };
+            this.newerCreateRTCPeerConnection((window as any).socketId, event.fromSocketId, event);
 
-                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
-                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
-
-                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
-                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
-                    }
-                };
-
-                //@ts-ignore
-                (window as any).dataChannel = ((window as any).rtcPeerConnection as RTCPeerConnection).createDataChannel((window as any).roomNumber, {reliable: false});
-                console.log('createDataChannel');
-
-                (window as any).dataChannel.onopen = function (event) {
-
-                        console.log('dataChannel open');
-
-
-                };
-                (window as any).dataChannel.onmessage = event => {
-                    console.log('dataChannel onmessage',event.data);
-                }
-                (window as any).dataChannel.onclose = function(){console.log("dataChannel closed! ")};
-                (window as any).dataChannel.onerror = function(){console.log("dataChannel ERROR!!!")};
-
-                (window as any).rtcPeerConnection.oniceconnectionstatechange = function () {
-                    console.log('rtcPeerConnection.iceConnectionState', (window as any).rtcPeerConnection.iceConnectionState);
-
-                    if ((window as any).rtcPeerConnection.iceConnectionState == 'disconnected') {
-                        ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
-                    }
-                };
-
-                (window as any).rtcPeerConnection.ondatachannel = function (ev) {
-
-                    ev.channel.onopen = function() {
-                        console.log('Data channel is open and ready to be used.');
-                    };
-                    ev.channel.onmessage = function(e){
-                        console.log("DC from  :" +e.data);
-                    }
-                };
-
-                (window as any).rtcPeerConnection.ontrack = function onAddStream(event) {
-
-
-                    // console.log('rtcPeerConnection.ontrack');
-                    console.log(event);
-                    let stream = event.streams[0];
-                    let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
-                    let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
-
-                    try {
-                        ((window as any).voiceStream as MediaStream).addTrack(stream.getAudioTracks()[0]);
-                    } catch (e) {
-
-                    };
-
-                    ((window as any).cameraVideoStream as MediaStream).addTrack(cameraTrack);
-                    ((window as any).mainVideoStream as MediaStream).addTrack(desktopTrack);
-
-                    (window as any).voiceAudio.srcObject = (window as any).voiceStream;
-                    ; (window as any).remoteVideo.srcObject = (window as any).mainVideoStream;
-                    (window as any).cameraVideo.srcObject = (window as any).cameraVideoStream;
-
-
-                    (window as any).remoteStream = stream;
-
-                    try {
-                        (window as any).voiceAudio.play();
-                    } catch (error) {
-                        console.error(error);
-                    }
-
-                    try {
-                        (window as any).remoteVideo.play();
-                    } catch (error) {
-                        console.error(error)
-                    }
-                    try {
-
-                        (window as any).cameraVideo.play();
-                    } catch (error) {
-                        console.error(error)
-                    }
-
-                    setInterval(() => {
-                        let cameraValid = cameraTrack.getSettings().width != 2;
-                        let desktopValid = desktopTrack.getSettings().width != 2;
-                        if (cameraValid && desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '25%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '25%';
-
-                        } else if (cameraValid && !desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '100%';
-
-
-                        } else if (!cameraValid && desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '100%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '100%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-
-                        } else if (!cameraValid && !desktopValid) {
-                            ((window as any).remoteVideo as HTMLElement).style.width = '0%';
-                            ((window as any).remoteVideo as HTMLElement).style.height = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.width = '0%';
-                            ((window as any).cameraVideo as HTMLElement).style.height = '0%';
-                        }
-                    }, 1000);
-                };
-
-
-                let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
-                console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
-                mediaStreamTrackArray.forEach(mediaStreamTrack => {
-
-                    (window as any).rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
-
-                });
-
-                (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
-                (window as any).rtcPeerConnection.createAnswer()
-                    .then(sessionDescription => {
-                        (window as any).rtcPeerConnection.setLocalDescription(sessionDescription);
-                        (window as any).socket.emit('answer', {
-                            type: 'answer',
-                            sdp: sessionDescription,
-                            room: (window as any).roomNumber
-                        });
-                    })
-                    .catch(err => {
-
-                        console.error(err);
-                    });
-
-
-            }
         });
 
 
 
         (window as any).socket.on('answer', (event) => {
-            // console.log(`socket.on('answer'`);
+
+            console.log(`socket.on('answer'`);
+            console.log(event);
+
             // console.log('answered done');
-            (window as any).rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+            let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+            let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
+            rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
         });
 
         (window as any).socket.on('candidate', event => {
-            // console.log(`socket.on('candidate'`);
-            // console.log('am her for Ice', event);
-            const candidate = new RTCIceCandidate({
-                sdpMLineIndex: event.label,
-                candidate: event.candidate
-            });
-            (window as any).rtcPeerConnection.addIceCandidate(candidate);
+         
+
+            try {
+                let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
+                // console.log(`socket.on('candidate'`);
+                // console.log('am her for Ice', event);
+                const candidate = new RTCIceCandidate({
+                    sdpMLineIndex: event.label,
+                    candidate: event.candidate
+                });
+
+                rtcPeerConnection.addIceCandidate(candidate);
+            } catch (error) {
+                console.error((window as any).rtcPcMap);
+
+                console.error(`event.fromSocketId`, event.fromSocketId);
+
+            }
         });
 
         (window as any).socket.on('out of room', (event) => {
@@ -449,5 +161,399 @@ export default class StreamToWebRTC {
                 });
             }
         }
+    }
+
+    public olderCreateRTCPeerConnection(fromSocketId: string): void {
+        let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+        let personVideoItem = document.createElement('div');
+        personVideoItem.setAttribute('class', 'person-video-item');
+        let audio = document.createElement("audio");
+
+        let screenVideo = document.createElement("video");
+        screenVideo.setAttribute('class', 'screen-video');
+        let cameraVideo = document.createElement("video");
+        cameraVideo.setAttribute('class', 'camera-video');
+        personVideoItem.appendChild(audio);
+        personVideoItem.appendChild(screenVideo);
+        personVideoItem.appendChild(cameraVideo);
+        let personInfo = document.createElement('div');
+        personInfo.setAttribute('class', 'person-info');
+        let personName = document.createElement('span');
+        let personStatus = document.createElement('span');
+        personStatus.innerHTML = '发言中...';
+        personInfo.appendChild(personName);
+        personInfo.appendChild(personStatus);
+        personVideoItem.appendChild(personInfo);
+        // 创建rtcPeerConnection用于音视频相关的传输
+        // @ts-ignore
+        let rtcPeerConnection: RTCPeerConnection = new RTCPeerConnection((window as any).iceServers, { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] });
+        rtcPcMap.set(fromSocketId, rtcPeerConnection);
+        document.getElementById('main-video-content').appendChild(personVideoItem);
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onicecandidate
+        // 只要本地代理ICE 需要通过信令服务器传递信息给其他对等端时就会触发
+        rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
+            if (event.candidate) {
+                // console.log('sending ice candidate', event.candidate);
+                (window as any).socket.emit('candidate', {
+                    type: 'candidate',
+                    label: event.candidate.sdpMLineIndex,
+                    id: event.candidate.sdpMid,
+                    candidate: event.candidate.candidate,
+                    room: (window as any).roomNumber,
+                    toSocketId: fromSocketId
+                })
+            }
+        };
+        //@ts-ignore
+        let dataChannel = rtcPeerConnection.createDataChannel((window as any).roomNumber, { reliable: false });
+        console.log('createDataChannel');
+        dataChannel.onopen = function (event) {
+            console.log('dataChannel open');
+        };
+        dataChannel.onmessage = event => {
+            console.log('dataChannel onmessage', event.data);
+        }
+        dataChannel.onclose = function () { console.log("dataChannel closed! ") };
+        dataChannel.onerror = function () { console.log("dataChannel ERROR!!!") };
+
+        rtcPeerConnection.oniceconnectionstatechange = function () {
+            console.log('rtcPeerConnection.iceConnectionState', rtcPeerConnection.iceConnectionState);
+            if (rtcPeerConnection.iceConnectionState == 'disconnected') {
+                ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+            }
+        };
+
+        rtcPeerConnection.ondatachannel = function (ev) {
+
+            ev.channel.onopen = function () {
+                console.log('Data channel is open and ready to be used.');
+            };
+            ev.channel.onmessage = function (e) {
+                console.log("DC from  :" + e.data);
+            }
+        };
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/ontrack
+        let _audioStream = new MediaStream();
+        let _cameraStream = new MediaStream();
+        let _sreenStream = new MediaStream();
+        rtcPeerConnection.ontrack = function onAddStream(event: RTCTrackEvent) {
+            console.log('rtcPeerConnection get stream ');
+            let stream = event.streams[0];
+            let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
+            let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
+
+            try {
+                _audioStream.addTrack(stream.getAudioTracks()[0]);
+            } catch (e) {
+
+            };
+            _cameraStream.addTrack(cameraTrack);
+            _sreenStream.addTrack(desktopTrack);
+
+            audio.srcObject = _audioStream;
+            cameraVideo.srcObject = _cameraStream;
+            screenVideo.srcObject = _sreenStream;
+
+
+            try {
+                audio.play();
+            } catch (error) {
+                console.error(error);
+            }
+            try {
+                cameraVideo.play();
+            } catch (error) {
+                console.error(error);
+            }
+
+            try {
+                screenVideo.play();
+            } catch (error) {
+                console.error(error);
+            }
+
+            setInterval(() => {
+                let cameraValid = cameraTrack.getSettings().width != 2;
+                let desktopValid = desktopTrack.getSettings().width != 2;
+                if (cameraValid && desktopValid) {
+                    screenVideo.style.width = '100%';
+                    screenVideo.style.height = '100%';
+                    cameraVideo.style.width = '25%';
+                    cameraVideo.style.height = '25%';
+
+                } else if (cameraValid && !desktopValid) {
+                    screenVideo.style.width = '0%';
+                    screenVideo.style.height = '0%';
+                    cameraVideo.style.width = '100%';
+                    cameraVideo.style.height = '100%';
+
+
+
+                } else if (!cameraValid && desktopValid) {
+                    screenVideo.style.width = '100%';
+                    screenVideo.style.height = '100%';
+                    cameraVideo.style.width = '0%';
+                    cameraVideo.style.height = '0%';
+
+                } else if (!cameraValid && !desktopValid) {
+                    screenVideo.style.width = '0%';
+                    screenVideo.style.height = '0%';
+                    cameraVideo.style.width = '0%';
+                    cameraVideo.style.height = '0%';
+                }
+
+                try {
+                    screenVideo.play()
+                } catch (error) {
+                    
+                }
+
+                try {
+                    cameraVideo.play()
+                } catch (error) {
+                    
+                }
+                
+            }, 1000);
+        };
+
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/addTrack
+        // rtcPeerConnection
+
+        let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
+        console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
+        mediaStreamTrackArray.forEach(mediaStreamTrack => {
+            rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
+        });
+
+
+        // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createOffer
+        // RTCPeerConnection接口的createOffer（）方法启动创建一个SDP offer，目的是启动一个新的WebRTC去连接远程端点。
+        // SDP offer包含有关已附加到WebRTC会话，浏览器支持的编解码器和选项的所有MediaStreamTracks信息，以及ICE 代理，目的是通过信令信道发送给潜在远程端点，以请求连接或更新现有连接的配置。
+        // 返回值是一个Promise，创建 offer 后，将使用包含新创建的要约的RTCSessionDescription对象来解析该返回值。
+        rtcPeerConnection.createOffer()
+            .then(sessionDescription => {
+                rtcPeerConnection.setLocalDescription(sessionDescription);
+                (window as any).socket.emit('offer', {
+                    type: 'offer',
+                    sdp: sessionDescription,
+                    room: (window as any).roomNumber,
+                    toSocketId: fromSocketId
+                })
+            })
+            .catch(err => {
+                console.error('error here');
+            });
+        // @ts-ignore
+
+    }
+
+
+    public newerCreateRTCPeerConnection(socketId: string, fromSocketId: string, event: any) {
+
+        console.warn('newerCreateRTCPeerConnection');
+        
+
+
+        console.log('this');
+        console.log(this);
+
+
+
+        let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+        let personVideoItem = document.createElement('div');
+        personVideoItem.setAttribute('class', 'person-video-item');
+        let audio = document.createElement("audio");
+        let screenVideo = document.createElement("video");
+        screenVideo.setAttribute('class', 'screen-video');
+        let cameraVideo = document.createElement("video");
+        cameraVideo.setAttribute('class', 'camera-video');
+        personVideoItem.appendChild(audio);
+        personVideoItem.appendChild(screenVideo);
+        personVideoItem.appendChild(cameraVideo);
+        let personInfo = document.createElement('div');
+        personInfo.setAttribute('class', 'person-info');
+        let personName = document.createElement('span');
+        let personStatus = document.createElement('span');
+        personStatus.innerHTML = '发言中...';
+        personInfo.appendChild(personName);
+        personInfo.appendChild(personStatus);
+        personVideoItem.appendChild(personInfo);
+        // @ts-ignore
+        let rtcPeerConnection = new RTCPeerConnection((window as any).iceServers, { optional: [{ RtpDataChannels: true }] });
+        rtcPcMap.set(fromSocketId, rtcPeerConnection);
+        document.getElementById('main-video-content').appendChild(personVideoItem);
+        rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
+            if (event.candidate) {
+                // console.log('sending ice candidate', event.candidate);
+                (window as any).socket.emit('candidate', {
+                    type: 'candidate',
+                    label: event.candidate.sdpMLineIndex,
+                    id: event.candidate.sdpMid,
+                    candidate: event.candidate.candidate,
+                    room: (window as any).roomNumber,
+                    toSocketId: fromSocketId
+                });
+            }
+        };
+
+        rtcPeerConnection.oniceconnectionstatechange = function () {
+            console.log('rtcPeerConnection.iceConnectionState', rtcPeerConnection.iceConnectionState);
+
+            if (rtcPeerConnection.iceConnectionState == 'disconnected') {
+                ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+            }
+        };
+
+        //@ts-ignore
+        let dataChannel = rtcPeerConnection.createDataChannel((window as any).roomNumber, { reliable: false });
+        console.log('createDataChannel');
+
+        dataChannel.onopen = function (event) {
+
+            console.log('dataChannel open');
+
+
+        };
+        dataChannel.onmessage = event => {
+            console.log('dataChannel onmessage', event.data);
+        }
+        dataChannel.onclose = function () { console.log("dataChannel closed! ") };
+        dataChannel.onerror = function () { console.log("dataChannel ERROR!!!") };
+
+        rtcPeerConnection.oniceconnectionstatechange = function () {
+            console.log('rtcPeerConnection.iceConnectionState', rtcPeerConnection.iceConnectionState);
+
+            if (rtcPeerConnection.iceConnectionState == 'disconnected') {
+                ipcRenderer.send(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED);
+            }
+        };
+
+        rtcPeerConnection.ondatachannel = function (ev) {
+
+            ev.channel.onopen = function () {
+                console.log('Data channel is open and ready to be used.');
+            };
+            ev.channel.onmessage = function (e) {
+                console.log("DC from  :" + e.data);
+            }
+        };
+
+        let _audioStream = new MediaStream();
+        let _cameraStream = new MediaStream();
+        let _sreenStream = new MediaStream();
+        rtcPeerConnection.ontrack = function onAddStream(event) {
+
+
+            // console.log('rtcPeerConnection.ontrack');
+            console.log(event);
+            let stream = event.streams[0];
+            let cameraTrack = stream.getVideoTracks()[0] as MediaStreamTrack;
+            let desktopTrack = stream.getVideoTracks()[1] as MediaStreamTrack;
+
+            try {
+                _audioStream.addTrack(stream.getAudioTracks()[0]);
+            } catch (e) {
+
+            };
+            _cameraStream.addTrack(cameraTrack);
+            _sreenStream.addTrack(desktopTrack);
+
+            audio.srcObject = _audioStream;
+            cameraVideo.srcObject = _cameraStream;
+            screenVideo.srcObject = _sreenStream;
+
+
+            try {
+                audio.play();
+            } catch (error) {
+                console.error(error);
+            }
+            try {
+                cameraVideo.play();
+            } catch (error) {
+                console.error(error);
+            }
+
+            try {
+                screenVideo.play();
+            } catch (error) {
+                console.error(error);
+            }
+
+            setInterval(() => {
+                let cameraValid = cameraTrack.getSettings().width != 2;
+                let desktopValid = desktopTrack.getSettings().width != 2;
+                if (cameraValid && desktopValid) {
+                    screenVideo.style.width = '100%';
+                    screenVideo.style.height = '100%';
+                    cameraVideo.style.width = '25%';
+                    cameraVideo.style.height = '25%';
+
+                } else if (cameraValid && !desktopValid) {
+                    screenVideo.style.width = '0%';
+                    screenVideo.style.height = '0%';
+                    cameraVideo.style.width = '100%';
+                    cameraVideo.style.height = '100%';
+
+
+
+                } else if (!cameraValid && desktopValid) {
+                    screenVideo.style.width = '100%';
+                    screenVideo.style.height = '100%';
+                    cameraVideo.style.width = '0%';
+                    cameraVideo.style.height = '0%';
+
+                } else if (!cameraValid && !desktopValid) {
+                    screenVideo.style.width = '0%';
+                    screenVideo.style.height = '0%';
+                    cameraVideo.style.width = '0%';
+                    cameraVideo.style.height = '0%';
+                }
+                try {
+                    screenVideo.play()
+                } catch (error) {
+                    
+                }
+
+                try {
+                    cameraVideo.play()
+                } catch (error) {
+                    
+                }
+            }, 1000);
+        };
+
+
+        let mediaStreamTrackArray = ((window as any).localStream as MediaStream).getTracks();
+        console.log('rtcPeerConnection 正在添加 addTrack', mediaStreamTrackArray);
+        mediaStreamTrackArray.forEach(mediaStreamTrack => {
+            rtcPeerConnection.addTrack(mediaStreamTrack, (window as any).localStream);
+        });
+
+        rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+        rtcPeerConnection.createAnswer()
+            .then(sessionDescription => {
+                rtcPeerConnection.setLocalDescription(sessionDescription);
+                (window as any).socket.emit('answer', {
+                    type: 'answer',
+                    sdp: sessionDescription,
+                    room: (window as any).roomNumber,
+                    toSocketId: fromSocketId
+                });
+            })
+            .catch(err => {
+
+                console.error(err);
+            });
+
+
+
+
+
+
+
+
+
     }
 }

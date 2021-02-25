@@ -150,27 +150,29 @@ export default class ScreenMeeting {
                         if (desktopStream == null) {
                             return;
                         }
-                        let leftVideo = document.getElementById('left-video');
+                        let leftVideo = (window as any).myScreenVideo;
                         // 将捕获的流放到右上角的video中
                         // @ts-ignore
                         leftVideo.srcObject = desktopStream;
                         // @ts-ignore
                         leftVideo.volume = 0.0;
                         // @ts-ignore
-                        leftVideo.onloadedmetadata = (e) => leftVideo.play();
+                       try {
+                            leftVideo.onloadedmetadata = (e) => leftVideo.play();
+                       } catch (error) {
+                           console.error(error)
+                       }
                         layui.layer.closeAll();
 
                         // (window as any).streamToWebRTC.run(desktopStream);
-                        (window as any).desktopStream = desktopStream;
+
                         try {
 
-                            let desktopTrack = (desktopStream as MediaStream).getVideoTracks()[0];
-
-                            var sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
+                            let desktopTrack = desktopStream.getVideoTracks()[0];
 
 
-
-                         
+                            for (let  rtcPeerConnection of (window as any).rtcPcMap.values() ) {
+                                let sender = (rtcPeerConnection as RTCPeerConnection).getSenders()[2];
                                 if (sender) {
                                     console.log(sender);
 
@@ -179,15 +181,15 @@ export default class ScreenMeeting {
                                     let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
                                     console.log(trackReplacedPromise);
 
-                                    
+
                                 }
-                           
-                         
+                            };
 
+                            
 
+                            let localStream: MediaStream = (window as any).localStream;
 
-
-                            (window as any).localStream.getVideoTracks()[1] = desktopTrack;
+                            localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], desktopTrack]);
 
                         } catch (error) {
                             console.error(error);

@@ -29,7 +29,7 @@ toastr.options = {
 };
 (window as any).toastr = toastr;
 
-var rtcPeerConnection: RTCPeerConnection;
+
 
 // 房间号
 var roomNumber: string;
@@ -42,18 +42,21 @@ var videoMeeting: VideoMeeting;
 var screenMeeting: ScreenMeeting;
 var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
-var disabledTrack: MediaStreamTrack = null;
+var disabledVideoTrack: MediaStreamTrack = null;
 var config = require('../../config.json');
 (window as any).config = config;
 var audioStream: MediaStream;
 var videoStream: MediaStream;
 var localStream: MediaStream;
 var streamType: string = 'audio';
-var leftVideo = document.getElementById('left-video');
-var leftCameraVideo = document.getElementById('left-camera-video');
-var rtcPCArray = new Array<RTCPeerConnection>();
+
+var myScreenVideo = $('#persion-me .screen-video')[0];
+var myCameraVideo = $('#persion-me .camera-video')[0];
+var socketId:string;
+var personInRoom: Array<string>;
+var rtcPcMap = new Map<string,RTCPeerConnection>();
 // @ts-ignore
-leftCameraVideo.onloadedmetadata = (e) => leftCameraVideo.play();
+ 
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
 
     nickname = ipcRenderer.sendSync(ChannelConstant.GET_NICKNAME);
@@ -75,8 +78,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         layui.form.render();
         try {
             audioStream = await audioMeeting.getMicrophoneStream();
-
-            disabledTrack = audioStream.getVideoTracks()[0].clone();
+            disabledVideoTrack = audioStream.getVideoTracks()[0].clone();
         } catch (error) {
             toastr.info('无法获取麦克风，切换为系统声音');
             audioStream = await audioMeeting.getSystemStream();
@@ -99,78 +101,97 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             audioStream = await audioMeeting.getSystemStream() as MediaStream;
         } else {
             audioStream = await audioMeeting.getMicrophoneStream();
+        }
+        localStream = new MediaStream([audioStream.getAudioTracks()[0], disabledVideoTrack.clone() , disabledVideoTrack.clone() ]);
 
-        }
-        localStream.getAudioTracks()[0] = audioStream.getAudioTracks()[0];
-        if (rtcPeerConnection) {
-            let sender = rtcPeerConnection.getSenders().find(s => {
-                return s.track.kind == 'audio';
-            });
-            if (sender) {
-                sender.replaceTrack(audioStream.getAudioTracks()[0]);
+        for (let  rtcPeerConnection of rtcPcMap.values()) {
+            if (rtcPeerConnection) {
+                let sender = rtcPeerConnection.getSenders().find(s => {
+                    return s.track.kind == 'audio';
+                });
+                if (sender) {
+                    sender.replaceTrack(audioStream.getAudioTracks()[0]);
+                }
             }
-        }
+        };
+
+        
 
     });
     // 监听摄像头
     layui.form.on('select(video-select)', async (data) => {
         // 关闭
         if (data.value == 'close') {
-            if (rtcPeerConnection) {
-                let sender = rtcPeerConnection.getSenders().find(s => {
-                    return s.track.kind == disabledTrack.kind;
-                });
-                if (sender) {
-                    sender.replaceTrack(disabledTrack.clone());
-                    localStream.getVideoTracks()[0] = disabledTrack;
+
+            for (let  rtcPeerConnection of rtcPcMap.values()) {
+                if (rtcPeerConnection) {
+                    let sender = rtcPeerConnection.getSenders().find(s => {
+                        return s.track.kind == disabledVideoTrack.kind;
+                    });
+                    if (sender) {
+                        sender.replaceTrack(disabledVideoTrack.clone());
+                        localStream.getVideoTracks()[0] = disabledVideoTrack;
+                    }
                 }
-            }
+            };
+
+            
 
             // @ts-ignore
-            leftCameraVideo.srcObject = new MediaStream([disabledTrack]);
-            localStream.getVideoTracks()[0] = disabledTrack;
+            myCameraVideo.srcObject = new MediaStream([disabledVideoTrack]);
+            localStream = new MediaStream([localStream.getAudioTracks()[0] ,disabledVideoTrack.clone(),localStream.getTracks()[2]]);
         } else {
             videoStream = await videoMeeting.getStream();
-            if (rtcPeerConnection) {
-                let sender = rtcPeerConnection.getSenders()[1];
-                if (sender) {
-                    sender.replaceTrack(videoStream.getVideoTracks()[0]);
+
+            for (let  rtcPeerConnection of rtcPcMap.values()) {
+                if (rtcPeerConnection) {
+                    console.log(rtcPeerConnection);
+                    
+                    let sender = rtcPeerConnection.getSenders()[1];
+                    if (sender) {
+                        sender.replaceTrack(videoStream.getVideoTracks()[0].clone());
+                    }
                 }
-            }
-
+            };
+            
             console.log(videoStream);
-
             // @ts-ignore
-            leftCameraVideo.srcObject = videoStream;
+            myCameraVideo.srcObject = videoStream;
             // @ts-ignore
-            leftCameraVideo.play();
-            // @ts-ignore
-            cameraVideo.scrObject = videoStream;
-            (localStream.getVideoTracks()[0] as MediaStreamTrack).applyConstraints
+            try {
+                // @ts-ignore
+                myCameraVideo.play();
+            } catch (error) {
+                console.error(error);
+                
+            }
+            
             localStream = new MediaStream([localStream.getTracks()[0], videoStream.getVideoTracks()[0], localStream.getTracks()[2]]);
 
         }
-        renderLocalVideoElement();
+         
     });
 
 
     // 屏幕共享
     layui.form.on('select(screen-select)', async (data) => {
         if (data.value == 'close') {
-            if (rtcPeerConnection) {
-                let sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
-                if (sender) {
-                    await sender.replaceTrack(disabledTrack.clone());
-                    localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledTrack]);
+
+            for (let  rtcPeerConnection of rtcPcMap.values()) {
+                if (rtcPeerConnection) {
+                    let sender = rtcPeerConnection.getSenders()[2];
+                    if (sender) {
+                        await sender.replaceTrack(disabledVideoTrack.clone());
+                        localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack.clone()]);
+                    }
                 }
-            }
+            };
+            
 
         } else {
-
-
             screenMeeting.run();
         }
-        renderLocalVideoElement();
+         
     });
 
 
@@ -178,11 +199,13 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     $('.baibanwhiteboard10').off().on('click', async () => {
         streamType = 'board';
         let boardStream = await boardMeeting.run();
-        let rtcPeerConnection = (window as any).rtcPeerConnection as RTCPeerConnection;
-        if (rtcPeerConnection) {
-            let sender2 = rtcPeerConnection.getSenders()[2];
-            sender2.replaceTrack(boardStream.getVideoTracks()[0]);
-        }
+        for (let  rtcPeerConnection of rtcPcMap.values()) {
+            if (rtcPeerConnection) {
+                let sender2 = rtcPeerConnection.getSenders()[2];
+                sender2.replaceTrack(boardStream.getVideoTracks()[0]);
+            }
+        };
+        
 
 
     });
@@ -226,53 +249,84 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
 
     ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED, () => {
         console.log(ChannelConstant.BOARDWINDOW_CLOSED);
-
-        if (rtcPeerConnection) {
-            rtcPeerConnection.getSenders()[2].replaceTrack(disabledTrack.clone());
-            $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
-            layui.form.render();
-
-            localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledTrack]);
-        }
+         
+        for (let  rtcPeerConnection of rtcPcMap.values()) {
+            if (rtcPeerConnection) {
+                rtcPeerConnection.getSenders()[2].replaceTrack(disabledVideoTrack.clone());
+                $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
+                layui.form.render();
+    
+                localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack]);
+            }
+        };
+        
     });
 
 });
 
-function renderLocalVideoElement() {
+async function renderLocalVideoElement() {
+    
     let screenValid = $('#screen-select').val() != 'close';
     let videoValid = $('#video-select').val() != 'close';
-    console.log(screenValid, videoValid);
+    // console.log(screenValid, videoValid);
 
-    if (!screenValid && !videoValid) {
-        leftVideo.style.width = '0%';
-        leftVideo.style.height = '0%';
-        leftCameraVideo.style.width = '0%';
-        leftCameraVideo.style.height = '0%';
-    } else if (screenValid && videoValid) {
-        leftVideo.style.width = '100%';
-        leftVideo.style.height = '100%';
-        leftCameraVideo.style.width = '25%';
-        leftCameraVideo.style.height = '25%';
-        // @ts-ignore
-        leftVideo.play();
-        // @ts-ignore
-        leftCameraVideo.play();
-    } else if (screenValid && !videoValid) {
-        leftVideo.style.width = '100%';
-        leftVideo.style.height = '100%';
-        leftCameraVideo.style.width = '0%';
-        leftCameraVideo.style.height = '0%';
-        // @ts-ignore
-        leftVideo.play();
-    } else if (!screenValid && videoValid) {
-        leftVideo.style.width = '0%';
-        leftVideo.style.height = '0%';
-        leftCameraVideo.style.width = '100%';
-        leftCameraVideo.style.height = '100%';
-        // @ts-ignore
-        leftCameraVideo.play();
+    try {
+        if (!screenValid && !videoValid) {
+            myScreenVideo.style.width = '0%';
+            myScreenVideo.style.height = '0%';
+            myCameraVideo.style.width = '0%';
+            myCameraVideo.style.height = '0%';
+        } else if (screenValid && videoValid) {
+            myScreenVideo.style.width = '100%';
+            myScreenVideo.style.height = '100%';
+            myCameraVideo.style.width = '25%';
+            myCameraVideo.style.height = '25%';
+            // @ts-ignore
+            try {
+                // @ts-ignore
+                myScreenVideo.play();
+            } catch (error) {
+                
+            }
+            
+            try {
+                // @ts-ignore
+                myCameraVideo.play();
+            } catch (error) {
+                
+            }
+        } else if (screenValid && !videoValid) {
+            myScreenVideo.style.width = '100%';
+            myScreenVideo.style.height = '100%';
+            myCameraVideo.style.width = '0%';
+            myCameraVideo.style.height = '0%';
+            // @ts-ignore
+            try {
+                // @ts-ignore
+                myScreenVideo.play();
+            } catch (error) {
+                
+            }
+        } else if (!screenValid && videoValid) {
+            myScreenVideo.style.width = '0%';
+            myScreenVideo.style.height = '0%';
+            myCameraVideo.style.width = '100%';
+            myCameraVideo.style.height = '100%';
+            // @ts-ignore
+            try {
+                // @ts-ignore
+                myCameraVideo.play();
+            } catch (error) {
+                
+            }
+        }
+    } catch (error) {
+        
     }
+    requestAnimationFrame(renderLocalVideoElement);
+    
 }
+renderLocalVideoElement();
 
 
 async function renderInputDevice() {
