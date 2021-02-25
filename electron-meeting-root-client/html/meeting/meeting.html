@@ -144,6 +144,13 @@
             height: 100%;
             z-index:1;
         }
+        .local-audio-wave-div{
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            max-height: 100px;
+        }
     </style>
 </head>
 
@@ -156,7 +163,7 @@
 
             <div class="main-video-content">
                 <!-- <button class="layui-btn layui-btn-normal talking-now-btn" style="z-index: 0;display: none;" >正在说话</button> -->
-                <canvas id="audio-wave-canvas"></canvas>
+                
                 <video id="main-video" style="z-index: 1;"></video>
                 <video id="camera-video" style="z-index: 1;"></video>
             </div>
@@ -164,7 +171,7 @@
 
         </div>
         <div class="layui-col-xs2 left-content">
-            <div class="left-video-content" style="position: relative;height: 100%;">
+            <div class="left-video-content" style="position: relative;height: calc(100% - 100px);">
                 <div class="left-video-item" style="position: relative;height: 25%;">
                     <video id="left-video" style="max-width: 100%;"></video>
                     <video id="left-camera-video"
@@ -172,8 +179,12 @@
                 </div>
 
             </div>
+            <div class="local-audio-wave-div">
+                <canvas id="audio-wave-canvas"></canvas>
+            </div>
         </div>
     </div>
+    
     <div class="bottom-util layui-form" lay-filter="bottom-form">
         <div class="layui-form-item">
             <div class="layui-inline">

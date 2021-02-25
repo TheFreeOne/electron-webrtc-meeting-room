@@ -51,6 +51,7 @@ var localStream: MediaStream;
 var streamType: string = 'audio';
 var leftVideo = document.getElementById('left-video');
 var leftCameraVideo = document.getElementById('left-camera-video');
+var rtcPCArray = new Array<RTCPeerConnection>();
 // @ts-ignore
 leftCameraVideo.onloadedmetadata = (e) => leftCameraVideo.play();
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
@@ -350,7 +351,8 @@ function drawAudioWave() {
     function renderFrame() {
         requestAnimationFrame(renderFrame);//方法renderFrame托管到定时器，无限循环调度，频率<16.6ms/次
 
-        context.fillStyle = "#000";//黑色背景
+        // context.fillStyle = "#000";//黑色背景
+        context.fillStyle = "gray";//黑色背景
         context.fillRect(0, 0, WIDTH, HEIGHT);//画布拓展全屏,动态调整
 
         analyser.getByteFrequencyData(dataArray);//获取当前时刻的音频数据
