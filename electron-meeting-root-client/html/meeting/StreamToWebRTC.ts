@@ -31,7 +31,7 @@ export default class StreamToWebRTC {
 
         let rtcPcArray = (window as any).rtcPcArray as Array<RTCPeerConnection>;
 
-         
+
 
         // soket.io创建的socket
         (window as any).socket = null;
@@ -75,7 +75,7 @@ export default class StreamToWebRTC {
             (window as any).socketId = data.socketId;
             (window as any).personInRoom = data.personInRoom;
             console.log(`${data.room} 房间已经创建完成`);
-            
+
 
         });
         // 收到joined，说明成功加入一个房间
@@ -106,7 +106,7 @@ export default class StreamToWebRTC {
         });
 
         // 收到邀请的一方收到offer
-        (window as any).socket.on('offer', async (event) => {
+        (window as any).socket.on('offer',  (event) => {
             console.log(` socket.on('offer'`);
 
             this.newerCreateRTCPeerConnection((window as any).socketId, event.fromSocketId, event);
@@ -120,14 +120,20 @@ export default class StreamToWebRTC {
             console.log(`socket.on('answer'`);
             console.log(event);
 
-            // console.log('answered done');
-            let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
-            let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
-            rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+            try {
+                // console.log('answered done');
+                let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
+                rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+            } catch (error) {
+                console.log(`rtcPcMap`,(window as any).rtcPcMap);
+                console.log(`event.fromSocketId`,event.fromSocketId);
+                
+            }
         });
 
         (window as any).socket.on('candidate', event => {
-         
+
 
             try {
                 let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
@@ -305,15 +311,15 @@ export default class StreamToWebRTC {
                 try {
                     screenVideo.play()
                 } catch (error) {
-                    
+
                 }
 
                 try {
                     cameraVideo.play()
                 } catch (error) {
-                    
+
                 }
-                
+
             }, 1000);
         };
 
@@ -352,7 +358,7 @@ export default class StreamToWebRTC {
     public newerCreateRTCPeerConnection(socketId: string, fromSocketId: string, event: any) {
 
         console.warn('newerCreateRTCPeerConnection');
-        
+
 
 
         console.log('this');
@@ -513,13 +519,13 @@ export default class StreamToWebRTC {
                 try {
                     screenVideo.play()
                 } catch (error) {
-                    
+
                 }
 
                 try {
                     cameraVideo.play()
                 } catch (error) {
-                    
+
                 }
             }, 1000);
         };

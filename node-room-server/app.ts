@@ -112,14 +112,14 @@ io.on('connection', socket => {
         let toSocketId = event.toSocketId;
         event.sdp.fromSocketId = socket.id;
         // socket.broadcast.to(event.room).emit('offer', event.sdp);
-        personInServer[toSocketId] .emit('answer', event.sdp);
+        personInServer[toSocketId] .emit('offer', event.sdp);
     });
 
     socket.on('answer', event => {
-        //  let toSocketId = event.toSocketId;
+         let toSocketId = event.toSocketId;
         event.sdp.fromSocketId = socket.id
-        socket.broadcast.to(event.room).emit('answer', event.sdp);
-        // personInServer[toSocketId] .emit('offer', event.sdp);
+        // socket.broadcast.to(event.room).emit('answer', event.sdp);
+        personInServer[toSocketId] .emit('answer', event.sdp);
     });
     // 用户退出房间
     socket.on('out of room', event => {
