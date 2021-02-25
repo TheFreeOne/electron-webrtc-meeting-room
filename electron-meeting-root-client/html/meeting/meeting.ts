@@ -79,13 +79,18 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         } catch (error) {
             toastr.info('无法获取麦克风，切换为系统声音');
             audioStream = await audioMeeting.getSystemStream();
+            (document.getElementById('voice-select') as any).value = 'default';
+            layui.form.render();
         }
+
         localStream = audioStream.clone();
         streamToWebRTC = new StreamToWebRTC(_roomNumber);
         (window as any).streamToWebRTC = streamToWebRTC;
         if (audioStream) {
             streamToWebRTC.run(audioStream);
+            drawAudioWave();
         }
+
     });
     // 监听音频切换
     layui.form.on('select(voice-select)', async (data) => {
@@ -131,9 +136,9 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                     sender.replaceTrack(videoStream.getVideoTracks()[0]);
                 }
             }
-            
+
             console.log(videoStream);
-         
+
             // @ts-ignore
             leftCameraVideo.srcObject = videoStream;
             // @ts-ignore
@@ -141,7 +146,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             // @ts-ignore
             cameraVideo.scrObject = videoStream;
             (localStream.getVideoTracks()[0] as MediaStreamTrack).applyConstraints
-            localStream = new MediaStream([localStream.getTracks()[0],videoStream.getVideoTracks()[0],localStream.getTracks()[2]]);
+            localStream = new MediaStream([localStream.getTracks()[0], videoStream.getVideoTracks()[0], localStream.getTracks()[2]]);
 
         }
         renderLocalVideoElement();
@@ -154,8 +159,8 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             if (rtcPeerConnection) {
                 let sender = ((window as any).rtcPeerConnection as RTCPeerConnection).getSenders()[2];
                 if (sender) {
-                    await sender.replaceTrack(disabledTrack.clone()); 
-                    localStream = new MediaStream([localStream.getTracks()[0],localStream.getTracks()[1],disabledTrack]);
+                    await sender.replaceTrack(disabledTrack.clone());
+                    localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledTrack]);
                 }
             }
 
@@ -173,7 +178,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         streamType = 'board';
         let boardStream = await boardMeeting.run();
         let rtcPeerConnection = (window as any).rtcPeerConnection as RTCPeerConnection;
-        if(rtcPeerConnection){
+        if (rtcPeerConnection) {
             let sender2 = rtcPeerConnection.getSenders()[2];
             sender2.replaceTrack(boardStream.getVideoTracks()[0]);
         }
@@ -218,15 +223,15 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         layui.layer.msg('复制房间号成功');
     });
 
-    ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED,()=>{
+    ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED, () => {
         console.log(ChannelConstant.BOARDWINDOW_CLOSED);
-        
-        if(rtcPeerConnection){
+
+        if (rtcPeerConnection) {
             rtcPeerConnection.getSenders()[2].replaceTrack(disabledTrack.clone());
-            $('#screen-select').find('option[value="close"]').first().attr('selected','selected');
+            $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
             layui.form.render();
-             
-            localStream = new MediaStream([localStream.getTracks()[0],localStream.getTracks()[1],disabledTrack]);
+
+            localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledTrack]);
         }
     });
 
@@ -235,8 +240,8 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
 function renderLocalVideoElement() {
     let screenValid = $('#screen-select').val() != 'close';
     let videoValid = $('#video-select').val() != 'close';
-    console.log(screenValid,videoValid);
-    
+    console.log(screenValid, videoValid);
+
     if (!screenValid && !videoValid) {
         leftVideo.style.width = '0%';
         leftVideo.style.height = '0%';
@@ -293,22 +298,91 @@ async function renderInputDevice() {
     layui.form.render();
 }
 
-function talkingNowBtnLook(){
-        
+function talkingNowBtnLook() {
+
     let mainVideo = $('#main-video');
     let cameraVideo = $('#main-video');
     let talkingNowBtn = $('.talking-now-btn');
-    setInterval(()=>{
-        if(mainVideo.width() != 0 || cameraVideo.width()){
+    setInterval(() => {
+        if (mainVideo.width() != 0 || cameraVideo.width()) {
             talkingNowBtn.hide();
-        }else{
+        } else {
             talkingNowBtn.show();
         }
-       
-    },1);
 
- 
+    }, 1);
+
+
 }
 talkingNowBtnLook();
+/**
+ * 画音频的波形图
+ */
+function drawAudioWave() {
+    //part1: 画布
+    let canvas = document.getElementById("audio-wave-canvas");
+    let context = (canvas as any).getContext("2d");
+
+    
+    let WIDTH = (canvas as any).width;
+    let HEIGHT = (canvas as any).height;
+
+    
+
+    //part3: 分析器
+    let audioContext = new AudioContext();//音频内容
+    let src = audioContext.createMediaStreamSource(audioStream);
+    let analyser = audioContext.createAnalyser();
+
+    src.connect(analyser);
+    // analyser.connect(AudCtx.destination);   // 屏蔽之后不会播放声音
+    analyser.fftSize = 128;//快速傅里叶变换, 必须为2的N次方
+
+    let bufferLength = analyser.frequencyBinCount;// = fftSize * 0.5
+
+    //part4: 变量
+    let barWidth = (WIDTH / bufferLength) - 1;//间隔1px
+    let barHeight;
+
+    let dataArray = new Uint8Array(bufferLength);//8位无符号定长数组
+
+    //part5: 动态监听
+    function renderFrame() {
+        requestAnimationFrame(renderFrame);//方法renderFrame托管到定时器，无限循环调度，频率<16.6ms/次
+
+        context.fillStyle = "#000";//黑色背景
+        context.fillRect(0, 0, WIDTH, HEIGHT);//画布拓展全屏,动态调整
+
+        analyser.getByteFrequencyData(dataArray);//获取当前时刻的音频数据
+
+        //part6: 绘画声压条
+        let x = 0;
+        for (let i = 0; i < bufferLength; i++) {
+            let data = dataArray[i];//int,0~255
+
+            let percentV = data / 255;//纵向比例
+            let percentH = i / bufferLength;//横向比例
+
+            barHeight = HEIGHT * percentV;
+
+            //gbk,0~255
+            let r = 255 * percentV;//值越大越红
+            let g = 255 * percentH;//越靠右越绿
+            // let b = 50;
+            let b = 128;
+
+            context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+            context.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+            x += barWidth + 1;//间隔1px
+        }
+    }
+
+    renderFrame();
+
+    
+
+}
+
 
 export = {}

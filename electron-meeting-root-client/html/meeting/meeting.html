@@ -138,6 +138,12 @@
             top:50%;
             transform: translate(-50%, -50%);
         }
+        #audio-wave-canvas{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index:1;
+        }
     </style>
 </head>
 
@@ -149,7 +155,8 @@
             </div>
 
             <div class="main-video-content">
-                <button class="layui-btn layui-btn-normal talking-now-btn" style="z-index: 0;display: none;" >正在说话</button>
+                <!-- <button class="layui-btn layui-btn-normal talking-now-btn" style="z-index: 0;display: none;" >正在说话</button> -->
+                <canvas id="audio-wave-canvas"></canvas>
                 <video id="main-video" style="z-index: 1;"></video>
                 <video id="camera-video" style="z-index: 1;"></video>
             </div>
