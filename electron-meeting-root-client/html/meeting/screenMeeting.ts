@@ -69,7 +69,12 @@ export default class ScreenMeeting {
                                         video: {
                                             //@ts-ignore
                                             mandatory: {
-                                                chromeMediaSource: 'screen'
+                                                chromeMediaSource: 'screen',
+                                                minFrameRate:30
+                                                // minWidth: 1280,
+                                                // maxWidth: 1280,
+                                                // minHeight: 720,
+                                                // maxHeight: 720
                                             }
                                         }
                                     }
@@ -185,6 +190,7 @@ export default class ScreenMeeting {
                                 }
                             };
 
+                            console.log(desktopTrack.getSettings());
 
 
                             let localStream: MediaStream = (window as any).localStream;

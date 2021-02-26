@@ -14,7 +14,8 @@ export default class AudioMeeting {
                 echoCancellation: true,
                 noiseSuppression: true,
                 sampleRate: 44100,
-                groupId: $('#voice-select').val() as ConstrainDOMString
+                channelCount:{ideal:2,min:1},
+                deviceId: $('#voice-select').val() as ConstrainDOMString
             }
         }
         // 麦克风声音

@@ -11,14 +11,20 @@ export default class VideoMeeting {
                 // video: true
                 // audio: false,
                 video: {
+                    deviceId: $('#video-select').val(),
+                    width: {ideal: 1280,min:320},
+                    height: {ideal:760,min:240},
+                    frameRate:{ideal: 20,min:10,max:60}
                     // echoCancellation: true,
                     // sampleRate:30,
                     // groupId: $('#video-select').val() as ConstrainDOMString
-                    optional: [{ deviceId: $('#video-select').val() }]
+                    // optional: [{ deviceId: $('#video-select').val() }]
                 }
             };
             // @ts-ignore
             let videoStream = await navigator.mediaDevices.getUserMedia(streamConstraints);
+            console.log(videoStream.getVideoTracks()[0].getSettings());
+            
             return videoStream;
         } catch (error) {
             console.error(error);
