@@ -80,7 +80,7 @@ io.on('connection', socket => {
             socket.broadcast.to(room).emit('new one enter', { "socketId": socket.id });
             socket.emit('new one enter', { "socketId": socket.id });
             personInServer[socket.id] = socket;
-        } else if (clientSize <= 11) {
+        } else if (clientSize <= 8) {
             socket.join(room);
             socket.emit('joined', { "room": room, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
             socket.broadcast.to(room).emit('new one enter', { "socketId": socket.id });
