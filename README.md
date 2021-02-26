@@ -1,7 +1,8 @@
 # electron-webrtc-meeting-room
 
 #### 介绍
-使用electron提供webrtc，java和node提供相关交互的视频会议室
+使用electron提供webrtc，java和node提供相关交互的视频会议室  
+目前支持9人房间
 #### 相关技术
  - 登陆服务器 springboot
  - 房间服务器 nodejs + typescript
