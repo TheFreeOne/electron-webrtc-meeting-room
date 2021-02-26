@@ -568,7 +568,6 @@ export default class StreamToWebRTC {
                 });
             })
             .catch(err => {
-
                 console.error(err);
             });
 

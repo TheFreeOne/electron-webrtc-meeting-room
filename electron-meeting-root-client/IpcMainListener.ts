@@ -65,7 +65,7 @@ export default class IpcMainListener{
 
         // 创建会议窗口
         ipcMain.on(ChannelConstant.CREATE_MEETING_WINDOW,(event,roomNumber,actionType)=>{
-            this._meetingWindow = new BrowserWindow({
+            let meetingWindow = new BrowserWindow({
                 title: '会议室--会议中：'+roomNumber,
                 width: 830,
                 height: 560,
@@ -85,11 +85,13 @@ export default class IpcMainListener{
                     webSecurity:false
                 }
             });
-            this._meetingWindow.loadFile('./html/meeting/meeting.html');
-            this._meetingWindow.webContents.openDevTools();
-            this._meetingWindow.on('ready-to-show',()=>{
-                this._meetingWindow.show();
-                this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
+            this._meetingWindow = meetingWindow;
+            meetingWindow.loadFile('./html/meeting/meeting.html');
+            meetingWindow.webContents.openDevTools();
+            meetingWindow.on('ready-to-show',()=>{
+                meetingWindow.show();
+                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
+                meetingWindow.webContents.send("windowId",meetingWindow.id);
             });
         });
         /**
@@ -104,7 +106,6 @@ export default class IpcMainListener{
                 minWidth: 830,
                 minHeight: 560,
                 icon:  '/icon.ico',
-                // parent:this._mainWindow,
                 // modal:true,
                 autoHideMenuBar: true,
                 show: true,
@@ -119,12 +120,17 @@ export default class IpcMainListener{
             boardWindow.loadFile("./html/whiteboard/index.html");
             boardWindow.on('ready-to-show',()=>{
                 event.returnValue = uuid;
+                // boardWindow.setParentWindow(this._meetingWindow);
             });
-            boardWindow.on('closed',()=>{
-                this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
+             
+            boardWindow.on('close',()=>{
+                this._meetingWindow &&  this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
             });
 
-
+            this._meetingWindow.on('close',()=>{
+                boardWindow.close();
+            });
+             
         });
         /**
          * 账号在其他地方登陆

@@ -185,11 +185,13 @@ export default class ScreenMeeting {
                                 }
                             };
 
-                            
+
 
                             let localStream: MediaStream = (window as any).localStream;
 
                             localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], desktopTrack]);
+                            (window as any).localStream = localStream;
+
 
                         } catch (error) {
                             console.error(error);

@@ -52,11 +52,12 @@ var streamType: string = 'audio';
 
 var myScreenVideo = $('#persion-me .screen-video')[0];
 var myCameraVideo = $('#persion-me .camera-video')[0];
-var socketId:string;
+var socketId: string;
 var personInRoom: Array<string>;
+var windowId;
 var rtcPcMap = new Map<string,RTCPeerConnection>();
 // @ts-ignore
- 
+
 ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
 
     nickname = ipcRenderer.sendSync(ChannelConstant.GET_NICKNAME);
@@ -102,9 +103,9 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         } else {
             audioStream = await audioMeeting.getMicrophoneStream();
         }
-        localStream = new MediaStream([audioStream.getAudioTracks()[0], disabledVideoTrack.clone() , disabledVideoTrack.clone() ]);
+        localStream = new MediaStream([audioStream.getAudioTracks()[0], disabledVideoTrack.clone(), disabledVideoTrack.clone()]);
 
-        for (let  rtcPeerConnection of rtcPcMap.values()) {
+        for (let rtcPeerConnection of rtcPcMap.values()) {
             if (rtcPeerConnection) {
                 let sender = rtcPeerConnection.getSenders().find(s => {
                     return s.track.kind == 'audio';
@@ -115,7 +116,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             }
         };
 
-        
+
 
     });
     // 监听摄像头
@@ -123,7 +124,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         // 关闭
         if (data.value == 'close') {
 
-            for (let  rtcPeerConnection of rtcPcMap.values()) {
+            for (let rtcPeerConnection of rtcPcMap.values()) {
                 if (rtcPeerConnection) {
                     let sender = rtcPeerConnection.getSenders().find(s => {
                         return s.track.kind == disabledVideoTrack.kind;
@@ -135,25 +136,25 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                 }
             };
 
-            
+
 
             // @ts-ignore
             myCameraVideo.srcObject = new MediaStream([disabledVideoTrack]);
-            localStream = new MediaStream([localStream.getAudioTracks()[0] ,disabledVideoTrack.clone(),localStream.getTracks()[2]]);
+            localStream = new MediaStream([localStream.getAudioTracks()[0], disabledVideoTrack.clone(), localStream.getTracks()[2]]);
         } else {
             videoStream = await videoMeeting.getStream();
 
-            for (let  rtcPeerConnection of rtcPcMap.values()) {
+            for (let rtcPeerConnection of rtcPcMap.values()) {
                 if (rtcPeerConnection) {
                     console.log(rtcPeerConnection);
-                    
+
                     let sender = rtcPeerConnection.getSenders()[1];
                     if (sender) {
                         sender.replaceTrack(videoStream.getVideoTracks()[0].clone());
                     }
                 }
             };
-            
+
             console.log(videoStream);
             // @ts-ignore
             myCameraVideo.srcObject = videoStream;
@@ -163,13 +164,13 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
                 myCameraVideo.play();
             } catch (error) {
                 console.error(error);
-                
+
             }
-            
+
             localStream = new MediaStream([localStream.getTracks()[0], videoStream.getVideoTracks()[0], localStream.getTracks()[2]]);
 
         }
-         
+
     });
 
 
@@ -177,21 +178,23 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     layui.form.on('select(screen-select)', async (data) => {
         if (data.value == 'close') {
 
-            for (let  rtcPeerConnection of rtcPcMap.values()) {
+            for (let rtcPeerConnection of rtcPcMap.values()) {
                 if (rtcPeerConnection) {
                     let sender = rtcPeerConnection.getSenders()[2];
                     if (sender) {
                         await sender.replaceTrack(disabledVideoTrack.clone());
-                        localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack.clone()]);
+
                     }
                 }
             };
-            
+            // @ts-ignore
+            myScreenVideo.srcObject = new MediaStream([disabledVideoTrack]);
+            localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack.clone()]);
 
         } else {
             screenMeeting.run();
         }
-         
+
     });
 
 
@@ -199,14 +202,43 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     $('.baibanwhiteboard10').off().on('click', async () => {
         streamType = 'board';
         let boardStream = await boardMeeting.run();
-        for (let  rtcPeerConnection of rtcPcMap.values()) {
+        console.log(boardStream);
+
+        for (let rtcPeerConnection of rtcPcMap.values()) {
             if (rtcPeerConnection) {
                 let sender2 = rtcPeerConnection.getSenders()[2];
                 sender2.replaceTrack(boardStream.getVideoTracks()[0]);
             }
         };
-        
+        // @ts-ignore
+        myScreenVideo.srcObject = new MediaStream([boardStream.getVideoTracks()[0]]);
+        localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], boardStream.getVideoTracks()[0]]);
+        try {
+            // @ts-ignore
+            myScreenVideo.onplay();
+        } catch (error) {
 
+        }
+
+    });
+
+    /**
+     * 白板
+     */
+    ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED, () => {
+        console.log(ChannelConstant.BOARDWINDOW_CLOSED);
+
+        for (let rtcPeerConnection of rtcPcMap.values()) {
+            if (rtcPeerConnection) {
+                rtcPeerConnection.getSenders()[2].replaceTrack(disabledVideoTrack.clone());
+                $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
+                layui.form.render();
+
+
+            }
+        };
+
+        localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack]);
 
     });
 
@@ -247,26 +279,17 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         layui.layer.msg('复制房间号成功');
     });
 
-    ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED, () => {
-        console.log(ChannelConstant.BOARDWINDOW_CLOSED);
-         
-        for (let  rtcPeerConnection of rtcPcMap.values()) {
-            if (rtcPeerConnection) {
-                rtcPeerConnection.getSenders()[2].replaceTrack(disabledVideoTrack.clone());
-                $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
-                layui.form.render();
-    
-                localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack]);
-            }
-        };
-        
-    });
 
 });
 
+ipcRenderer.once("windowId", (event, _windowId: string) => {
+
+    windowId = _windowId;
+});
+
 async function renderLocalVideoElement() {
-    
-    let screenValid = $('#screen-select').val() != 'close';
+    // @ts-ignore
+    let screenValid = (myScreenVideo.srcObject && myScreenVideo.srcObject.getVideoTracks()[0].readyState != 'ended'&& myScreenVideo.srcObject.getVideoTracks()[0].getSettings().width > 2 ) ||   $('#screen-select').val() != 'close';
     let videoValid = $('#video-select').val() != 'close';
     // console.log(screenValid, videoValid);
 
@@ -286,14 +309,14 @@ async function renderLocalVideoElement() {
                 // @ts-ignore
                 myScreenVideo.play();
             } catch (error) {
-                
+
             }
-            
+
             try {
                 // @ts-ignore
                 myCameraVideo.play();
             } catch (error) {
-                
+
             }
         } else if (screenValid && !videoValid) {
             myScreenVideo.style.width = '100%';
@@ -305,7 +328,7 @@ async function renderLocalVideoElement() {
                 // @ts-ignore
                 myScreenVideo.play();
             } catch (error) {
-                
+
             }
         } else if (!screenValid && videoValid) {
             myScreenVideo.style.width = '0%';
@@ -317,14 +340,14 @@ async function renderLocalVideoElement() {
                 // @ts-ignore
                 myCameraVideo.play();
             } catch (error) {
-                
+
             }
         }
     } catch (error) {
-        
+
     }
     requestAnimationFrame(renderLocalVideoElement);
-    
+
 }
 renderLocalVideoElement();
 
@@ -378,11 +401,11 @@ function drawAudioWave() {
     let canvas = document.getElementById("audio-wave-canvas");
     let context = (canvas as any).getContext("2d");
 
-    
+
     let WIDTH = (canvas as any).width;
     let HEIGHT = (canvas as any).height;
 
-    
+
 
     //part3: 分析器
     let audioContext = new AudioContext();//音频内容
@@ -436,7 +459,7 @@ function drawAudioWave() {
 
     renderFrame();
 
-    
+
 
 }
 
