@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>会议室</title>
-    <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
+    <link rel="stylesheet" href="../../../static/layui-v2.5.7/css/layui.css">
 
 
-    <link rel="stylesheet" href="../../static/icon/microphone_screen_camera_board/iconfont.css">
-    <link href="../../static/toastr/toastr.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../../../static/icon/microphone_screen_camera_board/iconfont.css">
+    <link href="../../../static/toastr/toastr.css" rel="stylesheet" />
 
     <script>
         (function () {
-            let config = require('../../config.json');
+            let config = require('../../../config.json');
             window.config = config;
             let script = document.createElement("script");
             script.src = `${config.nodeRoomServer}/socket.io/socket.io.js`
@@ -104,8 +104,9 @@
             background-color: #c3c2c2;
             display: grid;
             grid-gap: 10px;
-            grid-template-rows: repeat(3, 33.33%);
-            grid-template-columns: repeat(3, 33.33%);
+            grid-template-rows: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            overflow-y: scroll;
         }
 
         .bottom-util {
@@ -136,7 +137,10 @@
         .person-video-item {
             position: relative;
             box-sizing: border-box;
-            background-color: #000;;
+            background-color: #000;
+            min-width: 212px;
+            min-height: 116px;
+            z-index: 1;
         }
         .person-video-item .screen-video{
             position: relative;
@@ -269,7 +273,7 @@
 <!-- <script src="./audioMeeting.js"></script> -->
 
 
-<script src="../../static/layui-v2.5.7/layui.all.js"></script>
-<script src="./meeting.js"></script>
+<script src="../../../static/layui-v2.5.7/layui.all.js"></script>
+<script src="meeting.js"></script>
 
 </html>

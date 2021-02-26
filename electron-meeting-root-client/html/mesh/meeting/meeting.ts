@@ -1,6 +1,6 @@
 import { ipcRenderer, desktopCapturer, clipboard, ipcMain } from 'electron';
 import $ = require('jquery');
-import ChannelConstant from '../../util/ChannelConstant';
+import ChannelConstant from '../../../util/ChannelConstant';
 import AudioMeeting from './audioMeeting';
 import VideoMeeting from './videoMeeting';
 import ScreenMeeting from './screenMeeting';
@@ -43,7 +43,7 @@ var screenMeeting: ScreenMeeting;
 var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
 var disabledVideoTrack: MediaStreamTrack = null;
-var config = require('../../config.json');
+var config = require('../../../config.json');
 (window as any).config = config;
 var audioStream: MediaStream;
 var videoStream: MediaStream;

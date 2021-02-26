@@ -1,5 +1,5 @@
 import { desktopCapturer, ipcRenderer } from "electron";
-import ChannelConstant from "../../util/ChannelConstant";
+import ChannelConstant from "../../../util/ChannelConstant";
 
 export default class BoardMeeting {
     public async run() {

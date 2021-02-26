@@ -1,5 +1,5 @@
 import { dialog, ipcRenderer } from "electron";
-import ChannelConstant from "../../util/ChannelConstant";
+import ChannelConstant from "../../../util/ChannelConstant";
 
 export default class StreamToWebRTC {
 
@@ -53,7 +53,7 @@ export default class StreamToWebRTC {
         personInfo.appendChild(personStatus);
         personVideoItem.appendChild(personInfo);
 
-        let config = require('../../config.json');
+        let config = require('../../../config.json');
         // 打洞服务器的相关配置，局域网或者是单机环境下，这个配置不会生效
         const iceServers = {
             iceServers: [
@@ -128,7 +128,7 @@ export default class StreamToWebRTC {
             } catch (error) {
                 console.log(`rtcPcMap`,(window as any).rtcPcMap);
                 console.log(`event.fromSocketId`,event.fromSocketId);
-                
+
             }
         });
 
@@ -158,7 +158,7 @@ export default class StreamToWebRTC {
             (window as any).toastr.info(event.nickname + '离开了会议');
             let fromSocketId = event.fromSocketId;
             try {
-                
+
                 let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
                 let rtcPeerConnection = rtcPcMap.get(fromSocketId);
                 rtcPeerConnection.close();
@@ -166,8 +166,10 @@ export default class StreamToWebRTC {
                 rtcPcMap.delete(fromSocketId);
             } catch (error) {
                 console.error(error);
-                   
+
             }
+            console.log(`${fromSocketId} out of room`);
+
             $(`#${fromSocketId}`).remove();
         });
 
@@ -205,6 +207,16 @@ export default class StreamToWebRTC {
         personInfo.appendChild(personName);
         personInfo.appendChild(personStatus);
         personVideoItem.appendChild(personInfo);
+        personVideoItem.ondblclick = ()=>{
+            if(personVideoItem.style.position != 'absolute'){
+                personVideoItem.style.position = 'absolute';
+                personVideoItem.style.zIndex = '99';
+            }else{
+                personVideoItem.style.position = 'relative';
+                personVideoItem.style.zIndex = '1'
+            }
+
+        }
         // 创建rtcPeerConnection用于音视频相关的传输
         // @ts-ignore
         let rtcPeerConnection: RTCPeerConnection = new RTCPeerConnection((window as any).iceServers, { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] });
@@ -225,7 +237,7 @@ export default class StreamToWebRTC {
                 })
             }
         };
-        
+
         //@ts-ignore
         let dataChannel = rtcPeerConnection.createDataChannel((window as any).roomNumber, { reliable: false });
         console.log('createDataChannel');
@@ -404,6 +416,20 @@ export default class StreamToWebRTC {
         personInfo.appendChild(personName);
         personInfo.appendChild(personStatus);
         personVideoItem.appendChild(personInfo);
+        personVideoItem.ondblclick = ()=>{
+            if(personVideoItem.style.position != 'absolute'){
+                personVideoItem.style.position = 'absolute';
+                personVideoItem.style.zIndex = '99';
+                personVideoItem.style.width = '100%';
+                personVideoItem.style.height = '100%';
+            }else{
+                personVideoItem.style.position = 'relative';
+                personVideoItem.style.zIndex = '1';
+                personVideoItem.style.width = 'auto';
+                personVideoItem.style.height = 'auto';
+            }
+
+        }
         // @ts-ignore
         let rtcPeerConnection = new RTCPeerConnection((window as any).iceServers, { optional: [{ RtpDataChannels: true }] });
         rtcPcMap.set(fromSocketId, rtcPeerConnection);

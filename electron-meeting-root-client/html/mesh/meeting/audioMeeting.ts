@@ -24,6 +24,8 @@ export default class AudioMeeting {
         // 链家两个视频轨道
         audioStream.addTrack(emptyStream);
         audioStream.addTrack(emptyStream.clone());
+        console.log(emptyStream.getSettings());
+        
         return audioStream;
         // 可选的方式获取麦克风
         // audioStream = await navigator.mediaDevices.getUserMedia({
@@ -60,7 +62,8 @@ export default class AudioMeeting {
                                 minWidth: 2,
                                 maxWidth: 2,
                                 minHeight: 2,
-                                maxHeight: 2
+                                maxHeight: 2,
+                                maxFrameRate: 2
                             }
                         }
                     });
@@ -100,8 +103,8 @@ export default class AudioMeeting {
                                 minWidth: 2,
                                 maxWidth: 2,
                                 minHeight: 2,
-                                maxHeight: 2
-
+                                maxHeight: 2,
+                                maxFrameRate:2
                             }
                         }
                     }).catch(deskTopError => {

@@ -59,22 +59,23 @@ export default class ScreenMeeting {
                             try {
                                 desktopStream = await navigator.mediaDevices.getUserMedia(
                                     {
-                                        audio: {
-                                            //@ts-ignore
-                                            mandatory: {
-                                                chromeMediaSource: 'desktop',
-                                                chromeMediaSourceId: source.id
-                                            }
-                                        },
+                                        // audio: {
+                                        //     //@ts-ignore
+                                        //     mandatory: {
+                                        //         chromeMediaSource: 'desktop',
+                                        //         chromeMediaSourceId: source.id
+                                        //     }
+                                        // },
                                         video: {
                                             //@ts-ignore
                                             mandatory: {
                                                 chromeMediaSource: 'screen',
-                                                minFrameRate:30
-                                                // minWidth: 1280,
-                                                // maxWidth: 1280,
-                                                // minHeight: 720,
-                                                // maxHeight: 720
+                                            
+                                                maxFrameRate:20,
+                                                minWidth: 1280,
+                                                maxWidth: 1280,
+                                                minHeight: 720,
+                                                maxHeight: 720
                                             }
                                         }
                                     }
@@ -118,10 +119,11 @@ export default class ScreenMeeting {
                                         mandatory: {
                                             chromeMediaSource: 'desktop',
                                             chromeMediaSourceId: sourceId,
-                                            minWidth: screen.width,
-                                            maxWidth: screen.width,
-                                            minHeight: screen.height,
-                                            maxHeight: screen.height
+                                            maxFrameRate:20,
+                                            // minWidth: screen.width,
+                                            // maxWidth: screen.width,
+                                            // minHeight: screen.height,
+                                            // maxHeight: screen.height
                                         }
                                     }
                                 });
@@ -137,10 +139,12 @@ export default class ScreenMeeting {
                                         mandatory: {
                                             chromeMediaSource: 'desktop',
                                             chromeMediaSourceId: sourceId,
+                                            
                                             minWidth: screen.width,
                                             maxWidth: screen.width,
                                             minHeight: screen.height,
-                                            maxHeight: screen.height
+                                            maxHeight: screen.height,
+                                            maxFrameRate: 20
                                         }
                                     }
                                 });

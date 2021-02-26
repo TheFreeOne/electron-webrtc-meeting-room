@@ -27,3 +27,4 @@
 #### 参考资料
  - 房间服务器和webrtc https://github.com/harcop/webrtc-demo.git
  - 音频可视化 https://www.jq22.com/jquery-info22983
+ - 服务器 https://zhuanlan.zhihu.com/p/56428846

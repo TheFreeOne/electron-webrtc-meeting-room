@@ -86,8 +86,8 @@ export default class IpcMainListener{
                 }
             });
             this._meetingWindow = meetingWindow;
-            meetingWindow.loadFile('./html/meeting/meeting.html');
-            meetingWindow.webContents.openDevTools();
+            meetingWindow.loadFile('./html/mesh/meeting/meeting.html');
+            // meetingWindow.webContents.openDevTools();
             meetingWindow.on('ready-to-show',()=>{
                 meetingWindow.show();
                 meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
@@ -122,7 +122,7 @@ export default class IpcMainListener{
                 event.returnValue = uuid;
                 // boardWindow.setParentWindow(this._meetingWindow);
             });
-             
+
             boardWindow.on('close',()=>{
                 this._meetingWindow &&  this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
             });
@@ -130,7 +130,7 @@ export default class IpcMainListener{
             this._meetingWindow.on('close',()=>{
                 boardWindow.close();
             });
-             
+
         });
         /**
          * 账号在其他地方登陆
