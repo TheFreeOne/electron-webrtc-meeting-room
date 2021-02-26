@@ -70,7 +70,7 @@ export default class ScreenMeeting {
                                             //@ts-ignore
                                             mandatory: {
                                                 chromeMediaSource: 'screen',
-                                            
+
                                                 maxFrameRate:20,
                                                 minWidth: 1280,
                                                 maxWidth: 1280,
@@ -139,7 +139,7 @@ export default class ScreenMeeting {
                                         mandatory: {
                                             chromeMediaSource: 'desktop',
                                             chromeMediaSourceId: sourceId,
-                                            
+
                                             minWidth: screen.width,
                                             maxWidth: screen.width,
                                             minHeight: screen.height,
