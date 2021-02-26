@@ -86,7 +86,7 @@ export default class IpcMainListener{
                 }
             });
             this._meetingWindow.loadFile('./html/meeting/meeting.html');
-            this._meetingWindow.webContents.openDevTools()
+            this._meetingWindow.webContents.openDevTools();
             this._meetingWindow.on('ready-to-show',()=>{
                 this._meetingWindow.show();
                 this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
@@ -146,13 +146,13 @@ export default class IpcMainListener{
         });
         //ChannelConstant.RTCPEERCONNECTION_DISCONNECTED
         ipcMain.on(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED,()=>{
-            dialog.showMessageBoxSync(this._mainWindow,{
-                message: '对方已退出，会议即将关闭'
-            });
+            // dialog.showMessageBoxSync(this._mainWindow,{
+            //     message: '对方已退出，会议即将关闭'
+            // });
 
-            if(this._meetingWindow){
-                this._meetingWindow.close();
-            }
+            // if(this._meetingWindow){
+            //     this._meetingWindow.close();
+            // }
 
         });
     }

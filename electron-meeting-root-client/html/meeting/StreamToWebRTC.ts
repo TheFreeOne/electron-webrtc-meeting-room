@@ -86,7 +86,7 @@ export default class StreamToWebRTC {
             (window as any).personInRoom = data.personInRoom;
             console.log(`${data.room}房间加入成功`);
             // 被动的一方/收到邀请的一方向服务器发送消息，说明客人已经准备好进行通讯
-            (window as any).socket.emit('ready', (window as any).roomNumber);
+            (window as any).socket.emit('ready', {room:(window as any).roomNumber,fromNickName: (window as any).nickname});
         });
         // 房间已经满
         (window as any).socket.on('full', room => {
@@ -101,7 +101,7 @@ export default class StreamToWebRTC {
             console.log(this);
             console.log(`对方准备完成`);
 
-            this.olderCreateRTCPeerConnection(data.fromSocketId);
+            this.olderCreateRTCPeerConnection(data.fromSocketId,data.fromNickName);
 
         });
 
@@ -109,7 +109,7 @@ export default class StreamToWebRTC {
         (window as any).socket.on('offer',  (event) => {
             console.log(` socket.on('offer'`);
 
-            this.newerCreateRTCPeerConnection((window as any).socketId, event.fromSocketId, event);
+            this.newerCreateRTCPeerConnection(  event.fromSocketId,event.fromNickName, event);
 
         });
 
@@ -156,6 +156,19 @@ export default class StreamToWebRTC {
 
         (window as any).socket.on('out of room', (event) => {
             (window as any).toastr.info(event.nickname + '离开了会议');
+            let fromSocketId = event.fromSocketId;
+            try {
+                
+                let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
+                let rtcPeerConnection = rtcPcMap.get(fromSocketId);
+                rtcPeerConnection.close();
+                rtcPeerConnection = null;
+                rtcPcMap.delete(fromSocketId);
+            } catch (error) {
+                console.error(error);
+                   
+            }
+            $(`#${fromSocketId}`).remove();
         });
 
         // 页面关闭之后
@@ -169,10 +182,11 @@ export default class StreamToWebRTC {
         }
     }
 
-    public olderCreateRTCPeerConnection(fromSocketId: string): void {
+    public olderCreateRTCPeerConnection(fromSocketId: string,fromNickName:string): void {
         let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
         let personVideoItem = document.createElement('div');
         personVideoItem.setAttribute('class', 'person-video-item');
+        personVideoItem.setAttribute('id',fromSocketId);
         let audio = document.createElement("audio");
 
         let screenVideo = document.createElement("video");
@@ -186,6 +200,7 @@ export default class StreamToWebRTC {
         personInfo.setAttribute('class', 'person-info');
         let personName = document.createElement('span');
         let personStatus = document.createElement('span');
+        personName.innerHTML = fromNickName + '：';
         personStatus.innerHTML = '发言中...';
         personInfo.appendChild(personName);
         personInfo.appendChild(personStatus);
@@ -210,6 +225,7 @@ export default class StreamToWebRTC {
                 })
             }
         };
+        
         //@ts-ignore
         let dataChannel = rtcPeerConnection.createDataChannel((window as any).roomNumber, { reliable: false });
         console.log('createDataChannel');
@@ -344,7 +360,8 @@ export default class StreamToWebRTC {
                     type: 'offer',
                     sdp: sessionDescription,
                     room: (window as any).roomNumber,
-                    toSocketId: fromSocketId
+                    toSocketId: fromSocketId,
+                    fromNickName: (window as any).nickname
                 })
             })
             .catch(err => {
@@ -355,7 +372,7 @@ export default class StreamToWebRTC {
     }
 
 
-    public newerCreateRTCPeerConnection(socketId: string, fromSocketId: string, event: any) {
+    public newerCreateRTCPeerConnection(  fromSocketId: string,fromNickName:string, event: any) {
 
         console.warn('newerCreateRTCPeerConnection');
 
@@ -369,6 +386,7 @@ export default class StreamToWebRTC {
         let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
         let personVideoItem = document.createElement('div');
         personVideoItem.setAttribute('class', 'person-video-item');
+        personVideoItem.setAttribute('id',fromSocketId);
         let audio = document.createElement("audio");
         let screenVideo = document.createElement("video");
         screenVideo.setAttribute('class', 'screen-video');
@@ -381,6 +399,7 @@ export default class StreamToWebRTC {
         personInfo.setAttribute('class', 'person-info');
         let personName = document.createElement('span');
         let personStatus = document.createElement('span');
+        personName.innerHTML = fromNickName + '：';
         personStatus.innerHTML = '发言中...';
         personInfo.appendChild(personName);
         personInfo.appendChild(personStatus);

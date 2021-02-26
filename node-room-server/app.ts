@@ -80,7 +80,7 @@ io.on('connection', socket => {
             socket.broadcast.to(room).emit('new one enter', { "socketId": socket.id });
             socket.emit('new one enter', { "socketId": socket.id });
             personInServer[socket.id] = socket;
-        } else if (clientSize <= 2) {
+        } else if (clientSize <= 8) {
             socket.join(room);
             socket.emit('joined', { "room": room, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
             socket.broadcast.to(room).emit('new one enter', { "socketId": socket.id });
@@ -96,8 +96,9 @@ io.on('connection', socket => {
 
     });
     // 向房间里头的人说新来的已经准备好了
-    socket.on('ready', room => {
-        socket.broadcast.to(room).emit('ready', { fromSocketId: socket.id });
+    socket.on('ready', event => {
+        event.fromSocketId = socket.id;
+        socket.broadcast.to(event.room).emit('ready', event);
     });
 
     socket.on('candidate', event => {
@@ -105,24 +106,34 @@ io.on('connection', socket => {
         event.fromSocketId = socket.id
         event.toSocketId = toSocketId
         // socket.broadcast.to(event.room).emit('candidate', event);
-        personInServer[toSocketId].emit('candidate', event);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('candidate', event);
+        }
     });
-
+    /**
+     * 向新来的人提示创建连接
+     */
     socket.on('offer', event => {
         let toSocketId = event.toSocketId;
         event.sdp.fromSocketId = socket.id;
+        event.sdp.fromNickName = event.fromNickName;
         // socket.broadcast.to(event.room).emit('offer', event.sdp);
-        personInServer[toSocketId] .emit('offer', event.sdp);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('offer', event.sdp);
+        }
     });
 
     socket.on('answer', event => {
-         let toSocketId = event.toSocketId;
+        let toSocketId = event.toSocketId;
         event.sdp.fromSocketId = socket.id
         // socket.broadcast.to(event.room).emit('answer', event.sdp);
-        personInServer[toSocketId] .emit('answer', event.sdp);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('answer', event.sdp);
+        }
     });
     // 用户退出房间
     socket.on('out of room', event => {
+        event.fromSocketId = socket.id;
         socket.broadcast.to(event.room).emit('out of room', event);
         socket.leave(event.room);
         let hasRoom = io.sockets.adapter.rooms.has(event.room)
@@ -134,10 +145,6 @@ io.on('connection', socket => {
                 }).then(error => {
 
                 });
-
-
-
-
         }
     });
 })
