@@ -3,6 +3,9 @@
 #### 介绍
 使用electron提供webrtc，java和node提供相关交互的视频会议室  
 使用mesh架构，目前支持9人房间，因为是mesh架构，所以人多会卡
+
+#### 未来
+ - [ ] SFU架构 
 #### 相关技术
  - 登陆服务器 springboot
  - 房间服务器 nodejs + typescript
