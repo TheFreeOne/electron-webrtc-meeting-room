@@ -52,11 +52,15 @@ function createWindow() {
         });
         log.debug('创建了一个窗口');
     });
+
+    mainWindow.on('closed',()=>{
+        app.quit();
+    });
 }
 
 app.on('ready', () => {
     createWindow();
-
+    
     session.fromPartition("default").setPermissionRequestHandler((webContents, permission, callback) => {
         let allowedPermissions = ["audioCapture"]; 
         // Full list here: https://developer.chrome.com/extensions/declare_permissions#manifest

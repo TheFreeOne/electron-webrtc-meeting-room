@@ -5,6 +5,7 @@ import org.freeone.electronwebrtcmeetingroom.util.ResultModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,6 +39,14 @@ public class RoomController {
         boolean existed = roomService.existed(roomNumber);
         return ResultModel.okWithData(new HashMap<String,Object>(){{
             put("existed", existed);
+        }});
+    }
+    @RequestMapping("recycleRoom.json")
+    public ResultModel recycleRoom(@RequestParam String roomNumber){
+        System.out.println("回收房间号 = " +roomNumber);
+        roomService.recycleRoom(roomNumber);
+        return ResultModel.okWithData(new HashMap<String,Object>(){{
+            put("success", true);
         }});
     }
 }

@@ -22,5 +22,10 @@ public class RoomServiceImpl implements RoomService {
         return roomUtil.hasRoom(roomNumber);
     }
 
+    @Override
+    public void recycleRoom(String roomNumber) {
+        roomUtil.recycleRoom(roomNumber);
+    }
+
 
 }

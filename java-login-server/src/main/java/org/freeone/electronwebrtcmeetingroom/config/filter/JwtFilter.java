@@ -33,6 +33,8 @@ public class JwtFilter implements Filter {
             , "/**/*.js"
             , "/**/*.woff"
             , "/dev/**"
+            , "/imserver/**"
+            , "/recycleRoom.json"
             , "/api/**");
 
     AntPathMatcher antPathMatcher = new AntPathMatcher();

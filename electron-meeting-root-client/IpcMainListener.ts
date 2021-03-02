@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain,screen} from "electron";
+import { BrowserWindow, dialog, ipcMain,ipcRenderer,screen} from "electron";
 import ChannelConstant from "./util/ChannelConstant";
 
 export default class IpcMainListener{
@@ -11,7 +11,7 @@ export default class IpcMainListener{
 
     private _meetingWindow:BrowserWindow ;
 
-    
+
 
     public startListen(){
 
@@ -20,6 +20,36 @@ export default class IpcMainListener{
             this._token = data.token;
             this._nickname = data.nickname;
             this._mainWindow.loadFile('index.html');
+            /**
+             * 创建websocket，实现其他地方登陆退出
+             */
+            let webSocketWindow = new BrowserWindow({
+                title: 'WebSocket',
+                // width: 830,
+                // height: 560,
+                // minWidth: 830,
+                // minHeight: 560,
+                icon: 'icon.ico',
+                // parent: this._mainWindow,
+                // modal: true,
+                autoHideMenuBar:true,
+                // maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
+                // maxHeight: screen.getPrimaryDisplay().workAreaSize.height,
+                show: false,
+                useContentSize: true,
+                webPreferences: {
+                    nodeIntegration: true,
+                    enableRemoteModule: true,
+                    webSecurity:false
+                }
+            });
+            webSocketWindow.loadFile('./html/webSocket/webSocket.html');
+
+            webSocketWindow.on('ready-to-show',()=>{
+                // webSocketWindow.show();
+                // webSocketWindow.webContents.openDevTools();
+                webSocketWindow.webContents.send('token',this._token);
+            });
 
         });
 
@@ -35,7 +65,7 @@ export default class IpcMainListener{
 
         // 创建会议窗口
         ipcMain.on(ChannelConstant.CREATE_MEETING_WINDOW,(event,roomNumber,actionType)=>{
-            this._meetingWindow = new BrowserWindow({
+            let meetingWindow = new BrowserWindow({
                 title: '会议室--会议中：'+roomNumber,
                 width: 830,
                 height: 560,
@@ -55,14 +85,18 @@ export default class IpcMainListener{
                     webSecurity:false
                 }
             });
-            this._meetingWindow.loadFile('./html/meeting/meeting.html');
-            this._meetingWindow.webContents.openDevTools()
-            this._meetingWindow.on('ready-to-show',()=>{
-                this._meetingWindow.show();
-                this._meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
+            this._meetingWindow = meetingWindow;
+            meetingWindow.loadFile('./html/mesh/meeting/meeting.html');
+            // meetingWindow.webContents.openDevTools();
+            meetingWindow.on('ready-to-show',()=>{
+                meetingWindow.show();
+                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
+                meetingWindow.webContents.send("windowId",meetingWindow.id);
             });
         });
-
+        /**
+         * 创建白板窗口
+         */
         ipcMain.on(ChannelConstant.CREATE_BOARD_WINODW,(event)=>{
             let uuid = this.generateUUID();
             let boardWindow = new BrowserWindow({
@@ -72,7 +106,6 @@ export default class IpcMainListener{
                 minWidth: 830,
                 minHeight: 560,
                 icon:  '/icon.ico',
-                parent:this._mainWindow,
                 // modal:true,
                 autoHideMenuBar: true,
                 show: true,
@@ -84,8 +117,49 @@ export default class IpcMainListener{
                     webSecurity: false
                 }
             });
-            boardWindow.loadFile("./html/meeting/board.html");
-            event.returnValue = uuid;
+            boardWindow.loadFile("./html/whiteboard/index.html");
+            boardWindow.on('ready-to-show',()=>{
+                event.returnValue = uuid;
+                // boardWindow.setParentWindow(this._meetingWindow);
+            });
+
+            boardWindow.on('close',()=>{
+                this._meetingWindow &&  this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
+            });
+
+            this._meetingWindow.on('close',()=>{
+                boardWindow.close();
+            });
+
+        });
+        /**
+         * 账号在其他地方登陆
+         */
+        ipcMain.on(ChannelConstant.LOGIN_IN_OTHER_PLACES,()=>{
+            dialog.showMessageBoxSync(this._mainWindow,{
+                message: '该账号在其他地方登陆'
+            });
+
+            let windows = BrowserWindow.getAllWindows();
+            windows.forEach(windowItem =>{
+               if( windowItem.id !== this._mainWindow.id){
+                windowItem.close();
+               }
+            });
+            this._token = null;
+            this._nickname = null;
+            this._mainWindow.loadFile('./html/login/login.html');
+        });
+        //ChannelConstant.RTCPEERCONNECTION_DISCONNECTED
+        ipcMain.on(ChannelConstant.RTCPEERCONNECTION_DISCONNECTED,()=>{
+            // dialog.showMessageBoxSync(this._mainWindow,{
+            //     message: '对方已退出，会议即将关闭'
+            // });
+
+            // if(this._meetingWindow){
+            //     this._meetingWindow.close();
+            // }
+
         });
     }
 
@@ -100,7 +174,7 @@ export default class IpcMainListener{
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
-      
+
     }
-    
+
 }
