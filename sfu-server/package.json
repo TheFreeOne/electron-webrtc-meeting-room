@@ -1,0 +1,25 @@
+{
+  "name": "node-room-server",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "tsc",
+    "start": "  node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "base": "^3.0.0",
+    "express": "^4.17.1",
+    "httpolyglot": "^0.1.2",
+    "mediasoup": "^3.6.37",
+    "socket.io": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "@types/socket.io": "^2.1.13"
+  }
+}
