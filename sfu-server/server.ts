@@ -99,6 +99,42 @@ async function createWorkers() {
 var personInServer = {}
 io.on('connection', socket => {
 
+    socket.on('createRoom', async ({
+                                       room_id
+                                   }, callback) => {
+
+        if (roomList.has(room_id)) {
+            callback('already exists')
+        } else {
+            console.log('---created room--- ', room_id)
+            let worker = await getMediasoupWorker();
+            console.log("worker");
+
+            console.log(worker);
+
+            roomList.set(room_id, new Room(room_id, worker, io))
+            callback(room_id)
+        }
+    })
+
+    socket.on('join', ({
+                           room_id,
+                           name
+                       }, cb) => {
+
+        console.log('---user joined--- \"' + room_id + '\": ' + name)
+        if (!roomList.has(room_id)) {
+            return cb({
+                error: 'room does not exist'
+            })
+        }
+        roomList.get(room_id).addPeer(new Peer(socket.id, name))
+        socket.room_id = room_id
+
+        cb(roomList.get(room_id).toJson())
+    })
+
+
     socket.on('create or join', async (event, callback) => {
         let room_id  = event.room;
         let personInRoom = { length: 0 };
@@ -124,7 +160,17 @@ io.on('connection', socket => {
             socket.emit('new one enter', { "socketId": socket.id });
             personInServer[socket.id] = socket;
             let worker = await getMediasoupWorker();
-            roomList.set(room_id, new Room(room_id, worker, io))
+            roomList.set(room_id, new Room(room_id, worker, io));
+
+                console.log('---user joined--- \"' + room_id + '\": ' + name)
+                if (!roomList.has(room_id)) {
+                    return cb({
+                        error: 'room does not exist'
+                    })
+                }
+                roomList.get(room_id).addPeer(new Peer(socket.id, name))
+                socket.room_id = room_id
+                cb(roomList.get(room_id).toJson())
 
         } else {
             console.log('error joining room');
