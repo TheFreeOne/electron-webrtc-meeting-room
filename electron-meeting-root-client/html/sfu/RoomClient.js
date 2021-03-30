@@ -17,6 +17,7 @@ const _EVENTS = {
 class RoomClient {
 
     constructor(localMediaEl, remoteVideoEl, remoteAudioEl, mediasoupClient, socket, room_id, name, successCallback) {
+        console.log(`constructor  `,localMediaEl, remoteVideoEl, remoteAudioEl, mediasoupClient, socket, room_id, name, successCallback)
         this.name = name
         this.localMediaEl = localMediaEl
         this.remoteVideoEl = remoteVideoEl
@@ -248,6 +249,7 @@ class RoomClient {
 
 
     async produce(type, deviceId = null) {
+        console.log(`produce: ${type} ${deviceId}`)
         let mediaConstraints = {}
         let audio = false
         let screen = false
@@ -255,6 +257,10 @@ class RoomClient {
             case mediaType.audio:
                 mediaConstraints = {
                     audio: {
+                        echoCancellation: true,
+                        noiseSuppression: true,
+                        sampleRate: 44100,
+                        channelCount:{ideal:2,min:1},
                         deviceId: deviceId
                     },
                     video: false
@@ -299,6 +305,7 @@ class RoomClient {
         console.log('mediacontraints:',mediaConstraints)
         let stream;
         try {
+            // 获取留
             stream = screen ? await navigator.mediaDevices.getDisplayMedia() : await navigator.mediaDevices.getUserMedia(mediaConstraints)
             console.log(navigator.mediaDevices.getSupportedConstraints())
 
@@ -375,7 +382,7 @@ class RoomClient {
             })
 
             this.producerLabel.set(type, producer.id)
-
+            console.log(`switch (${type})`)
             switch (type) {
                 case mediaType.audio:
                     this.event(_EVENTS.startAudio)
@@ -443,7 +450,7 @@ class RoomClient {
         } = this.device
         const data = await this.socket.request('consume', {
             rtpCapabilities,
-            consumerTransportId: this.consumerTransport.id, // might be 
+            consumerTransportId: this.consumerTransport.id, // might be
             producerId
         });
         const {

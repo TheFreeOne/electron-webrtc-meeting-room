@@ -1,7 +1,14 @@
 // if (location.href.substr(0, 5) !== 'https')
 //   location.href = 'https' + location.href.substr(4, location.href.length - 4)
-const socket = io(window.config.nodeRoomServer, { path: '/socket.io' });
 
+const ChannelConstant =  require( "../../util/ChannelConstant");
+
+const socket = io(window.config.nodeRoomServer, { path: '/socket.io' });
+const {ipcRenderer} = require("electron");
+ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType) => {
+  console.log(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS)
+  document.getElementById("roomidInput").value = _roomNumber;
+});
 
 
 let producer = null;
