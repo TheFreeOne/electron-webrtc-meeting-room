@@ -159,6 +159,60 @@ io.on('connection', socket => {
     //     cb(roomList.get(room_id).toJson())
     // })
 
+    // 向房间里头的人说新来的已经准备好了
+    socket.on('ready', event => {
+        event.fromSocketId = socket.id;
+        socket.broadcast.to(event.room).emit('ready', event);
+    });
+
+    socket.on('candidate', event => {
+        let toSocketId = event.toSocketId;
+        event.fromSocketId = socket.id
+        event.toSocketId = toSocketId
+        // socket.broadcast.to(event.room).emit('candidate', event);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('candidate', event);
+        }
+    });
+    /**
+     * 向新来的人提示创建连接
+     */
+    socket.on('offer', event => {
+        let toSocketId = event.toSocketId;
+        event.sdp.fromSocketId = socket.id;
+        event.sdp.fromNickName = event.fromNickName;
+        // socket.broadcast.to(event.room).emit('offer', event.sdp);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('offer', event.sdp);
+        }
+    });
+
+    socket.on('answer', event => {
+        let toSocketId = event.toSocketId;
+        event.sdp.fromSocketId = socket.id
+        // socket.broadcast.to(event.room).emit('answer', event.sdp);
+        if (toSocketId && personInServer[toSocketId]) {
+            personInServer[toSocketId].emit('answer', event.sdp);
+        }
+    });
+    // 用户退出房间
+    socket.on('out of room', event => {
+        event.fromSocketId = socket.id;
+        socket.broadcast.to(event.room).emit('out of room', event);
+        socket.leave(event.room);
+        let hasRoom = io.sockets.adapter.rooms.has(event.room)
+        if (!hasRoom) {
+
+            // axios.get(config.javaLoginServer + "/recycleRoom.json?roomNumber=" + event.room)
+            //     .then(function (res) {
+            //
+            //     }).then(error => {
+            //
+            // });
+        }
+    });
+
+
     socket.on('getProducers', () => {
         console.log(`---get producers--- name:${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         // send all the current producer to newly joined member
