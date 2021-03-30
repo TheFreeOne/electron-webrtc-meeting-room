@@ -1,0 +1,1358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\system_wrappers">
+      <UniqueIdentifier>{73ED7632-BA7D-2644-BD04-C7392130838D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\system_wrappers\source">
+      <UniqueIdentifier>{8A6F5E6E-316F-22D4-1547-253B04CB32E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\network">
+      <UniqueIdentifier>{C0E16F67-D855-B60F-8134-BA0CD12A3DD9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\call">
+      <UniqueIdentifier>{4194A5F5-EAC8-84D3-5A1B-2FE5680BDC83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp">
+      <UniqueIdentifier>{9CD05236-6361-600F-6DD0-16DCB17A452F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\bitrate_controller">
+      <UniqueIdentifier>{7D929C95-1720-104A-DBF8-7965FD9E1C8F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\bitrate_controller">
+      <UniqueIdentifier>{7D929C95-1720-104A-DBF8-7965FD9E1C8F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\system_wrappers">
+      <UniqueIdentifier>{73ED7632-BA7D-2644-BD04-C7392130838D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\system_wrappers\source">
+      <UniqueIdentifier>{8A6F5E6E-316F-22D4-1547-253B04CB32E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\experiments">
+      <UniqueIdentifier>{215F37F4-8C97-1137-559F-1CEE145FFA30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\network">
+      <UniqueIdentifier>{C0E16F67-D855-B60F-8134-BA0CD12A3DD9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\numerics">
+      <UniqueIdentifier>{168745A4-2F0D-B7A8-2F10-9299025EF8C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\numerics">
+      <UniqueIdentifier>{168745A4-2F0D-B7A8-2F10-9299025EF8C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\numerics">
+      <UniqueIdentifier>{168745A4-2F0D-B7A8-2F10-9299025EF8C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\numerics">
+      <UniqueIdentifier>{168745A4-2F0D-B7A8-2F10-9299025EF8C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\numerics">
+      <UniqueIdentifier>{168745A4-2F0D-B7A8-2F10-9299025EF8C6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base\system">
+      <UniqueIdentifier>{AFD6A456-1D6D-10A7-15EC-A60913FD8BEC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\rtc_base">
+      <UniqueIdentifier>{F61FE869-C339-5D66-4289-838FEAC60397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\call">
+      <UniqueIdentifier>{4194A5F5-EAC8-84D3-5A1B-2FE5680BDC83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\call">
+      <UniqueIdentifier>{4194A5F5-EAC8-84D3-5A1B-2FE5680BDC83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\transport">
+      <UniqueIdentifier>{35A8FE0D-F57D-33D9-F012-AAD988E1EBCD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api\units">
+      <UniqueIdentifier>{2EECB3AE-CAAF-88C0-2794-5A5F8CFB9128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\api">
+      <UniqueIdentifier>{6AE05662-6177-52C8-526E-2E7848D15DCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\pacing">
+      <UniqueIdentifier>{45A993B5-2062-CAFA-B666-A3F26408DE77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator">
+      <UniqueIdentifier>{3DB390FF-BC4A-DF77-CA3F-0B9EC8BF5CFC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\remote_bitrate_estimator\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp">
+      <UniqueIdentifier>{9CD05236-6361-600F-6DD0-16DCB17A452F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp">
+      <UniqueIdentifier>{9CD05236-6361-600F-6DD0-16DCB17A452F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp\source">
+      <UniqueIdentifier>{8A6F5E6E-316F-22D4-1547-253B04CB32E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\rtp_rtcp\source\rtp_packet">
+      <UniqueIdentifier>{694052ED-933D-74B9-86F2-523EC69B9267}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\bitrate_controller">
+      <UniqueIdentifier>{7D929C95-1720-104A-DBF8-7965FD9E1C8F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\bitrate_controller">
+      <UniqueIdentifier>{7D929C95-1720-104A-DBF8-7965FD9E1C8F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\goog_cc">
+      <UniqueIdentifier>{7EEA0693-6772-ADDE-49BE-95A32135CDE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules">
+      <UniqueIdentifier>{212BF124-DF0B-CDE7-390D-94BCC1C226CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller">
+      <UniqueIdentifier>{04D890C9-A2FD-ABF0-A2A2-F97AB9F66E79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc\modules\congestion_controller\rtp">
+      <UniqueIdentifier>{BA7FCFF7-7644-A5EC-E5D1-35A5C4F68E09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libwebrtc">
+      <UniqueIdentifier>{F4EB5D24-B5C0-EFDE-CB7F-2B69B59C1189}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="libwebrtc\system_wrappers\source\field_trial.cc">
+      <Filter>libwebrtc\system_wrappers\source</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\rate_statistics.cc">
+      <Filter>libwebrtc\rtc_base</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_parser.cc">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\experiments\alr_experiment.cc">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\experiments\field_trial_units.cc">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\experiments\rate_control_settings.cc">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\rtc_base\network\sent_packet.cc">
+      <Filter>libwebrtc\rtc_base\network</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\call\rtp_transport_controller_send.cc">
+      <Filter>libwebrtc\call</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\transport\bitrate_settings.cc">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\transport\field_trial_based_config.cc">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\transport\network_types.cc">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\transport\goog_cc_factory.cc">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\units\timestamp.cc">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\units\time_delta.cc">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\units\data_rate.cc">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\units\data_size.cc">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\units\frequency.cc">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\api\network_state_predictor.cc">
+      <Filter>libwebrtc\api</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\pacing\interval_budget.cc">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\pacing\bitrate_prober.cc">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\pacing\paced_sender.cc">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\bwe_defines.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.cc">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.cc">
+      <Filter>libwebrtc\modules\rtp_rtcp\include</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.cc">
+      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.cc">
+      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.cc">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.cc">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.cc">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClCompile>
+    <ClCompile Include="libwebrtc\modules\congestion_controller\rtp\control_handler.cc">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClCompile>
+    <ClInclude Include="libwebrtc\system_wrappers\source\field_trial.h">
+      <Filter>libwebrtc\system_wrappers\source</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\rate_statistics.h">
+      <Filter>libwebrtc\rtc_base</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_parser.h">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\experiments\field_trial_units.h">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\experiments\alr_experiment.h">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\experiments\rate_control_settings.h">
+      <Filter>libwebrtc\rtc_base\experiments</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\network\sent_packet.h">
+      <Filter>libwebrtc\rtc_base\network</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\units\unit_base.h">
+      <Filter>libwebrtc\rtc_base\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\constructor_magic.h">
+      <Filter>libwebrtc\rtc_base</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_minmax.h">
+      <Filter>libwebrtc\rtc_base\numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions.h">
+      <Filter>libwebrtc\rtc_base\numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_conversions_impl.h">
+      <Filter>libwebrtc\rtc_base\numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\numerics\percentile_filter.h">
+      <Filter>libwebrtc\rtc_base\numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\numerics\safe_compare.h">
+      <Filter>libwebrtc\rtc_base\numerics</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\system\unused.h">
+      <Filter>libwebrtc\rtc_base\system</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\rtc_base\type_traits.h">
+      <Filter>libwebrtc\rtc_base</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\call\rtp_transport_controller_send.h">
+      <Filter>libwebrtc\call</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\call\rtp_transport_controller_send_interface.h">
+      <Filter>libwebrtc\call</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\webrtc_key_value_config.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\network_types.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\bitrate_settings.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\network_control.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\field_trial_based_config.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\transport\goog_cc_factory.h">
+      <Filter>libwebrtc\api\transport</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\bitrate_constraints.h">
+      <Filter>libwebrtc\api</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\units\frequency.h">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\units\data_size.h">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\units\time_delta.h">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\units\data_rate.h">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\units\timestamp.h">
+      <Filter>libwebrtc\api\units</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\api\network_state_predictor.h">
+      <Filter>libwebrtc\api</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\include\module_common_types_public.h">
+      <Filter>libwebrtc\modules\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\pacing\interval_budget.h">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\pacing\paced_sender.h">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\pacing\packet_router.h">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\pacing\bitrate_prober.h">
+      <Filter>libwebrtc\modules\pacing</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\inter_arrival.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_detector.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\overuse_estimator.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\bwe_defines.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\aimd_rate_control.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\remote_bitrate_estimator_abs_send_time.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\remote_bitrate_estimator\include\remote_bitrate_estimator.h">
+      <Filter>libwebrtc\modules\remote_bitrate_estimator\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\rtp_rtcp\include\rtp_rtcp_defines.h">
+      <Filter>libwebrtc\modules\rtp_rtcp\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\rtp_rtcp\source\rtp_packet\transport_feedback.h">
+      <Filter>libwebrtc\modules\rtp_rtcp\source\rtp_packet</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\bitrate_controller\loss_based_bandwidth_estimation.h">
+      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\bitrate_controller\send_side_bandwidth_estimation.h">
+      <Filter>libwebrtc\modules\bitrate_controller</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\bitrate_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\link_capacity_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\median_slope_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_controller.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\trendline_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\goog_cc_network_control.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_increase_detector_interface.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\acknowledged_bitrate_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\congestion_window_pushback_controller.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\delay_based_bwe.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\probe_bitrate_estimator.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\goog_cc\alr_detector.h">
+      <Filter>libwebrtc\modules\congestion_controller\goog_cc</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\send_time_history.h">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\transport_feedback_adapter.h">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\modules\congestion_controller\rtp\control_handler.h">
+      <Filter>libwebrtc\modules\congestion_controller\rtp</Filter>
+    </ClInclude>
+    <ClInclude Include="libwebrtc\mediasoup_helpers.h">
+      <Filter>libwebrtc</Filter>
+    </ClInclude>
+    <None Include="libwebrtc.gyp"/>
+  </ItemGroup>
+</Project>

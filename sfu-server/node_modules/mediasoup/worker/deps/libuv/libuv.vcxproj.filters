@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include\uv">
+      <UniqueIdentifier>{DBD03A45-B7F1-8761-8439-8009674C5DEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include\uv">
+      <UniqueIdentifier>{DBD03A45-B7F1-8761-8439-8009674C5DEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include\uv">
+      <UniqueIdentifier>{DBD03A45-B7F1-8761-8439-8009674C5DEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include\uv">
+      <UniqueIdentifier>{DBD03A45-B7F1-8761-8439-8009674C5DEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include">
+      <UniqueIdentifier>{57CA55B8-BCC5-4000-CE3A-58972F82E9CB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\include\uv">
+      <UniqueIdentifier>{DBD03A45-B7F1-8761-8439-8009674C5DEA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv">
+      <UniqueIdentifier>{933A722C-A948-E4BE-6A81-70764DE90AEB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src">
+      <UniqueIdentifier>{8CDEE807-BC53-E450-C8B8-4DEBB66742D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libuv\src\win">
+      <UniqueIdentifier>{47FC5EC4-15EB-E92F-89D7-AFE51CF838A9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libuv\common.gypi">
+      <Filter>libuv</Filter>
+    </None>
+    <ClInclude Include="libuv\include\uv.h">
+      <Filter>libuv\include</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\include\uv\tree.h">
+      <Filter>libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\include\uv\errno.h">
+      <Filter>libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\include\uv\threadpool.h">
+      <Filter>libuv\include\uv</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\include\uv\version.h">
+      <Filter>libuv\include\uv</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\fs-poll.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\heap-inl.h">
+      <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\idna.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\idna.h">
+      <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\inet.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\queue.h">
+      <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\random.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\strscpy.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\strscpy.h">
+      <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\threadpool.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\timer.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\uv-data-getter-setters.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\uv-common.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\uv-common.h">
+      <Filter>libuv\src</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\version.c">
+      <Filter>libuv\src</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\include\uv\win.h">
+      <Filter>libuv\include\uv</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\async.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\atomicops-inl.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\core.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\detect-wakeup.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\dl.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\error.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\fs.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\fs-event.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\getaddrinfo.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\getnameinfo.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\handle.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\handle-inl.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClInclude Include="libuv\src\win\internal.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\loop-watcher.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\pipe.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\thread.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\poll.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\process.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\process-stdio.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\req-inl.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\signal.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\snprintf.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\stream.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\stream-inl.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\tcp.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\tty.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\udp.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\util.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClCompile Include="libuv\src\win\winapi.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\winapi.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <ClCompile Include="libuv\src\win\winsock.c">
+      <Filter>libuv\src\win</Filter>
+    </ClCompile>
+    <ClInclude Include="libuv\src\win\winsock.h">
+      <Filter>libuv\src\win</Filter>
+    </ClInclude>
+    <None Include="uv.gyp"/>
+  </ItemGroup>
+</Project>
