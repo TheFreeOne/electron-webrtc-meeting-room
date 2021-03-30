@@ -96,43 +96,68 @@ async function createWorkers() {
 
 }
 
-
+var personInServer = {}
 io.on('connection', socket => {
 
-    socket.on('createRoom', async ({
-        room_id
-    }, callback) => {
+    socket.on('create or join', async (event, callback) => {
+        let room_id  = event.room;
+        let personInRoom = { length: 0 };
+        if (io.sockets.adapter.rooms.has(room_id)) {
+            personInRoom = Array.from(io.sockets.adapter.rooms.get(room_id));
+        }
+        const clientSize = personInRoom.length;
+        if (clientSize === 0) {
+            socket.join(room_id);
+            socket.emit('created', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
+            socket.broadcast.to(room_id).emit('new one enter', { "socketId": socket.id });
+            socket.emit('new one enter', { "socketId": socket.id });
+            personInServer[socket.id] = socket;
 
-        if (roomList.has(room_id)) {
-            callback('already exists')
-        } else {
-            console.log('---created room--- ', room_id)
             let worker = await getMediasoupWorker();
-            console.log("worker");
-
-            console.log(worker);
-
             roomList.set(room_id, new Room(room_id, worker, io))
-            callback(room_id)
+
+
+        } else if (clientSize <= 8) {
+            socket.join(room_id);
+            socket.emit('joined', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
+            socket.broadcast.to(room_id).emit('new one enter', { "socketId": socket.id });
+            socket.emit('new one enter', { "socketId": socket.id });
+            personInServer[socket.id] = socket;
+            let worker = await getMediasoupWorker();
+            roomList.set(room_id, new Room(room_id, worker, io))
+
+        } else {
+            console.log('error joining room');
+            socket.emit('full', { "room": room_id, "socketId": socket.id });
         }
-    })
 
-    socket.on('join', ({
-        room_id,
-        name
-    }, cb) => {
+        // if (roomList.has(room_id)) {
+        //     callback('already exists')
+        // } else {
+        //     console.log('---created room--- ', room_id)
+        //     let worker = await getMediasoupWorker();
+        //
+        //     roomList.set(room_id, new Room(room_id, worker, io))
+        //     callback(room_id)
+        // }
 
-        console.log('---user joined--- \"' + room_id + '\": ' + name)
-        if (!roomList.has(room_id)) {
-            return cb({
-                error: 'room does not exist'
-            })
-        }
-        roomList.get(room_id).addPeer(new Peer(socket.id, name))
-        socket.room_id = room_id
+    });
 
-        cb(roomList.get(room_id).toJson())
-    })
+    // socket.on('join', ({
+    //     room_id,
+    //     name
+    // }, cb) => {
+    //
+    //     console.log('---user joined--- \"' + room_id + '\": ' + name)
+    //     if (!roomList.has(room_id)) {
+    //         return cb({
+    //             error: 'room does not exist'
+    //         })
+    //     }
+    //     roomList.get(room_id).addPeer(new Peer(socket.id, name))
+    //     socket.room_id = room_id
+    //     cb(roomList.get(room_id).toJson())
+    // })
 
     socket.on('getProducers', () => {
         console.log(`---get producers--- name:${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
