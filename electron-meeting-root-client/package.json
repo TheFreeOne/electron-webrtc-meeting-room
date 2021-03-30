@@ -8,7 +8,7 @@
     "prestart": "tsc",
     "pack": "electron-builder --dir",
     "build": "tsc && electron-builder --win --x64",
-    "start": "electron ."
+    "start": "chcp 65001 & electron ."
   },
   "devDependencies": {
     "@types/jquery": "^3.5.5",

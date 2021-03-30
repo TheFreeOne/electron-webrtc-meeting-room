@@ -10,7 +10,8 @@ export default class AudioMeeting {
         let audioStream = null;
 
         let constraints = {
-            video: false, audio: {
+            video: false,
+            audio: {
                 echoCancellation: true,
                 noiseSuppression: true,
                 sampleRate: 44100,
@@ -25,7 +26,7 @@ export default class AudioMeeting {
         audioStream.addTrack(emptyStream);
         audioStream.addTrack(emptyStream.clone());
         console.log(emptyStream.getSettings());
-        
+
         return audioStream;
         // 可选的方式获取麦克风
         // audioStream = await navigator.mediaDevices.getUserMedia({
@@ -68,10 +69,10 @@ export default class AudioMeeting {
                         }
                     });
 
-                    
+
                     if (desktopAudioStream.getVideoTracks().length > 0) {
                         desktopAudioStream.getVideoTracks()[0].enabled = false;
-                        desktopAudioStream.addTrack(desktopAudioStream.getVideoTracks()[0].clone()); 
+                        desktopAudioStream.addTrack(desktopAudioStream.getVideoTracks()[0].clone());
                     }
                     return desktopAudioStream;
                 } catch (e) {
@@ -118,7 +119,7 @@ export default class AudioMeeting {
                         }
                     });
 
-                    // 生成一个3个轨道，1个音频2个视频 
+                    // 生成一个3个轨道，1个音频2个视频
 
                     if ((desktopAudioStream as MediaStream).getVideoTracks().length > 0) {
 
@@ -138,5 +139,5 @@ export default class AudioMeeting {
         }
     }
 
-     
+
 }

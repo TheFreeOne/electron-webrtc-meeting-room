@@ -1,0 +1,49 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(abseil-cpp)", "..\..\..\libwebrtc\deps\abseil-cpp", "{E03EE389-5857-8119-1AE9-34C820B51313}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(deps)", "..\..\..\libwebrtc\deps", "{12661AB6-ACCD-6E2F-FFB0-732950D1F6A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "(libwebrtc)", "..\..\..\libwebrtc", "{39B81098-84C1-39DA-EECD-7496B21BE399}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "abseil", "deps\abseil-cpp\abseil.vcxproj", "{DFA383C2-91FE-437B-0444-F2F33499DDC7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libuv", "..\libuv\libuv.vcxproj", "{67F13F84-49C0-7EF1-8D5F-36FF35C96EE7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libwebrtc", "libwebrtc.vcxproj", "{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "openssl", "..\openssl\openssl.vcxproj", "{3C9080F6-424E-756E-3B96-07AB835D5371}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C9080F6-424E-756E-3B96-07AB835D5371}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3C9080F6-424E-756E-3B96-07AB835D5371}.Debug|Win32.Build.0 = Debug|Win32
+		{3C9080F6-424E-756E-3B96-07AB835D5371}.Release|Win32.ActiveCfg = Release|Win32
+		{3C9080F6-424E-756E-3B96-07AB835D5371}.Release|Win32.Build.0 = Release|Win32
+		{67F13F84-49C0-7EF1-8D5F-36FF35C96EE7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67F13F84-49C0-7EF1-8D5F-36FF35C96EE7}.Debug|Win32.Build.0 = Debug|Win32
+		{67F13F84-49C0-7EF1-8D5F-36FF35C96EE7}.Release|Win32.ActiveCfg = Release|Win32
+		{67F13F84-49C0-7EF1-8D5F-36FF35C96EE7}.Release|Win32.Build.0 = Release|Win32
+		{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6}.Debug|Win32.Build.0 = Debug|Win32
+		{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6}.Release|Win32.ActiveCfg = Release|Win32
+		{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6}.Release|Win32.Build.0 = Release|Win32
+		{DFA383C2-91FE-437B-0444-F2F33499DDC7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DFA383C2-91FE-437B-0444-F2F33499DDC7}.Debug|Win32.Build.0 = Debug|Win32
+		{DFA383C2-91FE-437B-0444-F2F33499DDC7}.Release|Win32.ActiveCfg = Release|Win32
+		{DFA383C2-91FE-437B-0444-F2F33499DDC7}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DFA383C2-91FE-437B-0444-F2F33499DDC7} = {E03EE389-5857-8119-1AE9-34C820B51313}
+		{E03EE389-5857-8119-1AE9-34C820B51313} = {12661AB6-ACCD-6E2F-FFB0-732950D1F6A8}
+		{12661AB6-ACCD-6E2F-FFB0-732950D1F6A8} = {39B81098-84C1-39DA-EECD-7496B21BE399}
+		{DB50CC5B-4AE9-39BA-CB9F-D8A17BE408F6} = {39B81098-84C1-39DA-EECD-7496B21BE399}
+	EndGlobalSection
+EndGlobal
