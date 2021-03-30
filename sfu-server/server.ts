@@ -108,7 +108,7 @@ io.on('connection', socket => {
         const clientSize = personInRoom.length;
         if (clientSize === 0) {
             socket.join(room_id);
-            socket.emit('created', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
+            socket.emit('created', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room_id)) });
             socket.broadcast.to(room_id).emit('new one enter', { "socketId": socket.id });
             socket.emit('new one enter', { "socketId": socket.id });
             personInServer[socket.id] = socket;
@@ -119,7 +119,7 @@ io.on('connection', socket => {
 
         } else if (clientSize <= 8) {
             socket.join(room_id);
-            socket.emit('joined', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
+            socket.emit('joined', { "room": room_id, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room_id)) });
             socket.broadcast.to(room_id).emit('new one enter', { "socketId": socket.id });
             socket.emit('new one enter', { "socketId": socket.id });
             personInServer[socket.id] = socket;
