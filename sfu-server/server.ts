@@ -252,19 +252,21 @@ io.on('connection', socket => {
     })
 })
 
-// function room() {
-//     return Object.values(roomList).map(r => {
-//         return {
-//             router: r.router.id,
-//             peers: Object.values(r.peers).map(p => {
-//                 return {
-//                     name: p.name,
-//                 }
-//             }),
-//             id: r.id
-//         }
-//     })
-// }
+function room() {
+    return Object.values(roomList).map(r => {
+        return {
+            router: r.router.id,
+            peers: Object.values(r.peers).map(p => {
+                // @ts-ignore
+                return {
+                    // @ts-ignore
+                    name: p.name,
+                }
+            }),
+            id: r.id
+        }
+    })
+}
 
 /**
  * Get next mediasoup Worker.
