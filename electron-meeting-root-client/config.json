@@ -1,8 +1,0 @@
-{
-  "javaLoginServer": "http://127.0.0.1:18080/",
-  "nodeRoomServer": "http://192.168.0.142:3016",
-  "sturnserver": "stun:119.29.16.187:3478",
-  "turnserver": "turn:119.29.16.187:3478",
-  "turnusername":"username",
-  "turncredential":"password"
-}
