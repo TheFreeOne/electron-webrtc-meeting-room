@@ -1,6 +1,8 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
+    <link href="../../static/toastr/toastr.css" rel="stylesheet" />
     <script>
         (function () {
             let config = require('../../config.json');
@@ -16,12 +18,12 @@
     <!-- <script src="./RoomClient.js"></script> -->
 
     <style>
-        .containers {
+        /* .containers {
             display: grid;
             grid-gap: 5px;
             grid-template-columns: repeat(auto-fit, 1fr);
             grid-template-rows: repeat(auto-fit, 300px);
-        }
+        } */
 
         .container {
             display: flex;
@@ -29,7 +31,7 @@
 
         .vid {
             flex: 0 1 auto;
-            height: 400px;
+            /* height: 400px; */
         }
 
         .settings {
@@ -49,19 +51,212 @@
             display: none
         }
     </style>
+
+<style>
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .layui-row,
+    .layui-xs-col10,
+    .layui-xs-col2 {
+        width: 100%;
+        height: 100%;
+    }
+
+    .main-content {
+        background-color: gainsboro;
+        height: 100%;
+    }
+
+    .left-content {
+        background-color: grey;
+        height: 100%;
+    }
+
+    .layui-row {
+        height: calc(100% - 150px);
+    }
+
+    .window-item,
+    .window-item>img {
+        display: inline-block;
+
+        position: relative;
+        margin: 4px;
+    }
+
+    .window-item {
+        width: 192px;
+        height: 120px;
+        border: 2px solid darkgray;
+        float: left;
+        text-align: center;
+        box-sizing: border-box;
+        padding-bottom: 5px;
+    }
+
+    .window-item:hover {
+        border: 2px solid deepskyblue;
+    }
+
+    .window-item>img {
+        height: 100%;
+        max-width: 96%;
+    }
+
+    .window-item p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        position: absolute;
+        background: white;
+        bottom: -20px;
+        width: 100%;
+    }
+
+
+
+    .window-item-content {
+        display: grid;
+        grid-template-columns: 220px 220px 220px;
+        grid-template-rows: 150px 150px 150px;
+    }
+
+    .main-video-content {
+        padding-right: 20px;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        box-sizing: border-box;
+        background-color: #c3c2c2;
+        display: grid;
+        grid-gap: 10px;
+        grid-template-rows: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);
+        overflow-y: scroll;
+    }
+
+    .bottom-util {
+        height: 15%;
+    }
+
+    .talking-now-btn {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #audio-wave-canvas {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .local-audio-wave-div {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 100px;
+        max-height: 100px;
+    }
+    .person-video-item {
+        position: relative;
+        box-sizing: border-box;
+        background-color: #000;
+        min-width: 212px;
+        min-height: 116px;
+        z-index: 1;
+    }
+    .person-video-item .screen-video{
+        position: relative;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .person-video-item .camera-video{
+        position: absolute;
+        width: 25%;
+        height: 25%;
+        bottom: 25px;
+        right: 0;
+        z-index: 2;
+    }
+
+    .person-video-item .person-info{
+        height: 25px;
+        background-color: rebeccapurple;
+        position: absolute;
+        width: 100%;
+        z-index: 3;
+        left: 0;
+        bottom: 0;
+    }
+    .person-video-item audio{
+        display: none;
+    }
+
+
+</style>
+
+<style>
+    .person-video-item video{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+</style>
 </head>
 
 <body>
-    <div id="login">
 
-        Room:   <input id="roomidInput" value="123" type="text" />
-        <!--<button id="createRoom" onclick="createRoom(roomid.value)" label="createRoom">Create Room</button>-->
-        <br />
-        User: <input id='nameInput' value="bob" type="text" />
-        <button id='joinButton' onclick="joinRoom(nameInput.value, roomidInput.value)">Join</button>
+
+
+    <div id="login" style="display: none;">
+
+        <input id="roomidInput" value="" type="hidden" />
+    
+        
     </div>
+
+    <div class="layui-row">
+        <div class="layui-col-xs10 main-content">
+            <div class="main-audio-content">
+                <audio id="main-audio"></audio>
+            </div>
+
+            <div class="main-video-content container"   id="remoteVideos" >
+
+                <div class="person-video-item" id="localMedia">
+                    <div class="person-info">
+                        <span class="person-name" >我：</span>
+                        <span class="person-status" >发言中</span>
+                    </div>
+                </div>
+ 
+            </div>
+            <div id="remoteAudios"></div>
+        </div>
+        <div class="layui-col-xs2 left-content">
+            <div class="left-video-content" style="position: relative;height: calc(100% - 100px);">
+
+
+            </div>
+            <div class="local-audio-wave-div">
+                <canvas id="audio-wave-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+   
+    
+
     <div id="control" class="hidden">
-        <button id='exitButton' class='hidden' onclick="rc.exit()">Exit</button>
+        <button id='exitButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.exit()" remark="123">退出</button>
         <br/>
         audio: <select id="audioSelect">
         </select>
@@ -85,20 +280,10 @@
 
 
 
-    <div id='videoMedia' class='hidden'>
-        <h2>------local------</h2>
-        <div id="localMedia"></div>
-        <!--<video id="localVideo" autoplay inline class="vid"></video>-->
-        <!--<video id="localScreen" autoplay inline class="vid"></video>-->
-        <h2>-----remote-----</h2>
-        <div id="remoteVideos" class="container">
-        </div>
-
-        <div id="remoteAudios"></div>
-
-    </div>
+   
 </body>
 <footer>
+    <script src="../../static/layui-v2.5.7/layui.all.js"></script>
     <script src="index.js"></script>
 </footer>
 

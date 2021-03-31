@@ -88,7 +88,7 @@ export default class IpcMainListener{
             this._meetingWindow = meetingWindow;
             // meetingWindow.loadFile('./html/mesh/meeting/meeting.html');
             meetingWindow.loadFile('./html/sfu/index.html');
-            // meetingWindow.webContents.openDevTools();
+            meetingWindow.webContents.openDevTools();
             meetingWindow.on('ready-to-show',()=>{
                 meetingWindow.show();
                 meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);

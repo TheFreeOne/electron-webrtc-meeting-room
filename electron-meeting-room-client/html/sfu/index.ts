@@ -1,6 +1,8 @@
 import RoomClient from './RoomClient';
+import ChannelConstant from  "../../util/ChannelConstant";
 import $ = require('jquery');
 import toastr = require('toastr');
+const {ipcRenderer} = require("electron");
 
 console.log(toastr);
 
@@ -21,26 +23,26 @@ toastr.options = {
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
+var roomNumber ;
 (window as any).toastr = toastr;
-
-// if (location.href.substr(0, 5) !== 'https')
-//   location.href = 'https' + location.href.substr(4, location.href.length - 4)
 (window as any).RoomClient = RoomClient;
 (window as any).$ = $;
-const ChannelConstant =  require( "../../util/ChannelConstant");
+
+
 //@ts-ignore
 const socket = io(window.config.nodeRoomServer, { path: '/socket.io' });
-const {ipcRenderer} = require("electron");
-ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType) => {
+ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType) => {
   console.log(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS)
   //@ts-ignore
   document.getElementById("roomidInput").value = _roomNumber;
+  roomNumber = _roomNumber;
+  joinRoom( 'bob' + Math.round(Math.random() * 1000) , roomNumber);
 });
 
 
 let producer = null;
 //@ts-ignore
-nameInput.value = 'bob' + Math.round(Math.random() * 1000)
+ 
 
 socket.request = function request(type, data = {}) {
   return new Promise((resolve, reject) => {
@@ -88,15 +90,24 @@ function roomOpen() {
   //@ts-ignore
   control.className = ''
   //@ts-ignore
-  reveal(videoMedia)
+  // reveal(videoMedia)
 }
-
+/**
+ * 隐藏元素
+ * @param elem 
+ */
 function hide(elem) {
-  elem.className = 'hidden'
+  // elem.className = 'hidden'
+  $(elem).hide();
 }
 
+/**
+ * 
+ * @param elem 显示元素
+ */
 function reveal(elem) {
-  elem.className = ''
+  // elem.className = ''
+  $(elem).show();
 }
 
 
@@ -148,7 +159,7 @@ function addListeners() {
     //@ts-ignore
     reveal(login)
     //@ts-ignore
-    hide(videoMedia)
+    // hide(videoMedia)
   })
 }
 

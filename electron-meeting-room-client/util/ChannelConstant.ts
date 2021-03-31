@@ -8,7 +8,7 @@ export default class ChannelConstant{
 
     static CREATE_MEETING_WINDOW = 'create_meeting_window';
 
-    static CREATE_MEETING_WINDOW_SUCCESS ='create_meeting_window_success';
+    public static CREATE_MEETING_WINDOW_SUCCESS ='create_meeting_window_success';
 
     static CREATE_BOARD_WINODW = 'create_board_window';
 

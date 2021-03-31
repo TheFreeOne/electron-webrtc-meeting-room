@@ -1,8 +1,8 @@
-import VideoMeeting from './videoMeeting' ;
-import AudioMeeting from './audioMeeting' ;
+import VideoUtil from './videoUtil' ;
+import AudioUtil from './audioUtil' ;
 
 
- 
+
 
 export default  class RoomClient {
 
@@ -23,7 +23,7 @@ export default  class RoomClient {
         video: 'videoType',
         screen: 'screenType'
     }
-    
+
 
     private name;
     private localMediaEl;
@@ -88,6 +88,7 @@ export default  class RoomClient {
     ////////// INIT /////////
 
     async createRoom(room_id) {
+        console.log(`createRoom`)
         await this.socket.request('createRoom', {
             room_id
         }).catch(err => {
@@ -96,7 +97,7 @@ export default  class RoomClient {
     }
 
     async join(name, room_id) {
-
+        console.log(`join`)
         this.socket.request('join', {
             name,
             room_id
@@ -113,7 +114,8 @@ export default  class RoomClient {
     }
 
     async loadDevice(routerRtpCapabilities) {
-        let device
+        console.log(`loadDevice`)
+        let device;
         try {
             device = new this.mediasoupClient.Device();
         } catch (error) {
@@ -130,7 +132,7 @@ export default  class RoomClient {
     }
 
     async initTransports(device) {
-
+        console.log(`initTransports`)
         // init producerTransport
         {
             const data = await this.socket.request('createWebRtcTransport', {
@@ -147,6 +149,7 @@ export default  class RoomClient {
             this.producerTransport.on('connect', async function ({
                 dtlsParameters
             }, callback, errback) {
+                console.log(`producer request connectTransport`)
                 this.socket.request('connectTransport', {
                     dtlsParameters,
                     transport_id: data.id
@@ -210,6 +213,7 @@ export default  class RoomClient {
             this.consumerTransport.on('connect', function ({
                 dtlsParameters
             }, callback, errback) {
+                console.log(`connect request connectTransport`)
                 this.socket.request('connectTransport', {
                     transport_id: this.consumerTransport.id,
                     dtlsParameters
@@ -341,27 +345,34 @@ export default  class RoomClient {
                     //@ts-ignore
                     stream = navigator.mediaDevices.getDisplayMedia();
                 } catch (error) {
-                   
+
                 }
             } else if (audio) {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
                 } catch (error) {
-                    let audioMeeting = new AudioMeeting()
+                   try {
+                    let audioUtil = new AudioUtil();
+                    let _stream = await audioUtil.getSystemStream();
+                    (window as any)._stream = _stream;
+                    console.log(_stream);
                     
-                    let _stream = await audioMeeting.getSystemStream();
-                    stream = new MediaStream([_stream.getAudioTracks[0],_stream.getVideoTracks[0]]);
-                   
+                    stream = new MediaStream([_stream.getAudioTracks()[0],_stream.getVideoTracks()[0]]);
+                   } catch (error) {
+                       console.error(error);
+                       
+                   }
+
                 }
             } else {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
                 } catch (error) {
- 
+
                     console.error(error);
-                    let videoMeeting = new VideoMeeting();
+                    let videoMeeting = new VideoUtil();
                     let _stream = await videoMeeting.getStream();
-                    stream = new MediaStream([_stream.getAudioTracks[0],_stream.getVideoTracks[0]]);
+                    stream = new MediaStream([_stream.getAudioTracks()[0],_stream.getVideoTracks()[0]]);
                 }
             }
 
@@ -466,7 +477,7 @@ export default  class RoomClient {
     }
 
     async consume(producer_id) {
-
+        console.log(`consume ${producer_id}`)
         //let info = await roomInfo()
 
         this.getConsumeStream(producer_id).then(function ({
@@ -479,20 +490,26 @@ export default  class RoomClient {
 
             let elem;
             if (kind === 'video') {
-                elem = document.createElement('video')
-                elem.srcObject = stream
-                elem.id = consumer.id
-                elem.playsinline = false
-                elem.autoplay = true
-                elem.className = "vid"
-                this.remoteVideoEl.appendChild(elem)
+                let div = document.createElement('div');
+                div.className = 'person-video-item';
+
+                elem = document.createElement('video');
+
+                elem.srcObject = stream;
+                elem.id = consumer.id;
+                elem.playsinline = false;
+                elem.autoplay = true;
+                elem.className = "vid";
+                div.appendChild(elem);
+                div.setAttribute('consumer_id',producer_id);
+                this.remoteVideoEl.appendChild(div);
             } else {
-                elem = document.createElement('audio')
-                elem.srcObject = stream
-                elem.id = consumer.id
-                elem.playsinline = false
-                elem.autoplay = true
-                this.remoteAudioEl.appendChild(elem)
+                elem = document.createElement('audio');
+                elem.srcObject = stream;
+                elem.id = consumer.id;
+                elem.playsinline = false;
+                elem.autoplay = true;
+                this.remoteAudioEl.appendChild(elem);
             }
 
             consumer.on('trackended', function () {
@@ -508,6 +525,7 @@ export default  class RoomClient {
     }
 
     async getConsumeStream(producerId) {
+        console.log(`getConsumeStream ${producerId}`)
         const {
             rtpCapabilities
         } = this.device
@@ -600,14 +618,22 @@ export default  class RoomClient {
     }
 
     removeConsumer(consumer_id) {
+        
         let elem = document.getElementById(consumer_id);
         //@ts-ignore
         elem.srcObject.getTracks().forEach(function (track) {
             track.stop()
         })
-        elem.parentNode.removeChild(elem)
-
+        let parent = elem.parentNode;
+        parent.removeChild(elem);
         this.consumers.delete(consumer_id)
+        // 备注，后面加的
+        // @ts-ignore
+        if(parent.className == 'person-video-item'){
+            parent.parentNode.removeChild(parent);
+        }
+   
+
     }
 
     exit(offline = false) {
@@ -666,5 +692,4 @@ export default  class RoomClient {
     static get EVENTS() {
         return RoomClient._EVENTS
     }
-} 
- 
+}
