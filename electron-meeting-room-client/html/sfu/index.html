@@ -258,20 +258,20 @@
     <div id="control" class="hidden">
         <button id='exitButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.exit()" remark="123">退出</button>
         <br/>
-        audio: <select id="audioSelect">
+        音频设备: <select id="audioSelect">
         </select>
         <br/>
-        video: <select id="videoSelect">
+        视频设备: <select id="videoSelect"  >
         </select>
         <br />
-        <button id='startAudioButton' class='hidden' onclick="rc.produce(RoomClient.mediaType.audio, audioSelect.value)">audio</button>
-        <button id='stopAudioButton' class='hidden' onclick="rc.closeProducer(RoomClient.mediaType.audio)">close
+        <button id='startAudioButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.produce(RoomClient.mediaType.audio, audioSelect.value)">audio</button>
+        <button id='stopAudioButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.closeProducer(RoomClient.mediaType.audio)">close
             audio</button>
-        <button id='startVideoButton' class='hidden' onclick="rc.produce(RoomClient.mediaType.video, videoSelect.value)">video</button>
-        <button id='stopVideoButton' class='hidden' onclick="rc.closeProducer(RoomClient.mediaType.video)">close
+        <button id='startVideoButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.produce(RoomClient.mediaType.video, videoSelect.value)">video</button>
+        <button id='stopVideoButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.closeProducer(RoomClient.mediaType.video)">close
             video</button>
-        <button id='startScreenButton' class='hidden' onclick="rc.produce(RoomClient.mediaType.screen)">screen</button>
-        <button id='stopScreenButton' class='hidden' onclick="rc.closeProducer(RoomClient.mediaType.screen)">close
+        <button id='startScreenButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.produce(RoomClient.mediaType.screen)">screen</button>
+        <button id='stopScreenButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' onclick="rc.closeProducer(RoomClient.mediaType.screen)">close
             screen</button>
         <br />
     </div>

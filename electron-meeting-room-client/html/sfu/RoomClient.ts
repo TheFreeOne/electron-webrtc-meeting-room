@@ -345,14 +345,17 @@ export default  class RoomClient {
                     //@ts-ignore
                     stream = navigator.mediaDevices.getDisplayMedia();
                 } catch (error) {
-
+                    (window as any).toastr.error('获取屏幕流失败');
                 }
             } else if (audio) {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
                 } catch (error) {
+                    (window as any).toastr.error('获取音频流失败');
+
                    try {
                     let audioUtil = new AudioUtil();
+                    (window as any).toastr.info('更改为获取系统声音');
                     let _stream = await audioUtil.getSystemStream();
                     (window as any)._stream = _stream;
                     console.log(_stream);
@@ -360,7 +363,7 @@ export default  class RoomClient {
                     stream = new MediaStream([_stream.getAudioTracks()[0],_stream.getVideoTracks()[0]]);
                    } catch (error) {
                        console.error(error);
-                       
+                       (window as any).toastr.error('获取系统声音失败');
                    }
 
                 }
