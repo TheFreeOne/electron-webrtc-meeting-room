@@ -6,7 +6,6 @@ const {ipcRenderer} = require("electron");
 
 console.log(toastr);
 
-
 toastr.options = {
     "closeButton": true,
     "debug": false,
