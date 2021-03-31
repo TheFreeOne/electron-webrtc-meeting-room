@@ -1,11 +1,11 @@
-import VideoUtil from './videoUtil' ;
-import AudioUtil from './audioUtil' ;
+import VideoUtil from './videoUtil';
+import AudioUtil from './audioUtil';
 import ScreenUtil from './ScreenUtil';
 
 
 
 
-export default  class RoomClient {
+export default class RoomClient {
 
     public static _EVENTS = {
         exitRoom: 'exitRoom',
@@ -108,7 +108,8 @@ export default  class RoomClient {
             let device = await this.loadDevice(data)
             this.device = device
             await this.initTransports(device)
-            this.socket.emit('getProducers')
+            this.socket.emit('getProducers');
+            (window as any).socketid = e.socketid;
         }.bind(this)).catch(e => {
             console.log(e)
         })
@@ -262,14 +263,40 @@ export default  class RoomClient {
         this.socket.on('newProducers', async function (data) {
             console.log('new producers', data)
             for (let {
-                producer_id
+                producer_id,
+                producer_socket_id
             } of data) {
-                await this.consume(producer_id)
+                await this.consume(producer_id, producer_socket_id)
             }
         }.bind(this))
 
         this.socket.on('disconnect', function () {
             this.exit(true)
+        }.bind(this))
+
+        // 自定义方法
+        this.socket.on('joined', function (data) {
+            console.log(`一个用户${data.name}加入了房间`);
+
+            (window as any).personMap.set(data.socketid, data.name);
+
+        }.bind(this));
+        // 自定义方法
+        this.socket.on('othersInRoom', function (data) {
+           
+            for(let item of data){
+                (window as any).personMap.set(item.socketid, item.name);
+            }
+            
+        }.bind(this));
+
+        // 自定义方法
+        this.socket.on('a user is disconnected', function (data) {
+            ((window as any).personMap as Map<string, string>).delete(data.sockerid);
+            let personVideoItem = document.getElementById(data.sockerid);
+            if (personVideoItem) {
+                personVideoItem.parentNode.removeChild(personVideoItem);
+            }
         }.bind(this))
 
 
@@ -341,29 +368,32 @@ export default  class RoomClient {
             // 获取流
             if (screen) {
 
-                    let screenUtil = new ScreenUtil();
-                    stream = await screenUtil.getScreenStream();
-              
+                let screenUtil = new ScreenUtil();
+                stream = await screenUtil.getScreenStream();
+
             } else if (audio) {
+                let audioUtil = new AudioUtil();
                 try {
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
                 } catch (error) {
                     (window as any).toastr.error('获取音频流失败');
 
-                   try {
-                    let audioUtil = new AudioUtil();
-                    (window as any).toastr.info('更改为获取系统声音');
-                    let _stream = await audioUtil.getSystemStream();
-                    (window as any)._stream = _stream;
-                    console.log(_stream);
-                    
-                    stream = new MediaStream([_stream.getAudioTracks()[0],_stream.getVideoTracks()[0]]);
-                   } catch (error) {
-                       console.error(error);
-                       (window as any).toastr.error('获取系统声音失败');
-                   }
+                    try {
+
+                        (window as any).toastr.info('更改为获取系统声音');
+                        let _stream = await audioUtil.getSystemStream();
+                        (window as any)._stream = _stream;
+                        console.log(_stream);
+
+                        stream = new MediaStream([_stream.getAudioTracks()[0]]);
+                    } catch (error) {
+                        console.error(error);
+                        (window as any).toastr.error('获取系统声音失败');
+                    }
 
                 }
+                (window as any).currentStream = stream;
+                (window as any).drawAudioWave(stream);
             } else {
                 try {
 
@@ -373,7 +403,7 @@ export default  class RoomClient {
                     console.error(error);
                     let videoMeeting = new VideoUtil();
                     let _stream = await videoMeeting.getStream();
-                    stream = new MediaStream([_stream.getAudioTracks()[0],_stream.getVideoTracks()[0]]);
+                    stream = new MediaStream([_stream.getAudioTracks()[0], _stream.getVideoTracks()[0]]);
                 }
             }
 
@@ -381,13 +411,15 @@ export default  class RoomClient {
 
             console.log(navigator.mediaDevices.getSupportedConstraints());
 
+            console.log("audio ? ", audio ? 'YES' : "NO");
 
-            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0]
-            const params = {
+            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
+
+            const params: any = {
                 track
             };
             if (!audio && !screen) {
-                //@ts-ignore
+
                 params.encodings = [{
                     rid: 'r0',
                     maxBitrate: 100000,
@@ -405,19 +437,19 @@ export default  class RoomClient {
                     scalabilityMode: 'S1T3'
                 }
                 ];
-                //@ts-ignore
+
                 params.codecOptions = {
                     videoGoogleStartBitrate: 1000
                 };
             }
 
-            let producer = await this.producerTransport.produce(params)
-
+            let producer = await this.producerTransport.produce(params);
+            (window as any).currentProducer = producer;
             console.log('producer', producer)
 
             this.producers.set(producer.id, producer)
 
-            let elem
+            let elem;
             if (!audio) {
                 elem = document.createElement('video')
                 elem.srcObject = stream
@@ -425,7 +457,7 @@ export default  class RoomClient {
                 elem.playsinline = false
                 elem.autoplay = true
                 elem.className = "vid"
-                this.localMediaEl.appendChild(elem)
+                this.localMediaEl.appendChild(elem);
             }
 
             producer.on('trackended', () => {
@@ -477,7 +509,7 @@ export default  class RoomClient {
         }
     }
 
-    async consume(producer_id) {
+    async consume(producer_id, producer_socket_id?) {
         console.log(`consume ${producer_id}`)
         //let info = await roomInfo()
 
@@ -491,8 +523,8 @@ export default  class RoomClient {
 
             let elem;
             if (kind === 'video') {
-                let div = document.createElement('div');
-                div.className = 'person-video-item';
+
+
 
                 elem = document.createElement('video');
 
@@ -501,16 +533,46 @@ export default  class RoomClient {
                 elem.playsinline = false;
                 elem.autoplay = true;
                 elem.className = "vid";
-                div.appendChild(elem);
-                div.setAttribute('consumer_id',producer_id);
-                this.remoteVideoEl.appendChild(div);
+                elem.setAttribute('consumer_id', producer_id);
+
+                if (document.getElementById(producer_socket_id)) {
+                    document.getElementById(producer_socket_id).appendChild(elem);
+                } else {
+                    let div = document.createElement('div');
+                    div.className = 'person-video-item';
+                    div.id = producer_socket_id;
+                    div.appendChild(elem);
+                    this.remoteVideoEl.appendChild(div);
+                }
+
+
+
             } else {
                 elem = document.createElement('audio');
                 elem.srcObject = stream;
                 elem.id = consumer.id;
                 elem.playsinline = false;
                 elem.autoplay = true;
-                this.remoteAudioEl.appendChild(elem);
+                if (document.getElementById(producer_socket_id)) {
+                    document.getElementById(producer_socket_id).appendChild(elem);
+                } else {
+                    let div = document.createElement('div');
+                    div.className = 'person-video-item';
+                    div.id = producer_socket_id;
+                    div.appendChild(elem);
+
+                    let personInfo = document.createElement('div');
+                    personInfo.setAttribute('class', 'person-info');
+                    let personName = document.createElement('span');
+                    let personStatus = document.createElement('span');
+                    personName.innerHTML = (window as any).personMap.get(producer_socket_id);
+                    personStatus.innerHTML = '发言中...';
+                    personInfo.appendChild(personName);
+                    personInfo.appendChild(personStatus);
+                    div.appendChild(personInfo);
+                    this.remoteVideoEl.appendChild(div);
+                }
+
             }
 
             consumer.on('trackended', function () {
@@ -619,7 +681,7 @@ export default  class RoomClient {
     }
 
     removeConsumer(consumer_id) {
-        
+
         let elem = document.getElementById(consumer_id);
         //@ts-ignore
         elem.srcObject.getTracks().forEach(function (track) {
@@ -630,10 +692,10 @@ export default  class RoomClient {
         this.consumers.delete(consumer_id)
         // 备注，后面加的
         // @ts-ignore
-        if(parent.className == 'person-video-item'){
+        if (parent.className == 'person-video-item') {
             parent.parentNode.removeChild(parent);
         }
-   
+
 
     }
 

@@ -1,12 +1,18 @@
 const config = require('./config')
-import * as socket from 'socket.io';
-class Room {
-    private id:string;
-    private peers:Map<any,any>;
-    private io:socket.Server;
-    private router;
+import * as SocketIO from 'socket.io';
+import Peer from './Peer' ;
+import { Worker } from 'mediasoup/src/Worker';
+import { Router } from 'mediasoup/src/Router';
+import { WebRtcTransport, WebRtcTransportStat } from 'mediasoup/src/WebRtcTransport';
 
-    constructor(room_id, worker, io) {
+
+export default class Room {
+    private id:string;
+    private peers:Map<any,Peer>;
+    private io:SocketIO.Server;
+    private router:Router;
+
+    constructor(room_id:string, worker:Worker, io:SocketIO.Server) {
         this.id = room_id
         const mediaCodecs = config.mediasoup.router.mediaCodecs
         worker.createRouter({
@@ -29,13 +35,15 @@ class Room {
             peer.producers.forEach(producer => {
                 producerList.push({
                     producer_id: producer.id
+                    // @ts-ignore 获取额外添加的属性
+                    , producer_socket_id: producer.producer_socket_id
                 })
             })
         })
-        return producerList
+        return producerList;
     }
 
-    getRtpCapabilities() {
+    getRtpCapabilities():Router["rtpCapabilities"] {
         return this.router.rtpCapabilities
     }
 
@@ -45,7 +53,7 @@ class Room {
             initialAvailableOutgoingBitrate
         } = config.mediasoup.webRtcTransport;
 
-        const transport = await this.router.createWebRtcTransport({
+        const transport:WebRtcTransport = await this.router.createWebRtcTransport({
             listenIps: config.mediasoup.webRtcTransport.listenIps,
             enableUdp: true,
             enableTcp: true,
@@ -90,13 +98,14 @@ class Room {
     async produce(socket_id, producerTransportId, rtpParameters, kind) {
         // handle undefined errors
         return new Promise(async function (resolve, reject) {
-            let producer = await this.peers.get(socket_id).createProducer(producerTransportId, rtpParameters, kind)
+             
+            let producer = await (this.peers.get(socket_id) as Peer).createProducer(producerTransportId, rtpParameters, kind,socket_id);
             resolve(producer.id)
             this.broadCast(socket_id, 'newProducers', [{
                 producer_id: producer.id,
                 producer_socket_id: socket_id
             }])
-        }.bind(this))
+        }.bind(this));
     }
 
     async consume(socket_id, consumer_transport_id, producer_id,  rtpCapabilities) {
@@ -120,7 +129,7 @@ class Room {
             })
         }.bind(this))
 
-        return params
+        return params;
 
     }
 
@@ -159,4 +168,5 @@ class Room {
 
 
 }
-export = Room;
+
+ 

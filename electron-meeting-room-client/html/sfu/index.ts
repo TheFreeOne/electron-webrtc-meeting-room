@@ -27,7 +27,8 @@ var roomNumber ;
 (window as any).toastr = toastr;
 (window as any).RoomClient = RoomClient;
 (window as any).$ = $;
-
+// 人员 人员id，人员名称
+var personMap = new Map<string,string>();
 
 //@ts-ignore
 const socket = io(window.config.nodeRoomServer, { path: '/socket.io' });
@@ -187,4 +188,73 @@ document.getElementById('copyRoomNumberButton').onclick = function(){
   clipboard.writeText(roomNumber, 'clipboard');
   layui.layer.msg('复制房间号成功');
 }
+
+function drawAudioWave(audioStream:MediaStream) {
+  //part1: 画布
+  let canvas = document.getElementById("audio-wave-canvas");
+  let context = (canvas as any).getContext("2d");
+
+
+  let WIDTH = (canvas as any).width;
+  let HEIGHT = (canvas as any).height;
+
+
+
+  //part3: 分析器
+  let audioContext = new AudioContext();//音频内容
+  let src = audioContext.createMediaStreamSource(audioStream);
+  let analyser = audioContext.createAnalyser();
+
+  src.connect(analyser);
+  // analyser.connect(AudCtx.destination);   // 屏蔽之后不会播放声音
+  analyser.fftSize = 128;//快速傅里叶变换, 必须为2的N次方
+
+  let bufferLength = analyser.frequencyBinCount;// = fftSize * 0.5
+
+  //part4: 变量
+  let barWidth = (WIDTH / bufferLength) - 1;//间隔1px
+  let barHeight;
+
+  let dataArray = new Uint8Array(bufferLength);//8位无符号定长数组
+
+  //part5: 动态监听
+  function renderFrame() {
+      requestAnimationFrame(renderFrame);//方法renderFrame托管到定时器，无限循环调度，频率<16.6ms/次
+
+      // context.fillStyle = "#000";//黑色背景
+      context.fillStyle = "gray";//黑色背景
+      context.fillRect(0, 0, WIDTH, HEIGHT);//画布拓展全屏,动态调整
+
+      analyser.getByteFrequencyData(dataArray);//获取当前时刻的音频数据
+
+      //part6: 绘画声压条
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+          let data = dataArray[i];//int,0~255
+
+          let percentV = data / 255;//纵向比例
+          let percentH = i / bufferLength;//横向比例
+
+          barHeight = HEIGHT * percentV;
+
+          //gbk,0~255
+          let r = 255 * percentV;//值越大越红
+          let g = 255 * percentH;//越靠右越绿
+          // let b = 50;
+          let b = 128;
+
+          context.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+          context.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);
+
+          x += barWidth + 1;//间隔1px
+      }
+  }
+
+  renderFrame();
+
+
+
+}
+
+(window as any).drawAudioWave = drawAudioWave;
 export = {}

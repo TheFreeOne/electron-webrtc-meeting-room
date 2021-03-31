@@ -1,21 +1,25 @@
-class Peer {
+import { Consumer } from "mediasoup/src/Consumer";
+import { Producer } from "mediasoup/src/Producer";
+import { WebRtcTransport } from "mediasoup/src/WebRtcTransport";
 
-    private id;
-    private name ;
-    private transports ;
-    private consumers ;
-    private producers ;
+export default  class Peer {
+
+    public id;
+    public name ;
+    public transports:Map<any,WebRtcTransport> ;
+    public consumers:Map<any,Consumer> ;
+    public producers:Map<any,Producer> ;
 
     constructor(socket_id, name) {
         this.id = socket_id
         this.name = name
-        this.transports = new Map()
+        this.transports = new Map<any,WebRtcTransport>()
         this.consumers = new Map()
-        this.producers = new Map()
+        this.producers = new Map<any,Producer>()
     }
 
 
-    addTransport(transport) {
+    addTransport(transport:WebRtcTransport) {
         this.transports.set(transport.id, transport)
     }
 
@@ -26,13 +30,16 @@ class Peer {
         });
     }
 
-    async createProducer(producerTransportId, rtpParameters, kind) {
+    async createProducer(producerTransportId, rtpParameters, kind,producer_socket_id?):Promise<Producer> {
+        console.log(`createProducer`,producerTransportId, rtpParameters, kind,producer_socket_id);
+        
         //TODO handle null errors
-        let producer = await this.transports.get(producerTransportId).produce({
+        let producer:Producer = await (this.transports.get(producerTransportId) as  WebRtcTransport).produce({
             kind,
-            rtpParameters
+            rtpParameters 
         })
-
+        // @ts-ignore 额外添加属性
+        producer.producer_socket_id = producer_socket_id;
         this.producers.set(producer.id, producer)
 
         producer.on('transportclose', function() {
@@ -42,13 +49,13 @@ class Peer {
 
         }.bind(this))
 
-        return producer
+        return producer;
     }
 
-    async createConsumer(consumer_transport_id, producer_id, rtpCapabilities) {
+    async createConsumer(consumer_transport_id, producer_id, rtpCapabilities)  {
         let consumerTransport = this.transports.get(consumer_transport_id)
-
-        let consumer = null
+    
+        let consumer:Consumer = null
         try {
             consumer = await consumerTransport.consume({
                 producerId: producer_id,
@@ -112,5 +119,6 @@ class Peer {
         this.consumers.delete(consumer_id)
     }
 
-}
-export = Peer;
+     
+
+} 

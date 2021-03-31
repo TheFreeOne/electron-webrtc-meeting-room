@@ -26,6 +26,7 @@ const http: HTTP.Server = new HTTP.Server(app);
 // const http:HTTP.Server = require('http').Server(app);
 const io: socket.Server = require('socket.io')(http);
 
+
 const port = process.env.PORT || 3004;
 
 
@@ -49,9 +50,9 @@ http.listen(port, () => {
     console.log(`connected to ${port}`);
 });
 var personInServer = {}
-io.on('connection', socket => {
+io.on('connection', (socket    ) => {
 
-
+     
 
     console.log('a user is connected');
     // 创建或这是加入服务器
