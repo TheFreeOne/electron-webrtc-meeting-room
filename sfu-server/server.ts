@@ -217,7 +217,9 @@ io.on('connection', socket => {
     socket.on('getMyRoomInfo', (_, cb) => {
         cb(roomList.get(socket.room_id).toJson())
     })
-
+    /**
+     * 断开连接，关掉窗口之类的
+     */
     socket.on('disconnect', () => {
         console.log(`---disconnect--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         if (!socket.room_id) return
@@ -230,7 +232,9 @@ io.on('connection', socket => {
         console.log(`---producer close--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         roomList.get(socket.room_id).closeProducer(socket.id, producer_id)
     })
-
+    /**
+     * 点击了退出房间
+     */
     socket.on('exitRoom', async (_, callback) => {
         console.log(`---exit room--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         if (!roomList.has(socket.room_id)) {
@@ -246,8 +250,6 @@ io.on('connection', socket => {
         }
 
         socket.room_id = null
-
-
         callback('successfully exited room')
     })
 })

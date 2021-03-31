@@ -2,7 +2,7 @@
 
 #### 介绍
 使用electron提供webrtc，java和node提供相关交互的视频会议室  
-使用mesh架构，目前支持9人房间，因为是mesh架构，所以人多会卡
+使用sfu架构，(~~mesh架构，目前支持9人房间，因为是mesh架构，所以人多会卡~~)
 
 #### 未来
  - [ ] SFU架构 
@@ -32,4 +32,4 @@
  - 音频可视化 https://www.jq22.com/jquery-info22983
  - 服务器 https://zhuanlan.zhihu.com/p/56428846
  - Licode—基于webrtc的SFU/MCU实现 https://www.jianshu.com/p/dcc5ba06b49f
- - https://github.com/Dirvann/mediasoup-sfu-webrtc-video-rooms.git
+ - webrtc mediasoup sfu服务器https://github.com/Dirvann/mediasoup-sfu-webrtc-video-rooms.git
