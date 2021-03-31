@@ -6,6 +6,7 @@ const {ipcRenderer} = require("electron");
 
 console.log(toastr);
 
+
 toastr.options = {
     "closeButton": true,
     "debug": false,
@@ -42,7 +43,7 @@ ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roo
 
 let producer = null;
 //@ts-ignore
- 
+
 
 socket.request = function request(type, data = {}) {
   return new Promise((resolve, reject) => {
@@ -94,7 +95,7 @@ function roomOpen() {
 }
 /**
  * 隐藏元素
- * @param elem 
+ * @param elem
  */
 function hide(elem) {
   // elem.className = 'hidden'
@@ -102,7 +103,7 @@ function hide(elem) {
 }
 
 /**
- * 
+ *
  * @param elem 显示元素
  */
 function reveal(elem) {
