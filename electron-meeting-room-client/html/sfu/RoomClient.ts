@@ -1,5 +1,6 @@
 import VideoUtil from './videoUtil' ;
 import AudioUtil from './audioUtil' ;
+import ScreenUtil from './ScreenUtil';
 
 
 
@@ -340,13 +341,9 @@ export default  class RoomClient {
             // 获取流
             if (screen) {
 
-
-                try {
-                    //@ts-ignore
-                    stream = navigator.mediaDevices.getDisplayMedia();
-                } catch (error) {
-                    (window as any).toastr.error('获取屏幕流失败');
-                }
+                    let screenUtil = new ScreenUtil();
+                    stream = await screenUtil.getScreenStream();
+              
             } else if (audio) {
                 try {
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
@@ -369,6 +366,7 @@ export default  class RoomClient {
                 }
             } else {
                 try {
+
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
                 } catch (error) {
 

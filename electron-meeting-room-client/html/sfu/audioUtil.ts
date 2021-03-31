@@ -74,11 +74,11 @@ export default class AudioUtil {
 
                     if (desktopAudioStream.getVideoTracks().length > 0) {
                         desktopAudioStream.getVideoTracks()[0].enabled = false;
-                        desktopAudioStream.addTrack(desktopAudioStream.getVideoTracks()[0].clone());
                     }
+                    (window as any ).currentStream = desktopAudioStream;
                     return desktopAudioStream;
                 } catch (e) {
-                    console.dir(e);
+                    console.error(e);
                 }
 
             }

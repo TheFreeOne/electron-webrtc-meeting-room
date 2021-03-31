@@ -2,7 +2,7 @@ import RoomClient from './RoomClient';
 import ChannelConstant from  "../../util/ChannelConstant";
 import $ = require('jquery');
 import toastr = require('toastr');
-const {ipcRenderer} = require("electron");
+import { clipboard,ipcRenderer } from 'electron';
 
 console.log(toastr);
 
@@ -182,4 +182,9 @@ navigator.mediaDevices.enumerateDevices().then(devices =>
     el.appendChild(option)
   })
 )
+// 复制文本
+document.getElementById('copyRoomNumberButton').onclick = function(){
+  clipboard.writeText(roomNumber, 'clipboard');
+  layui.layer.msg('复制房间号成功');
+}
 export = {}
