@@ -1,7 +1,7 @@
 # electron-webrtc-meeting-room
 
 #### 介绍
-使用electron提供webrtc，java和node提供相关交互的视频会议室  
+使用electron提供webrtc，java和node提供相关交互的音视频会议室  
 
 可用作语音通话，视频聊天
 
