@@ -1,6 +1,7 @@
-import { BrowserWindow, dialog, ipcMain,ipcRenderer,screen} from "electron";
+import { app, BrowserWindow, dialog, ipcMain,ipcRenderer,screen} from "electron";
 import ChannelConstant from "./util/ChannelConstant";
-
+import * as fs from 'fs';
+import * as path from 'path';
 export default class IpcMainListener{
 
     private _token;
@@ -86,9 +87,17 @@ export default class IpcMainListener{
                 }
             });
             this._meetingWindow = meetingWindow;
-            // meetingWindow.loadFile('./html/mesh/meeting/meeting.html');
-            meetingWindow.loadFile('./html/sfu/index.html');
-            meetingWindow.webContents.openDevTools();
+            let config = this.readJsonFromFile(path.join(app.getAppPath(),'./config.json'));
+            console.log(config.meetingPattern );
+            
+            if(config.meetingPattern == 'mesh'){
+
+                meetingWindow.loadFile('./html/mesh/meeting/meeting.html');
+            }else{
+
+                meetingWindow.loadFile('./html/sfu/index.html');
+            }
+            // meetingWindow.webContents.openDevTools();
             meetingWindow.on('ready-to-show',()=>{
                 meetingWindow.show();
                 meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
@@ -177,5 +186,9 @@ export default class IpcMainListener{
         });
 
     }
+
+      readJsonFromFile(jsonFilePath: string) {
+        return JSON.parse(fs.readFileSync(jsonFilePath).toString());
+      }
 
 }

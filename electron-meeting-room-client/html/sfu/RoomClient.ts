@@ -27,9 +27,10 @@ export default class RoomClient {
 
 
     private name;
+
     private localMediaEl;
     private remoteVideoEl;
-    private remoteAudioEl;
+
     private mediasoupClient;
 
     private socket;
@@ -44,13 +45,22 @@ export default class RoomClient {
 
     private _isOpen;
     private eventListeners;
-
-    constructor(localMediaEl, remoteVideoEl, remoteAudioEl, mediasoupClient, socket, room_id, name, successCallback) {
-        console.log(`constructor  `, localMediaEl, remoteVideoEl, remoteAudioEl, mediasoupClient, socket, room_id, name, successCallback)
+    /**
+     * 
+     * @param localMediaEl 用于存放本地流的div
+     * @param remoteVideoEl  用于存放远程视频流的div，音频流
+     * @param mediasoupClient 
+     * @param socket socketio实例
+     * @param room_id 房间号码
+     * @param name 自己的名字
+     * @param successCallback 回调
+     */
+    constructor(localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, successCallback) {
+        console.log(`constructor  `, localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, successCallback)
         this.name = name
         this.localMediaEl = localMediaEl
         this.remoteVideoEl = remoteVideoEl
-        this.remoteAudioEl = remoteAudioEl
+ 
         this.mediasoupClient = mediasoupClient
 
         this.socket = socket
@@ -541,11 +551,22 @@ export default class RoomClient {
                     let div = document.createElement('div');
                     div.className = 'person-video-item';
                     div.id = producer_socket_id;
+
+                    let personInfo = document.createElement('div');
+                    personInfo.setAttribute('class', 'person-info');
+                    let personName = document.createElement('span');
+                    personName.className = 'person-name';
+                    let personStatus = document.createElement('span');
+                    personStatus.className = 'person-status';
+                    personName.innerHTML = (window as any).personMap.get(producer_socket_id)+"：";
+                    personStatus.innerHTML = '';
+                    personInfo.appendChild(personName);
+                    personInfo.appendChild(personStatus);
+                    div.appendChild(personInfo);
+
                     div.appendChild(elem);
                     this.remoteVideoEl.appendChild(div);
                 }
-
-
 
             } else {
                 elem = document.createElement('audio');
@@ -554,7 +575,9 @@ export default class RoomClient {
                 elem.playsinline = false;
                 elem.autoplay = true;
                 if (document.getElementById(producer_socket_id)) {
-                    document.getElementById(producer_socket_id).appendChild(elem);
+                    let personItem = document.getElementById(producer_socket_id);
+                    personItem.appendChild(elem);
+                    personItem.querySelector('.person-status').innerHTML= '发言中...';
                 } else {
                     let div = document.createElement('div');
                     div.className = 'person-video-item';
@@ -564,8 +587,10 @@ export default class RoomClient {
                     let personInfo = document.createElement('div');
                     personInfo.setAttribute('class', 'person-info');
                     let personName = document.createElement('span');
+                    personName.className = 'person-name';
                     let personStatus = document.createElement('span');
-                    personName.innerHTML = (window as any).personMap.get(producer_socket_id);
+                    personStatus.className = 'person-status';
+                    personName.innerHTML = (window as any).personMap.get(producer_socket_id)+"：";
                     personStatus.innerHTML = '发言中...';
                     personInfo.appendChild(personName);
                     personInfo.appendChild(personStatus);
@@ -588,15 +613,17 @@ export default class RoomClient {
     }
 
     async getConsumeStream(producerId) {
-        console.log(`getConsumeStream ${producerId}`)
+        console.log(`getConsumeStream by producerId:${producerId}`)
         const {
             rtpCapabilities
         } = this.device
+        console.log(`request consume`);
         const data = await this.socket.request('consume', {
             rtpCapabilities,
             consumerTransportId: this.consumerTransport.id, // might be
             producerId
         });
+        // 从返回的结果中解构赋值
         const {
             id,
             kind,
@@ -604,13 +631,15 @@ export default class RoomClient {
         } = data;
 
         let codecOptions = {};
+        console.log('Create a Consumer to consume a remote Producer.');
         const consumer = await this.consumerTransport.consume({
             id,
             producerId,
             kind,
             rtpParameters,
             codecOptions,
-        })
+        });
+         
         const stream = new MediaStream();
         stream.addTrack(consumer.track);
         return {
@@ -683,20 +712,27 @@ export default class RoomClient {
     removeConsumer(consumer_id) {
 
         let elem = document.getElementById(consumer_id);
+        if(elem == null) return;
         //@ts-ignore
-        elem.srcObject.getTracks().forEach(function (track) {
-            track.stop()
-        })
+        if(elem.srcObject && elem.srcObject != null){
+            //@ts-ignore
+            elem.srcObject.getTracks().forEach(function (track) {
+                track.stop()
+            })
+        }
+        let nodeName = elem.nodeName;
+    
+
         let parent = elem.parentNode;
         parent.removeChild(elem);
-        this.consumers.delete(consumer_id)
-        // 备注，后面加的
-        // @ts-ignore
-        if (parent.className == 'person-video-item') {
+        if(nodeName == 'AUDIO'){
+            parent.querySelector('.person-status').innerHTML = '';
+        }
+        if(parent.querySelectorAll('audio').length == 0 && parent.querySelectorAll('video').length == 0){
             parent.parentNode.removeChild(parent);
         }
-
-
+        this.consumers.delete(consumer_id)
+        
     }
 
     exit(offline = false) {

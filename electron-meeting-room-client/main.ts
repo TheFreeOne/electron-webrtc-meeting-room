@@ -29,13 +29,15 @@ function createWindow() {
         minWidth: 80,
         minHeight: 60,
         icon: 'icon.ico',
+        resizable:false,
+        
         maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
         maxHeight: screen.getPrimaryDisplay().workAreaSize.height,
         show: false,
         useContentSize: true,
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: false
+            enableRemoteModule: true
         }
         
     });

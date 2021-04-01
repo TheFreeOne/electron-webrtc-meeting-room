@@ -26,33 +26,85 @@
 </head>
 
 <body>
-    <div class="layui-form" style="margin-top: 176px;">
+    <div class="layui-form" id="action-form" style="margin-top: 176px;">
         <div class="layui-form-item" style="text-align: center;">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="join-meeting">加入会议</button>
         </div>
         <div class="layui-form-item" style="text-align: center;">
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="create-meeting">创建会议</button>
         </div>
-    </div>
-    <template id="meeting-type">
+        <div class="layui-form-item" style="float: right;">
+            <span id="setting" class="layui-icon layui-icon-set-fill" style="font-size: 20px; margin-right: 20px;"/>
+        </div>
 
-        <form class="layui-form" id="meeting-type-form">
+
+    </div>
+
+
+        <div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px;">
             <div class="layui-form-item">
 
-                <label class="layui-form-label">会议类型</label>
+                <label class="layui-form-label" title="登陆地址">登陆地址</label>
                 <div class="layui-input-block">
-                    <select name="meeting-type" class="layui-select meeting-type">
-                        <option value="audio">音频会议</option>
-                        </option>
-                        <option value="screen">屏幕共享</option>
-                        <option value="video">视频共享</option>
-                        <option value="board">白板共享</option>
+                     <input class="layui-input" name="javaLoginServer" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="sfuServer" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="mesh信令服务器">mesh信令服务器</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="nodeRoomServer" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="sturnserver">sturnserver</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="sturnserver" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turnserver">turnserver</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turnserver" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turnusername">turnusername</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turnusername" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turncredential">turncredential</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turncredential" >
+                </div>
+            <div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="会议模式">会议模式</label>
+                <div class="layui-input-block">
+                    <select name="meetingPattern" id="meetingPattern"  >
+                        <option value="mesh">MESH-P2P模式</option>
+                        <option value="sfu">SFU服务器模式</option>
                     </select>
                 </div>
             <div>
-        </form>
+            <div class="layui-form-item">
+                
+                <div class="layui-input-block" >
+                    <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
+                </div>
+            <div>
 
-    </template>
+                
+        </div>
+
+
 </body>
 <script src="./index.js"></script>
 </html>

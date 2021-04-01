@@ -31,7 +31,8 @@ var roomNumber ;
 var personMap = new Map<string,string>();
 
 //@ts-ignore
-const socket = io(window.config.nodeRoomServer, { path: '/socket.io' });
+const socket = io(window.config.sfuServer, { path: '/socket.io' });
+
 ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType) => {
   console.log(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS)
   //@ts-ignore
@@ -42,8 +43,6 @@ ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roo
 
 
 let producer = null;
-//@ts-ignore
-
 
 socket.request = function request(type, data = {}) {
   return new Promise((resolve, reject) => {
@@ -57,15 +56,14 @@ socket.request = function request(type, data = {}) {
   })
 }
 
-let rc = null
+let rc = null;
 
 function joinRoom(name, room_id) {
   if (rc && rc.isOpen()) {
     console.log('already connected to a room')
   } else {
     //@ts-ignore
-    rc = new RoomClient(localMedia, remoteVideos, remoteAudios, window.mediasoupClient, socket, room_id, name, roomOpen)
-
+    rc = new RoomClient(localMedia, remoteVideos,  window.mediasoupClient, socket, room_id, name, roomOpen)
     addListeners()
   }
 
@@ -89,7 +87,7 @@ function roomOpen() {
   //@ts-ignore
   reveal(exitButton)
   //@ts-ignore
-  control.className = ''
+  control.className = 'layui-from'
   //@ts-ignore
   // reveal(videoMedia)
 }
@@ -98,7 +96,6 @@ function roomOpen() {
  * @param elem
  */
 function hide(elem) {
-  // elem.className = 'hidden'
   $(elem).hide();
 }
 
@@ -107,7 +104,6 @@ function hide(elem) {
  * @param elem 显示元素
  */
 function reveal(elem) {
-  // elem.className = ''
   $(elem).show();
 }
 
@@ -167,28 +163,31 @@ function addListeners() {
 // Load mediaDevice options
 navigator.mediaDevices.enumerateDevices().then(devices =>
   devices.forEach(device => {
-    let el = null
+    let el = null;
     if ('audioinput' === device.kind) {
       //@ts-ignore
-      el = audioSelect
+      el = audioSelect;
     } else if ('videoinput' === device.kind) {
       //@ts-ignore
-      el = videoSelect
+      el = videoSelect;
     }
     if(!el) return
 
-    let option = document.createElement('option')
-    option.value = device.deviceId
-    option.innerText = device.label
-    el.appendChild(option)
+    let option = document.createElement('option');
+    option.value = device.deviceId;
+    option.innerText = device.label;
+    el.appendChild(option);
   })
-)
+);
 // 复制文本
 document.getElementById('copyRoomNumberButton').onclick = function(){
   clipboard.writeText(roomNumber, 'clipboard');
   layui.layer.msg('复制房间号成功');
 }
-
+/**
+ *
+ * @param audioStream 绘制音频声波
+ */
 function drawAudioWave(audioStream:MediaStream) {
   //part1: 画布
   let canvas = document.getElementById("audio-wave-canvas");
@@ -251,10 +250,25 @@ function drawAudioWave(audioStream:MediaStream) {
   }
 
   renderFrame();
-
-
-
 }
 
 (window as any).drawAudioWave = drawAudioWave;
+
+layui.use(['form'],()=>{
+  let form = layui.form;
+  form.render();
+
+  $('#startVideoButton').on('click',()=>{
+    if($('#stopScreenButton').is(':visible')){
+      $('#stopScreenButton').trigger('click');
+    }
+  });
+
+  $('#startScreenButton').on('click',()=>{
+    if($('#stopVideoButton').is(':visible')){
+      $('#stopVideoButton').trigger('click');
+    }
+  });
+
+})
 export = {}
