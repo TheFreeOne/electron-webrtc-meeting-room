@@ -13,7 +13,7 @@
     </style>
 </head>
 <body>
-<form class="layui-form" action="" onsubmit="return false"  >
+<form class="layui-form" action="" id="action-form" onsubmit="return false"  >
     <div class="layui-form-item">
         <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
@@ -32,7 +32,74 @@
             <button type="submit" class="layui-btn" lay-submit="" lay-filter="login-submit">立即提交</button>
         </div>
     </div>
+
+    <div class="layui-form-item" style="float: right;">
+        <span id="setting" class="layui-icon layui-icon-set-fill" style="font-size: 20px; margin-right: 20px;"/>
+    </div>
 </form>
+
+<div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px;">
+    <div class="layui-form-item">
+
+        <label class="layui-form-label" title="登陆地址">登陆地址</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="javaLoginServer" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="sfuServer" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="mesh信令服务器">mesh信令服务器</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="nodeRoomServer" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="sturnserver">sturnserver</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="sturnserver" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turnserver">turnserver</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turnserver" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turnusername">turnusername</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turnusername" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turncredential">turncredential</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turncredential" >
+        </div>
+    <div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="会议模式">会议模式</label>
+        <div class="layui-input-block">
+            <select name="meetingPattern" id="meetingPattern"  >
+                <option value="mesh">MESH-P2P模式</option>
+                <option value="sfu">SFU服务器模式</option>
+            </select>
+        </div>
+    <div>
+    <div class="layui-form-item">
+        
+        <div class="layui-input-block" >
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
+        </div>
+    <div>
+
+        
+</div>
 </body>
 <script src="login.js"></script>
 </html>

@@ -9,17 +9,7 @@ import * as fs from 'fs';
  
 
 
- function writeJsonToFile(params: any, fileAbsolutePath: string, callback?) {
-     console.log(params);
-     
-    //现将json文件读出来
-    var str = JSON.stringify(params);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
-    console.log(str);
-    console.log(fileAbsolutePath);
-    // {"javaLoginServer":"http://192.168.0.142:18080/","sfuServer":"http://192.168.0.142:3016","nodeRoomServer":"http://192.168.0.142:3016","sturnserver":"stun:119.29.16.187:3478","turnserver":"turn:119.29.16.187:3478","turnusername":"username","turncredential":"password","meetingPattern":"sfu"}
-    fs.writeFileSync(fileAbsolutePath,str,{encoding:'UTF-8'});
-    
-  }
+
 
 layui.use(['form'], () => {
     let form = layui.form;
@@ -110,6 +100,17 @@ layui.use(['form'], () => {
 
 });
 
+function writeJsonToFile(params: any, fileAbsolutePath: string, callback?) {
+    console.log(params);
+    
+   //现将json文件读出来
+   var str = JSON.stringify(params);//因为nodejs的写入文件只认识字符串或者二进制数，所以把json对象转换成字符串重新写入json文件中
+   console.log(str);
+   console.log(fileAbsolutePath);
+   // {"javaLoginServer":"http://192.168.0.142:18080/","sfuServer":"http://192.168.0.142:3016","nodeRoomServer":"http://192.168.0.142:3016","sturnserver":"stun:119.29.16.187:3478","turnserver":"turn:119.29.16.187:3478","turnusername":"username","turncredential":"password","meetingPattern":"sfu"}
+   fs.writeFileSync(fileAbsolutePath,str,{encoding:'UTF-8'});
+   
+ }
 function readJsonFromFile(jsonFilePath: string) {
     return JSON.parse(fs.readFileSync(jsonFilePath).toString());
   }
