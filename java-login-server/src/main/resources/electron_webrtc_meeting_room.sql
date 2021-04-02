@@ -30,4 +30,7 @@ CREATE TABLE `tb_user`  (
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4   ROW_FORMAT = Dynamic;
 
+INSERT INTO `tb_user` VALUES ('1', '1', '1', '1', '2021-04-02 16:05:14');
+INSERT INTO `tb_user` VALUES ('2', '2', '2', '2', '2021-04-02 16:05:25');
+
 SET FOREIGN_KEY_CHECKS = 1;

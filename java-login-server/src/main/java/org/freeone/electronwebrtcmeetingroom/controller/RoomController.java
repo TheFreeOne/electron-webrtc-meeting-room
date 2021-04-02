@@ -24,6 +24,12 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    /**
+     * 创建房间
+     * @param userId
+     * @param type
+     * @return
+     */
     @PostMapping("createRoom.json")
     public ResultModel create(@RequestAttribute String userId, @RequestParam(defaultValue = "default") String type){
         if (!typeList.contains(type)){
@@ -34,6 +40,12 @@ public class RoomController {
             put("roomNumber", roomNumber);
         }});
     }
+
+    /**
+     * 判断房间是否存在
+     * @param roomNumber
+     * @return
+     */
     @PostMapping("queryRoomExisted.json")
     public ResultModel exist(@RequestParam String roomNumber){
         boolean existed = roomService.existed(roomNumber);
@@ -41,6 +53,12 @@ public class RoomController {
             put("existed", existed);
         }});
     }
+
+    /**
+     * 回收房间号
+     * @param roomNumber
+     * @return
+     */
     @RequestMapping("recycleRoom.json")
     public ResultModel recycleRoom(@RequestParam String roomNumber){
         System.out.println("回收房间号 = " +roomNumber);

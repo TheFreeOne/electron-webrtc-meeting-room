@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * @author zhengkai.blog.csdn.net
+ * websocket服务器，用于同一个账号，不同客户端登陆处理
  */
 @ServerEndpoint("/imserver/{token}")
 @Component
@@ -110,7 +110,6 @@ public class WebSocketServer {
         //消息保存到数据库、redis
         if(StringUtils.isNotBlank(message)){
             try {
-
 
                 //解析发送的报文
                 JSONObject jsonObject = JSON.parseObject(message);

@@ -18,6 +18,12 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    /**
+     * 登陆
+     * @param username
+     * @param password
+     * @return
+     */
     @PostMapping("/login.json")
     public ResultModel login(String username, String password) {
         TbUser user = loginService.login(username, password);

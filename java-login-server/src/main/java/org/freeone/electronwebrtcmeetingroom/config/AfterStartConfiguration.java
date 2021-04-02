@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 项目启动之后自动执行
+ */
 @Configuration
 public class AfterStartConfiguration implements ApplicationRunner {
 
