@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.freeone.electronwebrtcmeetingroom.dao.TableCheckMapper">
+    <update id="createTbUser">
+        CREATE TABLE `tb_user`  (
+                                    `id` varchar(32) CHARACTER SET utf8mb4   NOT NULL COMMENT '主键',
+                                    `username` varchar(20) CHARACTER SET utf8mb4   NULL DEFAULT NULL,
+                                    `password` varchar(255) CHARACTER SET utf8mb4   NULL DEFAULT NULL,
+                                    `nickname` varchar(20) CHARACTER SET utf8mb4   NULL DEFAULT NULL,
+                                    `create_time` datetime(0) NULL DEFAULT NULL,
+                                    PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB CHARACTER SET = utf8mb4   ROW_FORMAT = Dynamic;
+
+    </update>
+    <select id="getTables" resultType="map">
+        select table_name from information_schema.tables where table_schema= (select database())
+  </select>
+</mapper>
