@@ -8,6 +8,7 @@
     <script src="./static/layui-v2.5.7/layui.all.js"></script>
     <title>会议室</title>
     <style>
+         
         #meeting-type-form {
             margin-top: 26px;
             padding-right: 10px;
@@ -25,66 +26,68 @@
     </style>
 </head>
 
-<body>
+<body style="overflow-y: hidden ">
     <div class="layui-form" id="action-form" style="margin-top: 176px;">
         <div class="layui-form-item" style="text-align: center;">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="join-meeting">加入会议</button>
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="join-meeting">加入会议</button>
         </div>
         <div class="layui-form-item" style="text-align: center;">
-            <button type="submit" class="layui-btn" lay-submit="" lay-filter="create-meeting">创建会议</button>
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-meeting">创建会议</button>
         </div>
-        <div class="layui-form-item" style="float: right;">
-            <span id="setting" class="layui-icon layui-icon-set-fill" style="font-size: 20px; margin-right: 20px;"/>
+        
+
+        <div style="width: 100%;position: absolute; bottom: 0;height: 30px; background-color: #EDEDED;line-height: 30px;text-align: right;">
+            <button id="setting" class="layui-btn layui-btn-xs layui-btn-primary" style="margin-right: 10px;" ><i  class="layui-icon layui-icon-set-fill" style="font-size: 20px; "></i>设置</button>
         </div>
 
 
     </div>
 
 
-        <div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px;">
+        <div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px; ">
             <div class="layui-form-item">
 
                 <label class="layui-form-label" title="登陆地址">登陆地址</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="javaLoginServer" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="sfuServer" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="mesh信令服务器">mesh信令服务器</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="nodeRoomServer" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="sturnserver">sturnserver</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="sturnserver" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="turnserver">turnserver</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="turnserver" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="turnusername">turnusername</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="turnusername" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="turncredential">turncredential</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="turncredential" >
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 <label class="layui-form-label" title="会议模式">会议模式</label>
                 <div class="layui-input-block">
@@ -93,13 +96,13 @@
                         <option value="sfu">SFU服务器模式</option>
                     </select>
                 </div>
-            <div>
+            </div>
             <div class="layui-form-item">
                 
                 <div class="layui-input-block" >
-                    <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
+                    <button type="submit" style="width:130px" class="layui-btn layui-btn-normal layui-btn-sm" id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
                 </div>
-            <div>
+            </div>
 
                 
         </div>

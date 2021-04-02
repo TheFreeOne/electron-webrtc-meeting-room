@@ -25,11 +25,11 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         title: '会议室',
         width: 340,
-        height: 400,
+        height: 490,
         minWidth: 80,
         minHeight: 60,
         icon: 'icon.ico',
-        resizable:false,
+        resizable:true,
         
         maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
         maxHeight: screen.getPrimaryDisplay().workAreaSize.height,
