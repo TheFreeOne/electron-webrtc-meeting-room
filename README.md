@@ -55,7 +55,7 @@
      
        - 安装nodejs 和 typescript
        
-       - 进入sfu-server，执行`npm install`下载依赖，执行`npm run start`开启房间服务器
+       - 进入sfu-server，编辑`config.js`设置`announcedIp`为客户端能访问到的路径，执行`npm install`下载依赖，执行`npm run start`开启房间服务器
        
        - 若你的电脑是windows，可能会出现mediasoup编译失败的情况，可以按照以下方式解决
        
