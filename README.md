@@ -66,8 +66,11 @@
  - 启动客户端(sfu模式不需要sturnserver|turnserver)
  
    - `npm install `下载依赖`npm run start `启动客户端，或者下载发行版
+
    ![登陆](https://images.gitee.com/uploads/images/2021/0403/182506_85891f2e_1927643.png "client01.png")
+
    ![设置](https://images.gitee.com/uploads/images/2021/0403/182523_896244c2_1927643.png "client02.png")
+
    ![单机演示页面](https://images.gitee.com/uploads/images/2021/0403/182544_3fe56e5e_1927643.png "client04.png")
 
 #### 关于turnserver
