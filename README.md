@@ -83,6 +83,8 @@
    
    sfu-server 原来源 https://github.com/Dirvann/mediasoup-sfu-webrtc-video-rooms.git
    
+   android 来源 https://github.com/haiyangwu/mediasoup-demo-android.git
+   
 #### 参考资料
  - 房间服务器和webrtc https://github.com/harcop/webrtc-demo.git
  - 音频可视化 https://www.jq22.com/jquery-info22983
