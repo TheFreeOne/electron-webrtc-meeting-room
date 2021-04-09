@@ -34,7 +34,10 @@ export default class Room {
         this.peers.forEach(peer => {
             peer.producers.forEach(producer => {
                 producerList.push({
+                   
                     producer_id: producer.id
+                    // 兼容安卓的写法
+                    , peerId: peer.id
                     // @ts-ignore 获取额外添加的属性
                     , producer_socket_id: producer.producer_socket_id
                 })
@@ -84,7 +87,8 @@ export default class Room {
                 id: transport.id,
                 iceParameters: transport.iceParameters,
                 iceCandidates: transport.iceCandidates,
-                dtlsParameters: transport.dtlsParameters
+                dtlsParameters: transport.dtlsParameters,
+                sctpParameters: transport.sctpParameters
             },
         };
     }
@@ -117,7 +121,7 @@ export default class Room {
             console.error('can not consume');
             return;
         }
-
+ 
         let {consumer, params} = await this.peers.get(socket_id).createConsumer(consumer_transport_id, producer_id, rtpCapabilities)
 
         consumer.on('producerclose', function(){
