@@ -1,8 +1,8 @@
-const express = require('express');
+import * as  express from 'express';
 import * as HTTP from 'http';
 const app = express();
 const https = require('httpolyglot');
-const fs = require('fs');
+import * as fs from 'fs'
 import * as mediasoup from 'mediasoup';
 // const mediasoup = require('mediasoup');
 const config = require('./config');
@@ -24,10 +24,11 @@ const http: HTTP.Server = new HTTP.Server(app);
 // const httpsServer = https.createServer(options, app)
 import { Socket } from 'socket.io';
 
-
 const io: SocketIO.Server = require('socket.io')(http);
 
-
+app.get('/createValidRoomId',(req,resp)=>{
+    resp.send({ roomId: createValidRoomId() });
+});
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
 
@@ -410,8 +411,8 @@ io.on('connection', (socket: NewSocket) => {
                 roomList.get(socket.room_id).broadCast(socket.id, 'a user is disconnected', {
                     "sockerid": socket.id
                 });
-            };
-
+            }
+             
         } catch (error) {
 
         }
@@ -430,7 +431,7 @@ io.on('connection', (socket: NewSocket) => {
 
     })
     /**
-     * 点击了退出房间
+     * 点击了退出房间,此时检测并销毁房间
      */
     socket.on('exitRoom', async (_, callback) => {
         console.log(`---exit room--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -490,4 +491,40 @@ function getMediasoupWorker() {
     }
 
     return worker;
+}
+/**
+ * 
+ * @param time 生成随机号码
+ * @returns 
+ */
+function randomNumber(time = 9):string{
+    let str = '0123456789';
+    let result = '';
+    for(let i = 0;i<time ;i++){
+        
+        result += str.charAt(parseInt((Math.random() * 10)+""));
+    }
+    return result;
+}
+/**
+ * 
+ * @returns 生成房间号
+ */
+function createValidRoomId():string {
+
+    let number = randomNumber();
+    let roomIds = Array.from(roomList.keys());
+
+    while(testRoomId(number)){
+        number = randomNumber();
+    }
+    return number;
+
+    function testRoomId(_number){
+        if(roomIds.includes(_number)){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }
