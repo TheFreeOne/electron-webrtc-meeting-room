@@ -46,10 +46,10 @@ export default class RoomClient {
     private _isOpen;
     private eventListeners;
     /**
-     * 
+     *
      * @param localMediaEl 用于存放本地流的div
      * @param remoteVideoEl  用于存放远程视频流的div，音频流
-     * @param mediasoupClient 
+     * @param mediasoupClient
      * @param socket socketio实例
      * @param room_id 房间号码
      * @param name 自己的名字
@@ -60,7 +60,7 @@ export default class RoomClient {
         this.name = name
         this.localMediaEl = localMediaEl
         this.remoteVideoEl = remoteVideoEl
- 
+
         this.mediasoupClient = mediasoupClient
 
         this.socket = socket
@@ -117,7 +117,7 @@ export default class RoomClient {
             const data = await this.socket.request('getRouterRtpCapabilities');
             let device = await this.loadDevice(data)
             this.device = device
-            await this.initTransports(device)
+            await this.initTransports(device);
             this.socket.emit('getProducers');
             (window as any).socketid = e.socketid;
         }.bind(this)).catch(e => {
@@ -139,7 +139,7 @@ export default class RoomClient {
         await device.load({
             routerRtpCapabilities
         })
-        return device
+        return device;
 
     }
 
@@ -293,11 +293,11 @@ export default class RoomClient {
         }.bind(this));
         // 自定义方法
         this.socket.on('othersInRoom', function (data) {
-           
+
             for(let item of data){
                 (window as any).personMap.set(item.socketid, item.name);
             }
-            
+
         }.bind(this));
 
         // 自定义方法
@@ -639,7 +639,7 @@ export default class RoomClient {
             rtpParameters,
             codecOptions,
         });
-         
+
         const stream = new MediaStream();
         stream.addTrack(consumer.track);
         return {
@@ -721,7 +721,7 @@ export default class RoomClient {
             })
         }
         let nodeName = elem.nodeName;
-    
+
 
         let parent = elem.parentNode;
         parent.removeChild(elem);
@@ -732,7 +732,7 @@ export default class RoomClient {
             parent.parentNode.removeChild(parent);
         }
         this.consumers.delete(consumer_id)
-        
+
     }
 
     exit(offline = false) {

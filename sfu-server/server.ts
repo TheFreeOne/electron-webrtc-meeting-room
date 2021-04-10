@@ -1,33 +1,53 @@
 import * as  express from 'express';
 import * as HTTP from 'http';
-const app = express();
-const https = require('httpolyglot');
+// const https = require('httpolyglot');
 import * as fs from 'fs'
 import * as mediasoup from 'mediasoup';
-// const mediasoup = require('mediasoup');
 const config = require('./config');
-const path = require('path');
+import * as path from 'path';
 import Room from './Room';
 import Peer from './Peer';
 import * as SocketIO from 'socket.io';
 import { Worker } from 'mediasoup/src/Worker';
+const bodyParser = require('body-parser');
 (async () => {
     await createWorkers()
 })();
 
-
+const app = express();
 const options = {
     // key: fs.readFileSync(path.join(__dirname,config.sslKey), 'utf-8'),
     // cert: fs.readFileSync(path.join(__dirname,config.sslCrt), 'utf-8')
 }
 const http: HTTP.Server = new HTTP.Server(app);
 // const httpsServer = https.createServer(options, app)
-import { Socket } from 'socket.io';
+ 
 
 const io: SocketIO.Server = require('socket.io')(http);
-
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 app.get('/createValidRoomId',(req,resp)=>{
     resp.send({ roomId: createValidRoomId() });
+});
+
+app.post('/isRoomExisted',(req,resp)=>{
+  try {
+    //   console.log(req.query)
+    // console.log(req.params)
+    let {roomId }=req.body;
+    // console.log(req.get('Origin'))
+    // console.log(req.url)
+
+    if(Array.from(roomList.keys()).includes(roomId)){
+        resp.status(200).json({existed:true});
+    }else{
+        resp.status(200).json({existed:false});
+    }
+  } catch (error) {
+     resp.status(500).json({error}); 
+  }
 });
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
@@ -38,6 +58,7 @@ http.listen(config.listenPort, () => {
 
 
 // all mediasoup workers
+// let workers = new Array<mediasoup.types.Worker>();
 let workers = new Array<Worker>();
 let nextMediasoupWorkerIdx = 0;
 
@@ -61,9 +82,6 @@ let nextMediasoupWorkerIdx = 0;
  */
 let roomList = new Map<string, Room>();
 
-
-
-
 async function createWorkers() {
     let {
         numWorkers
@@ -86,53 +104,59 @@ async function createWorkers() {
             //@ts-ignore
             workers.push(worker);
 
+            try {
+                setInterval(async () => {
+                    const usage = await worker.getResourceUsage();
+                    console.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
+                }, 120000);
+            } catch (error) {
+                
+            }
+             
         } catch (error) {
             console.log('捕获到异常');
 
             console.dir(error);
         }
-        // log worker resource usage
-        /*setInterval(async () => {
-            const usage = await worker.getResourceUsage();
-
-            console.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
-        }, 120000);*/
+      
     }
 
 
 }
 interface NewSocket extends SocketIO.Socket {
+    /**
+     * 给连接的添加房间号
+     */
     room_id;
 }
 
-var personInServer = {}
 io.on('connection', (socket: NewSocket) => {
 
     // 创建房间
     socket.on('createRoom', async ({
         room_id
     }, callback) => {
-
         console.dir('---try create room ---');
-
-
         try {
-            if (roomList.has(room_id)) {
-                if (callback) {
-                    callback('already exists');
+            // 保证在传输了房间号之后再处理
+            if(room_id){
+                if (roomList.has(room_id)) {
+                    if (callback) {
+                        callback('already exists');
+                    } else {
+                        socket.emit('createRoom callback', 'already exists')
+                    }
+    
                 } else {
-                    socket.emit('createRoom callback', 'already exists')
-                }
-
-            } else {
-                console.log('---created room--- ', room_id)
-                let worker = await getMediasoupWorker();
-                let room = new Room(room_id, worker, io)
-                roomList.set(room_id, room);
-                if (callback) {
-                    callback(room_id);
-                } else {
-                    socket.emit('createRoom callback', room_id)
+                    console.log('---created room--- ', room_id)
+                    let worker = await getMediasoupWorker();
+                    let room = new Room(room_id, worker, io)
+                    roomList.set(room_id, room);
+                    if (callback) {
+                        callback(room_id);
+                    } else {
+                        socket.emit('createRoom callback', room_id)
+                    }
                 }
             }
         } catch (error) {
@@ -171,7 +195,6 @@ io.on('connection', (socket: NewSocket) => {
                 });
             }
 
-
             roomList.get(room_id).addPeer(new Peer(socket.id, name));
             socket.room_id = room_id;
             // 广播
@@ -179,7 +202,7 @@ io.on('connection', (socket: NewSocket) => {
                 room_id: room_id,
                 name: name,
                 socketid: socket.id
-            })
+            });
             let jsonObject = roomList.get(room_id).toJson();
             (jsonObject as any).socketid = socket.id;
             if (cb) {
@@ -196,7 +219,7 @@ io.on('connection', (socket: NewSocket) => {
 
 
     })
-
+ 
     socket.on('getProducers', () => {
         console.log(`---get producers--- name:${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         // send all the current producer to newly joined member
@@ -246,7 +269,7 @@ io.on('connection', (socket: NewSocket) => {
         }
     });
     /**
-     * 兼容安卓的写法
+     * 异步的写法
      * 一般情况下只要createWebRtcTransport就可以了
      */
     socket.on('createSendTransport', async (_, callback) => {
@@ -271,7 +294,7 @@ io.on('connection', (socket: NewSocket) => {
     });
 
     /**
-     * 兼容安卓的写法
+     * 异步的写法
      * 一般情况下只要createWebRtcTransport就可以了
      */
     socket.on('createRecvTransport', async (_, callback) => {
@@ -294,8 +317,6 @@ io.on('connection', (socket: NewSocket) => {
             });
         }
     });
-
-    
 
     socket.on('connectTransport', async ({
         transport_id,
@@ -485,7 +506,6 @@ function room() {
 function getMediasoupWorker() {
     const worker = workers[nextMediasoupWorkerIdx];
     console.log(`workers size = ` + workers.length);
-
     if (++nextMediasoupWorkerIdx === workers.length) {
         nextMediasoupWorkerIdx = 0;
     }

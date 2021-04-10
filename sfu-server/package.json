@@ -1,6 +1,6 @@
 {
-  "name": "node-room-server",
-  "version": "1.0.0",
+  "name": "sfu-server",
+  "version": "0.3.2",
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -20,7 +20,7 @@
     "negotiator": "^0.6.2",
     "netstring": "^0.3.0",
     "random-number": "^0.0.9",
-  
+
     "uuid": "^8.3.2"
   },
   "devDependencies": {
