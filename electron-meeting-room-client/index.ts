@@ -37,15 +37,14 @@ layui.use(['form'], () => {
         let token = ipcRenderer.sendSync(ChannelConstant.GET_TOKEN);
         let config = readJsonFromFile(path.join(remote.app.getAppPath(),'./config.json'));
         $.ajax({
-            url: `${config.javaLoginServer}/createRoom.json`,
+            url: `${config.meetingPattern == 'sfu' ?config.sfuServer:config.nodeRoomServer}/createValidRoomId`,
             headers: {
                 'token': token
             },
-            type: 'post',
+            type: 'get',
+            timeout: 1000,
             success: (result) => {
-                if (result.success) {
-                    ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, result.data.roomNumber, "CREATE");
-                }
+                ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, result.roomId, "CREATE");
                 layui.layer.closeAll();
             }, error: (err) => {
                 console.log(err);
@@ -71,21 +70,23 @@ layui.use(['form'], () => {
             let token = ipcRenderer.sendSync(ChannelConstant.GET_TOKEN);
             let config = readJsonFromFile(path.join(remote.app.getAppPath(),'./config.json'));
             $.ajax({
-                url: `${config.javaLoginServer}/queryRoomExisted.json`,
+                url: `${config.meetingPattern == 'sfu' ?config.sfuServer:config.nodeRoomServer}/isRoomExisted`,
                 headers: {
                     'token': token
                 },
                 data: {
-                    roomNumber: pass
+                    roomId: pass
                 },
                 type: 'post',
+                timeout:3000,
                 success: (result) => {
                     layui.layer.closeAll();
-                    if (result.data && result.data.existed == true) {
+                    if(result.existed){
                         ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, pass, "JOIN");
-                    } else {
+                    }else{
                         layui.layer.msg('不存在的房间');
                     }
+                     
 
                 }, error: (err) => {
                     console.log(err);

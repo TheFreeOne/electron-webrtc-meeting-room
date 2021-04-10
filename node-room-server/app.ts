@@ -5,9 +5,12 @@ import * as socket from 'socket.io';
 import axios from "axios";
 
 const app: express.Application = express();
-
+const bodyParser = require('body-parser');
 let config = require('./config.json');
-
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 app.all("*", function (req, res, next) {
     console.log('app.all')
     //设置允许跨域的域名，*代表允许任意域名跨域
@@ -20,6 +23,28 @@ app.all("*", function (req, res, next) {
         res.send(200);  //让options尝试请求快速结束
     else {
         next();
+    }
+});
+
+app.get('/createValidRoomId',(req,resp)=>{
+    resp.send({ roomId: createValidRoomId() });
+});
+
+app.post('/isRoomExisted',(req,resp)=>{
+    try {
+        //   console.log(req.query)
+        // console.log(req.params)
+        let {roomId }=req.body;
+        // console.log(req.get('Origin'))
+        // console.log(req.url)
+
+        if(io.sockets.adapter.rooms.has(roomId)){
+            resp.status(200).json({existed:true});
+        }else{
+            resp.status(200).json({existed:false});
+        }
+    } catch (error) {
+        resp.status(500).json({error});
     }
 });
 const http: HTTP.Server = new HTTP.Server(app);
@@ -52,7 +77,7 @@ http.listen(port, () => {
 var personInServer = {}
 io.on('connection', (socket    ) => {
 
-     
+
 
     console.log('a user is connected');
     // 创建或这是加入服务器
@@ -149,3 +174,40 @@ io.on('connection', (socket    ) => {
         }
     });
 })
+
+/**
+ *
+ * @param time 生成随机号码
+ * @returns
+ */
+function randomNumber(time = 9):string{
+    let str = '0123456789';
+    let result = '';
+    for(let i = 0;i<time ;i++){
+
+        result += str.charAt(parseInt((Math.random() * 10)+""));
+    }
+    return result;
+}
+/**
+ *
+ * @returns 生成房间号
+ */
+function createValidRoomId():string {
+
+    let number = randomNumber();
+
+
+    while(testRoomId(number)){
+        number = randomNumber();
+    }
+    return number;
+
+    function testRoomId(_number){
+        if(io.sockets.adapter.rooms.has(_number)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}

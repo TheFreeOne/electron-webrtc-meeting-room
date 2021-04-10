@@ -34,16 +34,31 @@ layui.use(['form'], () => {
             url: config.javaLoginServer + '/login.json',
             data: formData.field,
             type: 'post',
+            timeout:1000,
             success: (result) => {
                 if (result.success) {
+                    console.log(result);
+                    debugger
                     ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, result.data);
+                    // ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
+                    //     nickname: `nickname-${formData.field.username}:`+Math.random()*1000,
+                    //     token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
+                    // });
+
                 } else {
                     layui.layer.msg(result.msg);
                 }
             },
             error: (xmlHttpRequest, textStatus, errorThrown) => {
                 if (xmlHttpRequest.status == 0) {
-                    alert('服务器没有响应，请检查服务器地址');
+                    alert(`登陆地址没有响应，开启模拟登陆`);
+                    let nickname = `nickname-${formData.field.username}`+parseInt(""+Math.random()*100000);
+                    sessionStorage.setItem('nickname',nickname);
+                    ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
+                        nickname: nickname,
+                        // jwttoken
+                        token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
+                    });
                 } else {
                     alert('请求异常 ：' + xmlHttpRequest.status)
                 } 

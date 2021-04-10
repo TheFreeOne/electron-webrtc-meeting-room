@@ -100,7 +100,7 @@ export default class IpcMainListener{
             // meetingWindow.webContents.openDevTools();
             meetingWindow.on('ready-to-show',()=>{
                 meetingWindow.show();
-                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType);
+                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType,this._nickname);
                 meetingWindow.webContents.send("windowId",meetingWindow.id);
             });
         });

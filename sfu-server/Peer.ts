@@ -1,16 +1,27 @@
 import { Consumer } from "mediasoup/src/Consumer";
 import { Producer } from "mediasoup/src/Producer";
 import { WebRtcTransport } from "mediasoup/src/WebRtcTransport";
-
+/**
+ * 房间里头的人
+ */
 export default  class Peer {
-
+    
+    /**
+     * 连接的socket的id
+     */
     public id;
+    /**
+     * 连接socket的名
+     */
     public name ;
+
     public transports:Map<any,WebRtcTransport> ;
+
     public consumers:Map<any,Consumer> ;
+
     public producers:Map<any,Producer> ;
 
-    constructor(socket_id, name) {
+    constructor(socket_id, name = 'unknow') {
         this.id = socket_id
         this.name = name
         this.transports = new Map<any,WebRtcTransport>()
@@ -18,7 +29,7 @@ export default  class Peer {
         this.producers = new Map<any,Producer>()
     }
 
-
+    
     addTransport(transport:WebRtcTransport) {
         this.transports.set(transport.id, transport)
     }

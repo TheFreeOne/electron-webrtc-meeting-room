@@ -33,12 +33,15 @@ var personMap = new Map<string,string>();
 //@ts-ignore
 const socket = io(window.config.sfuServer, { path: '/socket.io' });
 
-ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType) => {
+ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType,_nickname) => {
   console.log(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS)
   //@ts-ignore
   document.getElementById("roomidInput").value = _roomNumber;
   roomNumber = _roomNumber;
-  joinRoom( 'bob' + Math.round(Math.random() * 1000) , roomNumber);
+  let nickname = _nickname || 'bob' + Math.round(Math.random() * 1000);
+  console.log('nickname',nickname);
+  
+  joinRoom( nickname , roomNumber);
 });
 
 

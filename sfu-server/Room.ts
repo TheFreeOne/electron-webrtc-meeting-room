@@ -7,9 +7,13 @@ import { WebRtcTransport, WebRtcTransportStat } from 'mediasoup/src/WebRtcTransp
 
 
 export default class Room {
+
     private id:string;
+
     private peers:Map<any,Peer>;
+
     private io:SocketIO.Server;
+
     private router:Router;
 
     constructor(room_id:string, worker:Worker, io:SocketIO.Server) {
@@ -36,7 +40,7 @@ export default class Room {
                 producerList.push({
                    
                     producer_id: producer.id
-                    // 兼容安卓的写法
+                    // 兼容写法
                     , peerId: peer.id
                     // @ts-ignore 获取额外添加的属性
                     , producer_socket_id: producer.producer_socket_id
