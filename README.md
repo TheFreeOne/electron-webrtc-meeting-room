@@ -25,8 +25,8 @@
  | 模块  | 说明  | 是否必须  |
 |---|---|---|
 | java-login-server  | 登陆服务器 springboot  | 0.3.2之后非必须  |
-| node-room-server  | webrtc房间服务器  | 非必须  |
-| sfu-server  | mediasoup为基础的sfu服务器  | 0.3.2之后必须  |
+| node-room-server  | webrtc房间服务器  | 0.3.2由会议模式决定  |
+| sfu-server  | mediasoup为基础的sfu服务器  | 0.3.2由会议模式决定  |
 
  
 #### 使用 
