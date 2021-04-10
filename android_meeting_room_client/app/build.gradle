@@ -20,6 +20,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -29,5 +34,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'org.mediasoup.droid:mediasoup-client:3.0.8-beta-3'
+    // https://mvnrepository.com/artifact/io.socket/socket.io-client
+    implementation 'io.socket:socket.io-client:2.0.0'
+
+
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 
 }
