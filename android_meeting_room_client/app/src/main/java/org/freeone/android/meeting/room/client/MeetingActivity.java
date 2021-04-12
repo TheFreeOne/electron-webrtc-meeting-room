@@ -60,6 +60,7 @@ public class MeetingActivity extends AppCompatActivity {
                 }
             });
             this.roomClient = new RoomClient(MeetingActivity.this, roomId, nickname, sfuServerAddress, new RoomStore(),mPeerAdapter);
+
             PeerConnectionUtils.setPreferCameraFace("front");
         } catch (Throwable e) {
             e.printStackTrace();
@@ -67,6 +68,9 @@ public class MeetingActivity extends AppCompatActivity {
 
     }
 
-
-
+    @Override
+    protected void onStop() {
+        roomClient.close();
+        super.onStop();
+    }
 }

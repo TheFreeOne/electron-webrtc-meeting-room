@@ -72,6 +72,8 @@ public class RoomClient extends RoomMessageHandler {
     private PeerAdapter mPeerAdapter;
 
 
+
+
     public enum ConnectionState {
         // initial state.
         NEW,
@@ -585,5 +587,68 @@ public class RoomClient extends RoomMessageHandler {
 
     private Emitter.Listener onConnectError = args -> Log.e(TAG, "Error connecting");
     ;
+
+    public void close() {
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: " );
+        mWorkHandler.post(
+                () -> {
+
+
+                    // dispose all transport and device.
+                    disposeTransportDevice();
+
+                    // dispose audio track.
+                    if (mLocalAudioTrack != null) {
+                        mLocalAudioTrack.setEnabled(false);
+                        mLocalAudioTrack.dispose();
+                        mLocalAudioTrack = null;
+                    }
+
+                    // dispose video track.
+                    if (mLocalVideoTrack != null) {
+                        mLocalVideoTrack.setEnabled(false);
+                        mLocalVideoTrack.dispose();
+                        mLocalVideoTrack = null;
+                    }
+
+                    // dispose peerConnection.
+                    mPeerConnectionUtils.dispose();
+
+                    // quit worker handler thread.
+                    mWorkHandler.getLooper().quit();
+                });
+
+
+        this.mSocket.disconnect();
+        // Set room state.
+        mStore.setRoomState(ConnectionState.CLOSED);
+    }
+    private void disposeTransportDevice() {
+        Logger.d(TAG, "disposeTransportDevice()");
+        // Close mediasoup Transports.
+        if (mSendTransport != null) {
+            mSendTransport.close();
+            mSendTransport.dispose();
+            mSendTransport = null;
+        }
+
+        if (mRecvTransport != null) {
+            mRecvTransport.close();
+            mRecvTransport.dispose();
+            mRecvTransport = null;
+        }
+
+        // dispose device.
+        if (mMediasoupDevice != null) {
+            mMediasoupDevice.dispose();
+            mMediasoupDevice = null;
+        }
+    }
 
 }
