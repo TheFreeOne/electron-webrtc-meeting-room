@@ -1,27 +1,26 @@
 package org.freeone.android.meeting.room.client;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.graphics.Bitmap;
-import android.os.Build;
+
+import android.graphics.Rect;
+
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.FrameLayout;
-import android.widget.GridLayout;
+
+import android.view.View;
+
 
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
 import org.freeone.android.meeting.room.client.lib.PeerConnectionUtils;
 import org.freeone.android.meeting.room.client.lib.RoomClient;
 import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
-import org.freeone.android.meeting.room.client.lib.model.RoomInfo;
+
 import org.mediasoup.droid.MediasoupClient;
-import org.webrtc.EglRenderer;
-import org.webrtc.SurfaceViewRenderer;
 
 public class MeetingActivity extends AppCompatActivity {
 
@@ -46,9 +45,19 @@ public class MeetingActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.meeting_recycleView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        recyclerView.setLayoutManager(gridLayoutManager);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setAutoMeasureEnabled(true);
+
+        recyclerView.setLayoutManager(linearLayoutManager);
         mPeerAdapter = new PeerAdapter( this);
         recyclerView.setAdapter(mPeerAdapter);
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+                outRect.set(0, 0, 0, 20);
+            }
+        });
         this.roomClient = new RoomClient(MeetingActivity.this, roomId, nickname, sfuServerAddress, new RoomStore(),mPeerAdapter);
         PeerConnectionUtils.setPreferCameraFace("front");
 

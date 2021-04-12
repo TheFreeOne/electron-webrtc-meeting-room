@@ -127,23 +127,22 @@ public class RoomClient extends RoomMessageHandler {
                         try {
                             JSONArray jsonArray = new JSONArray(args[0].toString());
                             if (jsonArray.length() > 0) {
-                                JSONObject info = jsonArray.getJSONObject(0);
-                                Logger.d(TAG, "device#createSendTransport() " + info);
-                                String producer_id = info.optString("producer_id");
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("producerId", producer_id);
-                                jsonObject.put("consumerTransportId", mRecvTransport.getId());
-                                jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
-                                Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
-                                mSocket.emit("consume", jsonObject, (Ack) args1 -> {
-                                    if (args1 != null) {
-                                        try {
-                                            Log.e(TAG, "call: consume callback");
+                                for (int i = 0; i < jsonArray.length(); i++) {
 
-                                            if (true) {
+                                    JSONObject info = jsonArray.getJSONObject(i);
+                                    Logger.d(TAG, "device#createSendTransport() " + info);
+                                    String producer_id = info.optString("producer_id");
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("producerId", producer_id);
+                                    jsonObject.put("consumerTransportId", mRecvTransport.getId());
+                                    jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
+                                    Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
+                                    mSocket.emit("consume", jsonObject, (Ack) args1 -> {
+                                        if (args1 != null) {
+                                            try {
 
                                                 JSONObject data = new JSONObject(args1[0].toString());
-
+                                                Log.e(TAG, "call: consume callback = "+ data);
                                                 String peerId = data.optString("peerId");
                                                 String producerId = data.optString("producerId");
                                                 String id = data.optString("id");
@@ -172,24 +171,49 @@ public class RoomClient extends RoomMessageHandler {
                                                     consumer.resume();
                                                     ConsumerItemViewModel consumerItemViewModel = new ConsumerItemViewModel();
                                                     consumerItemViewModel.setConsumer(consumer);
-                                                   mWorkHandler.post(()->{
-                                                       mPeerAdapter.AddConsumerItemViewModel(consumerItemViewModel);
-                                                   });
+                                                    mWorkHandler.post(()->{
+                                                        mPeerAdapter.AddConsumerItemViewModel(consumerItemViewModel);
+                                                    });
                                                 }
 
 
+
+
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
                                             }
-
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
                                         }
-                                    }
-                                });
+                                    });
+
+                                }
 
 
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            // 关闭消费
+            mSocket.on("consumerClosed", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args != null){
+                        try {
+                            JSONObject jsonObject = new JSONObject(args[0].toString());
+                            Log.e(TAG, "socketIO on consumerClosed = "+jsonObject );
+                            String consumerId = jsonObject.optString("consumer_id");
+                            ConsumerHolder holder = mConsumers.remove(consumerId);
+                            if (holder != null) {
+                                holder.mConsumer.close();
+                                mConsumers.remove(consumerId);
+                                mStore.removeConsumer(holder.peerId, holder.mConsumer.getId());
+                            }
+                            mPeerAdapter.removeConsumerItemViewModelByConsumerId(consumerId);
+
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }

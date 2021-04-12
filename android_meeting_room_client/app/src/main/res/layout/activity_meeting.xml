@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="10dp"
     tools:context=".MeetingActivity">
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/meeting_recycleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="#EDEDED" />
 
 </RelativeLayout>
