@@ -36,30 +36,34 @@ public class MeetingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
 
-        MediasoupClient.initialize(getApplicationContext());
-        Bundle extras = getIntent().getExtras();
-        this.nickname = extras.getString("nickname");
-        this.roomId = extras.getString("roomId");
-        this.sfuServerAddress = extras.getString("sfuServerAddress");
+        try {
+            MediasoupClient.initialize(getApplicationContext());
+            Bundle extras = getIntent().getExtras();
+            this.nickname = extras.getString("nickname");
+            this.roomId = extras.getString("roomId");
+            this.sfuServerAddress = extras.getString("sfuServerAddress");
 
 
-        recyclerView = findViewById(R.id.meeting_recycleView);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setAutoMeasureEnabled(true);
+            recyclerView = findViewById(R.id.meeting_recycleView);
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            linearLayoutManager.setAutoMeasureEnabled(true);
 
-        recyclerView.setLayoutManager(linearLayoutManager);
-        mPeerAdapter = new PeerAdapter( this);
-        recyclerView.setAdapter(mPeerAdapter);
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-                outRect.set(0, 0, 0, 20);
-            }
-        });
-        this.roomClient = new RoomClient(MeetingActivity.this, roomId, nickname, sfuServerAddress, new RoomStore(),mPeerAdapter);
-        PeerConnectionUtils.setPreferCameraFace("front");
+            recyclerView.setLayoutManager(linearLayoutManager);
+            mPeerAdapter = new PeerAdapter( this);
+            recyclerView.setAdapter(mPeerAdapter);
+            recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                    super.getItemOffsets(outRect, view, parent, state);
+                    outRect.set(0, 0, 0, 20);
+                }
+            });
+            this.roomClient = new RoomClient(MeetingActivity.this, roomId, nickname, sfuServerAddress, new RoomStore(),mPeerAdapter);
+            PeerConnectionUtils.setPreferCameraFace("front");
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
 
     }
 

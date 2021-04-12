@@ -7,13 +7,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
-
-import androidx.annotation.NonNull;
-
-import org.freeone.android.meeting.room.client.ConsumerItemViewModel;
-import org.freeone.android.meeting.room.client.R;
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
 import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
+import org.freeone.android.meeting.room.client.model.PersonItemViewModel;
+import org.freeone.android.meeting.room.client.view.MySurfaceViewRenderer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +23,10 @@ import org.mediasoup.droid.RecvTransport;
 import org.mediasoup.droid.SendTransport;
 import org.mediasoup.droid.Transport;
 import org.webrtc.AudioTrack;
-import org.webrtc.MediaStreamTrack;
-import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoTrack;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import io.socket.client.Ack;
 import io.socket.client.IO;
@@ -56,7 +52,7 @@ public class RoomClient extends RoomMessageHandler {
     Socket mSocket;
 
     public static Boolean needWaitSocketIO = false;
-    public static String tempProducerId ="";
+    public static String tempProducerId = "";
 
     // mediasoup-client Device instance.
     private Device mMediasoupDevice;
@@ -112,7 +108,7 @@ public class RoomClient extends RoomMessageHandler {
         initSocketIO();
     }
 
-    public void initSocketIO(){
+    public void initSocketIO() {
         try {
             mSocket = IO.socket(sfuServerAddress);
             mSocket.on(Socket.EVENT_CONNECT, onConnect);
@@ -132,6 +128,8 @@ public class RoomClient extends RoomMessageHandler {
                                     JSONObject info = jsonArray.getJSONObject(i);
                                     Logger.d(TAG, "device#createSendTransport() " + info);
                                     String producer_id = info.optString("producer_id");
+                                    String producer_socket_id = info.optString("producer_socket_id");
+
                                     JSONObject jsonObject = new JSONObject();
                                     jsonObject.put("producerId", producer_id);
                                     jsonObject.put("consumerTransportId", mRecvTransport.getId());
@@ -142,7 +140,7 @@ public class RoomClient extends RoomMessageHandler {
                                             try {
 
                                                 JSONObject data = new JSONObject(args1[0].toString());
-                                                Log.e(TAG, "call: consume callback = "+ data);
+                                                Log.e(TAG, "call: consume callback = " + data);
                                                 String peerId = data.optString("peerId");
                                                 String producerId = data.optString("producerId");
                                                 String id = data.optString("id");
@@ -169,15 +167,12 @@ public class RoomClient extends RoomMessageHandler {
 
                                                 if ("video".equals(consumer.getKind())) {
                                                     consumer.resume();
-                                                    ConsumerItemViewModel consumerItemViewModel = new ConsumerItemViewModel();
-                                                    consumerItemViewModel.setConsumer(consumer);
-                                                    mWorkHandler.post(()->{
-                                                        mPeerAdapter.AddConsumerItemViewModel(consumerItemViewModel);
+                                                    PersonItemViewModel consumerItemViewModel = new PersonItemViewModel();
+                                                    consumerItemViewModel.getConsumerList().add(consumer);
+                                                    mWorkHandler.post(() -> {
+                                                        mPeerAdapter.addConsumerItemViewModel(producer_socket_id,consumer,"nickname");
                                                     });
                                                 }
-
-
-
 
 
                                             } catch (Exception e) {
@@ -197,21 +192,77 @@ public class RoomClient extends RoomMessageHandler {
                 }
             });
             // 关闭消费
-            mSocket.on("consumerClosed", new Emitter.Listener() {
+            mSocket.on("consumerClosed", args -> {
+                if (args != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(args[0].toString());
+                        Log.e(TAG, "socketIO on consumerClosed = " + jsonObject);
+                        String consumerId = jsonObject.optString("consumer_id");
+                        ConsumerHolder holder = mConsumers.remove(consumerId);
+                        if (holder != null) {
+                            holder.mConsumer.close();
+                            mConsumers.remove(consumerId);
+                            mStore.removeConsumer(holder.peerId, holder.mConsumer.getId());
+                        }
+                        mPeerAdapter.removeConsumerByConsumerId(consumerId);
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            mSocket.on("a user is disconnected", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if (args != null){
+                    if(args != null){
                         try {
                             JSONObject jsonObject = new JSONObject(args[0].toString());
-                            Log.e(TAG, "socketIO on consumerClosed = "+jsonObject );
-                            String consumerId = jsonObject.optString("consumer_id");
-                            ConsumerHolder holder = mConsumers.remove(consumerId);
-                            if (holder != null) {
-                                holder.mConsumer.close();
-                                mConsumers.remove(consumerId);
-                                mStore.removeConsumer(holder.peerId, holder.mConsumer.getId());
+                            String sockerId = jsonObject.optString("sockerid");
+                            mPeerAdapter.removePersonBySocketId(sockerId);
+                            List<PersonItemViewModel> list = mPeerAdapter.getList();
+                            for (int i = 0; i < list.size(); i++) {
+                                PersonItemViewModel personItemViewModel = list.get(i);
+                                if (sockerId.equals(personItemViewModel.getSocketId())){
+
+                                    List<Consumer> consumerList = personItemViewModel.getConsumerList();
+                                    for (Consumer consumer : consumerList) {
+                                        String kind = consumer.getKind();
+                                        if ("video".equals(kind)){
+                                            VideoTrack videoTrack = (VideoTrack) consumer.getTrack();
+                                            MySurfaceViewRenderer surfaceViewRenderer = personItemViewModel.getSurfaceViewRenderer();
+                                            videoTrack.removeSink(surfaceViewRenderer);
+
+                                            try {
+                                                surfaceViewRenderer.release();
+                                            } catch (Exception e) {
+                                                System.err.println("release error");
+                                            }
+
+                                            try {
+                                                consumer.close();
+                                            } catch (Exception e) {
+                                                System.err.println("close error");
+                                            }
+
+                                        }
+
+                                        ConsumerHolder holder = mConsumers.remove(consumer.getId());
+                                        if (holder == null) {
+                                            break;
+                                        }
+                                        holder.mConsumer.close();
+                                        mConsumers.remove(consumer.getId());
+                                        mStore.removeConsumer(holder.peerId, holder.mConsumer.getId());
+                                    }
+
+
+                                    break;
+                                }
                             }
-                            mPeerAdapter.removeConsumerItemViewModelByConsumerId(consumerId);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -223,7 +274,7 @@ public class RoomClient extends RoomMessageHandler {
 
             mSocket.connect();
 
-            Log.e(TAG, "initSocketIO: initSocketIO" );
+            Log.e(TAG, "initSocketIO: initSocketIO");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -239,10 +290,10 @@ public class RoomClient extends RoomMessageHandler {
             jsonObject.put("room_id", roomId);
 
             mSocket.emit("join", jsonObject, (Ack) joinArgs -> {
-                Log.e(TAG, "join: send = " +jsonObject );
-                if (joinArgs != null){
+                Log.e(TAG, "join: send = " + jsonObject);
+                if (joinArgs != null) {
                     try {
-                        Log.e(TAG, "join: callback = " + new JSONObject(joinArgs[0].toString()) );
+                        Log.e(TAG, "join: callback = " + new JSONObject(joinArgs[0].toString()));
                         JSONObject jsonCallback = new JSONObject(joinArgs[0].toString());
                         this.peerId = jsonCallback.optString("socketid");
                         getRouterRtpCapabilities();
@@ -257,13 +308,13 @@ public class RoomClient extends RoomMessageHandler {
         }
     }
 
-    public void getRouterRtpCapabilities(){
-        mSocket.emit("getRouterRtpCapabilities", new JSONObject(),(Ack) args -> {
-            if(args!= null){
+    public void getRouterRtpCapabilities() {
+        mSocket.emit("getRouterRtpCapabilities", new JSONObject(), (Ack) args -> {
+            if (args != null) {
                 try {
-                    Log.e(TAG, "getRouterRtpCapabilities: callback = "+args[0].toString() );
+                    Log.e(TAG, "getRouterRtpCapabilities: callback = " + args[0].toString());
 
-                    mWorkHandler.post(()->{
+                    mWorkHandler.post(() -> {
                         try {
                             this.mMediasoupDevice = new Device();
                             String routerRtpCapabilities = args[0].toString();
@@ -286,53 +337,54 @@ public class RoomClient extends RoomMessageHandler {
         });
     }
 
-    public void getProducers(){
+    public void getProducers() {
         mSocket.emit("getProducers");
     }
 
-    public void initProducerTransport(){
+    public void initProducerTransport() {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("forceTcp", false);
             jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
-            Log.e(TAG, "initProducerTransport: json = "+jsonObject );
+            Log.e(TAG, "initProducerTransport: json = " + jsonObject);
             mSocket.emit("createWebRtcTransport", jsonObject, (Ack) args -> {
-                    if(args != null){
-                        try {
-                            Log.e(TAG, "initProducerTransport createWebRtcTransport callback = " + args[0].toString() );
-                            JSONObject info = new JSONObject(args[0].toString());
+                if (args != null) {
+                    try {
+                        Log.e(TAG, "initProducerTransport createWebRtcTransport callback = " + args[0].toString());
+                        JSONObject info = new JSONObject(args[0].toString());
 
-                            Logger.d(TAG, "device#createSendTransport() " + info);
+                        Logger.d(TAG, "device#createSendTransport() " + info);
 
-                            String id = info.optString("id");
-                            String iceParameters = info.optString("iceParameters");
-                            String iceCandidates = info.optString("iceCandidates");
-                            String dtlsParameters = info.optString("dtlsParameters");
-                            String sctpParameters = info.optString("sctpParameters");
+                        String id = info.optString("id");
+                        String iceParameters = info.optString("iceParameters");
+                        String iceCandidates = info.optString("iceCandidates");
+                        String dtlsParameters = info.optString("dtlsParameters");
+                        String sctpParameters = info.optString("sctpParameters");
 
-                            this.mSendTransport = mMediasoupDevice.createSendTransport(sendTransportListener, id, iceParameters, iceCandidates, dtlsParameters);
-//                            enableCam();
-                            initConsumerTransport();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        this.mSendTransport = mMediasoupDevice.createSendTransport(sendTransportListener, id, iceParameters, iceCandidates, dtlsParameters);
+                        enableCam();
+                        initConsumerTransport();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void initConsumerTransport(){
+
+    public void initConsumerTransport() {
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("forceTcp", false);
 
-            Log.e(TAG, "initConsumerTransport: " );
+            Log.e(TAG, "initConsumerTransport: ");
             mSocket.emit("createWebRtcTransport", jsonObject, (Ack) args -> {
-                if(args != null){
+                if (args != null) {
                     Log.e(TAG, "initConsumerTransport: createWebRtcTransport send = " + jsonObject);
                     try {
-                        Log.e(TAG, "initConsumerTransport createWebRtcTransport callback: args[0].toString() = " + args[0].toString() );
+                        Log.e(TAG, "initConsumerTransport createWebRtcTransport callback: args[0].toString() = " + args[0].toString());
                         JSONObject info = new JSONObject(args[0].toString());
 
                         String id = info.optString("id");
@@ -340,7 +392,7 @@ public class RoomClient extends RoomMessageHandler {
                         String iceCandidates = info.optString("iceCandidates");
                         String dtlsParameters = info.optString("dtlsParameters");
 
-                        this.mRecvTransport = mMediasoupDevice.createRecvTransport( recvTransportListener, id, iceParameters, iceCandidates, dtlsParameters,null);
+                        this.mRecvTransport = mMediasoupDevice.createRecvTransport(recvTransportListener, id, iceParameters, iceCandidates, dtlsParameters, null);
                         getProducers();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -360,7 +412,7 @@ public class RoomClient extends RoomMessageHandler {
                 () -> {
                     try {
                         if (mLocalVideoTrack == null) {
-                            mLocalVideoTrack = mPeerConnectionUtils.createVideoTrack(mContext , "cam");
+                            mLocalVideoTrack = mPeerConnectionUtils.createVideoTrack(mContext, "cam");
                             mLocalVideoTrack.setEnabled(true);
                         }
                         mCamProducer =
@@ -375,8 +427,8 @@ public class RoomClient extends RoomMessageHandler {
                                         mLocalVideoTrack,
                                         null,
                                         null);
-                        Log.e(TAG, "enableCamImpl: mCamProducer " );
-                        Log.e(TAG, "tempProducerId = 3" );
+                        Log.e(TAG, "enableCamImpl: mCamProducer ");
+                        Log.e(TAG, "tempProducerId = 3");
 
                         System.out.println(mCamProducer);
                         mStore.addProducer(mCamProducer);
@@ -406,12 +458,12 @@ public class RoomClient extends RoomMessageHandler {
                         jsonObject.put("kind", kind);
                         jsonObject.put("rtpParameters", toJsonObject(rtpParameters));
                         jsonObject.put("appData", appData);
-                        Log.e(TAG, "onProduce: appData = " +appData );
+                        Log.e(TAG, "onProduce: appData = " + appData);
 
                         mSocket.emit("produce", jsonObject, new Ack() {
                             @Override
                             public void call(Object... args) {
-                                if(args != null){
+                                if (args != null) {
                                     for (Object arg : args) {
                                         try {
                                             JSONObject jsonObject1 = new JSONObject(arg.toString());
@@ -426,7 +478,7 @@ public class RoomClient extends RoomMessageHandler {
                                 }
                             }
                         });
-                        while("".equals(tempProducerId)){
+                        while ("".equals(tempProducerId)) {
                             // 阻塞等待tempProducerId
                         }
 
@@ -475,13 +527,13 @@ public class RoomClient extends RoomMessageHandler {
                 public void onConnect(Transport transport, String dtlsParameters) {
 
                     try {
-                        Log.e(listenerTAG, "onConnect: " );
+                        Log.e(listenerTAG, "onConnect: ");
                         JSONObject jsonObject = new JSONObject();
                         String id = mRecvTransport.getId();
 
                         jsonObject.put("transport_id", mRecvTransport.getId());
                         jsonObject.put("dtlsParameters", toJsonObject(dtlsParameters));
-                        Log.e(listenerTAG, "connectTransport send ="+jsonObject  );
+                        Log.e(listenerTAG, "connectTransport send =" + jsonObject);
                         mSocket.emit("connectTransport", jsonObject);
 
                     } catch (JSONException e) {
@@ -492,7 +544,7 @@ public class RoomClient extends RoomMessageHandler {
 
                 @Override
                 public void onConnectionStateChange(Transport transport, String connectionState) {
-                    Log.e(listenerTAG, "onConnectionStateChange: connectionState = "+connectionState );
+                    Log.e(listenerTAG, "onConnectionStateChange: connectionState = " + connectionState);
                 }
             };
 
@@ -505,9 +557,9 @@ public class RoomClient extends RoomMessageHandler {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("room_id", roomId);
                 mSocket.emit("createRoom", jsonObject, (Ack) args1 -> {
-                    Log.e(TAG, "createRoom send = "+jsonObject );
-                    if(args1 != null){
-                        Log.e(TAG, "call: createRoom = "+ args1[0].toString()  );
+                    Log.e(TAG, "createRoom send = " + jsonObject);
+                    if (args1 != null) {
+                        Log.e(TAG, "call: createRoom = " + args1[0].toString());
                         join(nickname, roomId);
                     }
 
@@ -519,6 +571,7 @@ public class RoomClient extends RoomMessageHandler {
 
         }
     };
+
     public static JSONObject toJsonObject(String data) {
         try {
             return new JSONObject(data);
@@ -527,8 +580,10 @@ public class RoomClient extends RoomMessageHandler {
             return new JSONObject();
         }
     }
+
     private Emitter.Listener onDisconnect = args -> Log.i(TAG, "diconnected");
 
-    private Emitter.Listener onConnectError = args -> Log.e(TAG, "Error connecting"); ;
+    private Emitter.Listener onConnectError = args -> Log.e(TAG, "Error connecting");
+    ;
 
 }
