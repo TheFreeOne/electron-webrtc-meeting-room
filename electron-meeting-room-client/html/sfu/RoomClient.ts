@@ -462,11 +462,12 @@ export default class RoomClient {
             let elem;
             if (!audio) {
                 elem = document.createElement('video')
-                elem.srcObject = stream
-                elem.id = producer.id
-                elem.playsinline = false
-                elem.autoplay = true
-                elem.className = "vid"
+                elem.srcObject = stream;
+                elem.id = producer.id;
+                elem.playsinline = false;
+                elem.autoplay = true;
+                elem.className = "vid";
+                elem.muted = true;
                 this.localMediaEl.appendChild(elem);
             }
 
