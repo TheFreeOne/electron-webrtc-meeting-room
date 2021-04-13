@@ -7,6 +7,6 @@
     <FrameLayout
         android:id="@+id/remote_item_framelayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:background="#000000"></FrameLayout>
 </RelativeLayout>

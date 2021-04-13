@@ -5,7 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
+
 
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
 import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
@@ -63,11 +63,11 @@ public class RoomClient extends RoomMessageHandler {
     // Local Audio Track for mic.
     private AudioTrack mLocalAudioTrack;
     // Local mic mediasoup Producer.
-    private Producer mMicProducer;
+    private static Producer mMicProducer;
     // local Video Track for cam.
     private VideoTrack mLocalVideoTrack;
     // Local cam mediasoup Producer.
-    private Producer mCamProducer;
+    private static Producer mCamProducer;
 
     private PeerAdapter mPeerAdapter;
 
@@ -137,6 +137,13 @@ public class RoomClient extends RoomMessageHandler {
                                     jsonObject.put("consumerTransportId", mRecvTransport.getId());
                                     jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
                                     Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
+                                    if (mCamProducer != null && producer_id.equals(mCamProducer.getId())){
+                                        continue;
+                                    }
+                                    if (mMicProducer != null && producer_id.equals(mMicProducer.getId())){
+                                        continue;
+                                    }
+
                                     mSocket.emit("consume", jsonObject, (Ack) args1 -> {
                                         if (args1 != null) {
                                             try {
@@ -273,6 +280,47 @@ public class RoomClient extends RoomMessageHandler {
                 }
             });
 
+            mSocket.on("othersInRoom", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if (args != null){
+                        try {
+                            JSONArray jsonArray = new JSONArray(args[0].toString());
+                            for (int i = 0; i < jsonArray.length() ; i++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String socketId = jsonObject.getString("socketid");
+                                String name = jsonObject.getString("name");
+                                mPeerAdapter.addPerson(socketId,name);
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
+            mSocket.on("joined", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    if(args != null){
+                        try {
+                            JSONObject jsonObject = new JSONObject(args[0].toString());
+
+                            String room_id = jsonObject.optString("room_id");
+                            String socketId = jsonObject.optString("socketid");
+                            String name = jsonObject.optString("name");
+
+                            if (roomId.equals(room_id)){
+                                mPeerAdapter.addPerson(socketId,name);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+
 
             mSocket.connect();
 
@@ -365,6 +413,7 @@ public class RoomClient extends RoomMessageHandler {
 
                         this.mSendTransport = mMediasoupDevice.createSendTransport(sendTransportListener, id, iceParameters, iceCandidates, dtlsParameters);
                         enableCam();
+                        enableMic();
                         initConsumerTransport();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -404,6 +453,52 @@ public class RoomClient extends RoomMessageHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void enableMic() {
+        Logger.d(TAG, "enableMic()");
+        mWorkHandler.post(()->{
+            try {
+                if (mMicProducer != null) {
+                    return;
+                }
+                if (!mMediasoupDevice.isLoaded()) {
+                    Log.w(TAG, "enableMic() | not loaded");
+                    return;
+                }
+                if (!mMediasoupDevice.canProduce("audio")) {
+                    Log.w(TAG, "enableMic() | cannot produce audio");
+                    return;
+                }
+                if (mSendTransport == null) {
+                    Log.w(TAG, "enableMic() | mSendTransport doesn't ready");
+                    return;
+                }
+                if (mLocalAudioTrack == null) {
+                    mLocalAudioTrack = mPeerConnectionUtils.createAudioTrack(mContext, "mic");
+                    mLocalAudioTrack.setEnabled(true);
+                }
+                mMicProducer =
+                        mSendTransport.produce(
+                                producer -> {
+                                    Log.e(TAG, "onTransportClose(), micProducer");
+                                    if (mMicProducer != null) {
+                                        mStore.removeProducer(mMicProducer.getId());
+                                        mMicProducer = null;
+                                    }
+                                },
+                                mLocalAudioTrack,
+                                null,
+                                null);
+                mStore.addProducer(mMicProducer);
+            } catch (MediasoupException e) {
+                e.printStackTrace();
+                Log.e(TAG, "enableMic() | failed:", e);
+                mStore.addNotify("error", "Error enabling microphone: " + e.getMessage());
+                if (mLocalAudioTrack != null) {
+                    mLocalAudioTrack.setEnabled(false);
+                }
+            }
+        });
     }
 
 

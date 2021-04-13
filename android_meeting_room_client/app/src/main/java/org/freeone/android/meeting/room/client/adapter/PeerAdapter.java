@@ -24,6 +24,7 @@ import org.freeone.android.meeting.room.client.view.MySurfaceViewRenderer;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mediasoup.droid.Consumer;
+import org.webrtc.AudioTrack;
 import org.webrtc.EglRenderer;
 import org.webrtc.RendererCommon;
 import org.webrtc.VideoTrack;
@@ -70,12 +71,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
                     VideoTrack videoTrack = (VideoTrack) consumer.getTrack();
                     videoTrack.addSink(surfaceViewRenderer);
                     surfaceViewRenderer.setVisibility(View.VISIBLE);
-
-                }else if ("audio".equals(kind)){
-                    // TODO 音频怎么处理
-
                 }
-
                 consumerBelongTo.put(consumer.getId(),list.get(index));
             }else{
                 PersonItemViewModel personItemViewModel = new PersonItemViewModel();
@@ -144,11 +140,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
         layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         holder.surfaceViewRenderer.setLayoutParams(layoutParams);
-        holder.surfaceViewRenderer.setOnClickListener(v -> {
-            ViewGroup.LayoutParams surfaceViewlayoutParams = holder.surfaceViewRenderer.getLayoutParams();
-            surfaceViewlayoutParams.height = holder.surfaceViewRenderer.getHeight()+1;
-            holder.surfaceViewRenderer.setLayoutParams(surfaceViewlayoutParams);
-        });
+
     }
 
     /**
@@ -173,9 +165,40 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
+
+    Handler addPersonHandler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            JSONObject jsonObject = (JSONObject) msg.obj;
+            String socketId = jsonObject.optString("socketId");
+            String nickname = jsonObject.optString("nickname");
+            PersonItemViewModel personItemViewModel = new PersonItemViewModel();
+            personItemViewModel.setSocketId(socketId);
+            personItemViewModel.setNickname(nickname);
+            list.add(personItemViewModel);
+            notifyItemInserted(getItemCount() - 1);
+            notifyItemChanged(getItemCount());
+        }
+    };
+
+    public void addPerson(@NonNull String socketId,  String nickname) {
+        Log.e(TAG, "addConsumerItemViewModel: start" );
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("socketId",socketId);
+            jsonObject.put("nickname",nickname);
+            Message message = new Message();
+            message.obj = jsonObject;
+            message.what = 1;
+            addPersonHandler.sendMessage(message);
+            Log.e(TAG, "AddConsumerItemViewModel: end");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     Handler removeConsumerByConsumerIdHandler = new Handler(){
@@ -199,7 +222,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
                             videoTrack.dispose();
 
                             surfaceViewRenderer.clearImage();
-//                            surfaceViewRenderer.setVisibility(View.GONE);
+
                         }
 
                         break;
@@ -294,6 +317,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
         FrameLayout frameLayout;
         PersonItemViewModel personItemViewModel;
         MySurfaceViewRenderer surfaceViewRenderer;
+
         PeerViewHolder(@NonNull View view) {
             super(view);
             frameLayout = view.findViewById(R.id.remote_item_framelayout);
@@ -344,7 +368,11 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
                 });
 
 //                surfaceViewRenderer.setBackground(mContext.getResources().getDrawable(Color.BLUE));
-                frameLayout.addView(surfaceViewRenderer);
+                ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
+                layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                layoutParams.height = 768;
+                frameLayout.addView(surfaceViewRenderer,layoutParams);
+
                 List<Consumer> consumerList = personItemViewModel.getConsumerList();
                 for (int i = 0; i < consumerList.size(); i++) {
                     Consumer consumer = consumerList.get(i);
@@ -355,7 +383,8 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
                         surfaceViewRenderer.setVisibility(View.VISIBLE);
 
                     }else if ("audio".equals(kind)){
-                        // TODO 音频怎么处理
+                        //   音频webrtc自动处理
+
 
                     }
                 }
