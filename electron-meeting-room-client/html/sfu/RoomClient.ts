@@ -544,7 +544,7 @@ export default class RoomClient {
                 elem.playsinline = false;
                 elem.autoplay = true;
                 elem.className = "vid";
-                elem.setAttribute('consumer_id', producer_id);
+                elem.setAttribute('producer_id', producer_id);
 
                 if (document.getElementById(producer_socket_id)) {
                     document.getElementById(producer_socket_id).appendChild(elem);
