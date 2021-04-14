@@ -5,9 +5,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
-
-
-import androidx.annotation.WorkerThread;
+import android.widget.Toast;
 
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
 import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
@@ -74,6 +72,8 @@ public class RoomClient extends RoomMessageHandler {
 
     private PeerAdapter mPeerAdapter;
 
+    private String recvIceParameters;
+
 
     public enum ConnectionState {
         // initial state.
@@ -136,10 +136,13 @@ public class RoomClient extends RoomMessageHandler {
                                 jsonObject.put("consumerTransportId", mRecvTransport.getId());
                                 jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
                                 Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
+
                                 if (mCamProducer != null && producer_id.equals(mCamProducer.getId())) {
+                                    Log.e(TAG, "consume  continue" );
                                     continue;
                                 }
                                 if (mMicProducer != null && producer_id.equals(mMicProducer.getId())) {
+                                    Log.e(TAG, "consume  continue" );
                                     continue;
                                 }
 
@@ -160,8 +163,12 @@ public class RoomClient extends RoomMessageHandler {
 
                                             Consumer consumer = mRecvTransport.consume(
                                                     c -> {
-                                                        mConsumers.remove(c.getId());
-                                                        Logger.w(TAG, "onTransportClose for consume");
+                                                        try {
+                                                            mConsumers.remove(c.getId());
+                                                        } catch (Exception e) {
+                                                            Log.e(TAG, "initSocketIO: mConsumers.remove ", e);
+                                                        }
+                                                        Log.e(TAG, "onTransportClose for consume");
                                                     },
                                                     id,
                                                     producerId,
@@ -181,19 +188,10 @@ public class RoomClient extends RoomMessageHandler {
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
-//                                                    mWorkHandler.post(() -> {
-//
-//                                                        try {
-//                                                            mPeerAdapter.addConsumerItemViewModel(producer_socket_id,consumer,"nickname");
-//                                                        } catch (Exception e) {
-//                                                            Log.e(TAG, "call: mPeerAdapter.addConsumerItemViewModel error",e );
-//                                                            e.printStackTrace();
-//                                                        }
-//                                                    });
                                             }
 
 
-                                        } catch (Exception e) {
+                                        } catch (Throwable e) {
                                             e.printStackTrace();
                                         }
                                     }
@@ -222,7 +220,6 @@ public class RoomClient extends RoomMessageHandler {
                             mStore.removeConsumer(holder.peerId, holder.mConsumer.getId());
                         }
                         mPeerAdapter.removeConsumerByConsumerId(consumerId);
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -444,6 +441,7 @@ public class RoomClient extends RoomMessageHandler {
 
                         String id = info.optString("id");
                         String iceParameters = info.optString("iceParameters");
+                        this.recvIceParameters = iceParameters;
                         String iceCandidates = info.optString("iceCandidates");
                         String dtlsParameters = info.optString("dtlsParameters");
 
@@ -761,7 +759,42 @@ public class RoomClient extends RoomMessageHandler {
 
                 @Override
                 public void onConnectionStateChange(Transport transport, String connectionState) {
+
                     Log.e(listenerTAG, "onConnectionStateChange: connectionState = " + connectionState);
+                    if ("disconnected".equals(connectionState)){
+                        Log.e(TAG, "onConnectionStateChange: "+transport.getId()+" disconnected" );
+                        // TODO 如果所有consumer都关闭了，那么 recvTransport也会关闭
+
+
+                            Log.e(TAG, "mRecvTransport.restartIce" );
+                            if (mRecvTransport != null) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("transport_id",transport.getId());
+                                    Log.e(TAG, "restartIce : send = " + jsonObject);
+                                    mSocket.emit("restartIce", jsonObject, new Ack() {
+                                        @Override
+                                        public void call(Object... args) {
+                                            if (args != null){
+                                                Log.e(TAG, "restartIce : callback = "+args[0].toString());
+                                                String iceParameters = args[0].toString();
+                                                try {
+                                                    mRecvTransport.restartIce(iceParameters);
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                    });
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+
+                    }
+
                 }
             };
 

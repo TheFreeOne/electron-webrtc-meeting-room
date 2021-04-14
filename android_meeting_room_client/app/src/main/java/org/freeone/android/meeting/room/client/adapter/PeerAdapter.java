@@ -219,7 +219,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
                         if ("video".equals(kind)){
                             VideoTrack videoTrack = (VideoTrack) consumer.getTrack();
                             videoTrack.removeSink(surfaceViewRenderer);
-                            videoTrack.dispose();
+//                            videoTrack.dispose();
 
                             surfaceViewRenderer.clearImage();
 
