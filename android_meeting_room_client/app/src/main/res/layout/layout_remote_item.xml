@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/remote_item_relativeLayout"
     android:layout_width="match_parent"
+    android:background="@drawable/shape_button"
     android:layout_height="wrap_content">
 
     <FrameLayout

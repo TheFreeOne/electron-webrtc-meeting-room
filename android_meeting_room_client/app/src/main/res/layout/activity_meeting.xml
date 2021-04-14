@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#001C2D"
+    android:orientation="vertical"
     android:padding="10dp"
     tools:context=".MeetingActivity">
 
@@ -11,7 +13,33 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/meeting_recycleView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#EDEDED" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#001C2D" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/mic_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_button"
+            android:text="关闭麦克风"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/cam_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_button"
+            android:text="关闭摄像头"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+</LinearLayout>

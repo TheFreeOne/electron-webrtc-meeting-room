@@ -135,12 +135,34 @@ export default class Room {
             this.io.to(socket_id).emit('consumerClosed', {
                 consumer_id: consumer.id
             })
-        }.bind(this))
+        }.bind(this));
+
+        consumer.on('producerpause', () =>
+		{
+			// tell client consumer is pause
+            console.dir(`---producerpause---`)
+            this.io.to(socket_id).emit('consumerPaused', {
+                consumer_id: consumer.id
+            })
+		});
+
+		consumer.on('producerresume', () =>
+		{
+			// tell client consumer is resume
+            console.dir(`---producerresume---`)
+            this.io.to(socket_id).emit('consumerResumed', {
+                consumer_id: consumer.id
+            })
+		});
+
 
         return params;
 
     }
-
+    /**
+     * 
+     * @param socket_id 移除人员
+     */
     async removePeer(socket_id) {
         this.peers.get(socket_id).close()
         this.peers.delete(socket_id)
@@ -149,6 +171,14 @@ export default class Room {
     closeProducer(socket_id, producer_id) {
         this.peers.get(socket_id).closeProducer(producer_id)
     }
+
+    async pauseProducer(socket_id, producer_id){
+       await this.peers.get(socket_id).pauseProducer(producer_id);
+    }
+
+    async resumeProducer(socket_id, producer_id){
+        await this.peers.get(socket_id).resumeProducer(producer_id);
+     }
 
     broadCast(socket_id, name, data) {
         for (let otherID of Array.from(this.peers.keys()).filter(id => id !== socket_id)) {
@@ -163,8 +193,6 @@ export default class Room {
     getPeers(){
         return this.peers
     }
-
-
 
     toJson() {
         return {

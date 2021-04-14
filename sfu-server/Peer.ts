@@ -5,7 +5,7 @@ import { WebRtcTransport } from "mediasoup/src/WebRtcTransport";
  * 房间里头的人
  */
 export default  class Peer {
-    
+
     /**
      * 连接的socket的id
      */
@@ -29,7 +29,7 @@ export default  class Peer {
         this.producers = new Map<any,Producer>()
     }
 
-    
+
     addTransport(transport:WebRtcTransport) {
         this.transports.set(transport.id, transport)
     }
@@ -43,11 +43,11 @@ export default  class Peer {
 
     async createProducer(producerTransportId, rtpParameters, kind,producer_socket_id?):Promise<Producer> {
         // console.log(`createProducer`,producerTransportId, rtpParameters, kind,producer_socket_id);
-        
+
         //TODO handle null errors
         let producer:Producer = await (this.transports.get(producerTransportId) as  WebRtcTransport).produce({
             kind,
-            rtpParameters 
+            rtpParameters
         })
         // @ts-ignore 额外添加属性
         producer.producer_socket_id = producer_socket_id;
@@ -65,7 +65,7 @@ export default  class Peer {
 
     async createConsumer(consumer_transport_id, producer_id, rtpCapabilities)  {
         let consumerTransport = this.transports.get(consumer_transport_id)
-    
+
         let consumer:Consumer = null
         try {
             consumer = await consumerTransport.consume({
@@ -109,13 +109,33 @@ export default  class Peer {
 
     closeProducer(producer_id) {
         try {
-            this.producers.get(producer_id).close()
+            if(this.producers.get(producer_id)){
+                this.producers.get(producer_id).close()
+            }else {
+                console.dir(`get a null producer by producer_id = ${producer_id}`);
+            }
         } catch(e) {
             console.warn(e)
         }
-
-
         this.producers.delete(producer_id)
+    }
+
+    async pauseProducer(producer_id) {
+        try {
+           await this.producers.get(producer_id).pause();
+        } catch(e) {
+            console.error(e)
+        }
+
+    }
+
+    async resumeProducer(producer_id) {
+        try {
+           await this.producers.get(producer_id).resume();
+        } catch(e) {
+            console.error(e)
+        }
+
     }
 
     getProducer(producer_id) {
@@ -130,6 +150,6 @@ export default  class Peer {
         this.consumers.delete(consumer_id)
     }
 
-     
 
-} 
+
+}

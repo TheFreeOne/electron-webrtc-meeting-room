@@ -2,9 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/back"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
+    android:background="#001C2D"
     android:gravity="center_horizontal|center_vertical"
     tools:context=".MainActivity">
 
@@ -15,6 +17,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
+        android:textColor="#ED7404"
+        android:theme="@style/MyEditText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +31,9 @@
         android:layout_below="@+id/edit_nickname"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="123456789" />
+        android:text="123456789"
+        android:textColor="#ED7404"
+        android:theme="@style/MyEditText" />
 
     <EditText
         android:id="@+id/edit_sfu_server_address"
@@ -37,6 +43,8 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:text="http://192.168.0.142:3016"
+        android:textColor="#ED7404"
+        android:theme="@style/MyEditText"
         tools:ignore="MissingConstraints" />
 
     <Button
@@ -45,10 +53,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_sfu_server_address"
         android:layout_centerInParent="true"
-        android:layout_centerVertical="true"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
+        android:background="@drawable/shape_button"
+        android:gravity="center_horizontal|center_vertical"
         android:text="进入会议"
+        android:textColor="#FFFFFF"
         tools:ignore="MissingConstraints" />
 
 

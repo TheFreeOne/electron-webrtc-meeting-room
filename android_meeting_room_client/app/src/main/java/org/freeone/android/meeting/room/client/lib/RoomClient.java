@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.util.Log;
 
 
+import androidx.annotation.WorkerThread;
+
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
 import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
 import org.freeone.android.meeting.room.client.model.PersonItemViewModel;
@@ -52,7 +54,8 @@ public class RoomClient extends RoomMessageHandler {
     Socket mSocket;
 
     public static Boolean needWaitSocketIO = false;
-    public static String tempProducerId = "";
+    public static String tempVideoProducerId = "";
+    public static String tempAudioProducerId = "";
 
     // mediasoup-client Device instance.
     private Device mMediasoupDevice;
@@ -67,11 +70,9 @@ public class RoomClient extends RoomMessageHandler {
     // local Video Track for cam.
     private VideoTrack mLocalVideoTrack;
     // Local cam mediasoup Producer.
-    private static Producer mCamProducer;
+    private  Producer mCamProducer;
 
     private PeerAdapter mPeerAdapter;
-
-
 
 
     public enum ConnectionState {
@@ -116,87 +117,94 @@ public class RoomClient extends RoomMessageHandler {
             mSocket.on(Socket.EVENT_CONNECT, onConnect);
             mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-            mSocket.on("newProducers", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    Log.e(TAG, "call: newProducers");
-                    if (args != null) {
-                        Log.e(TAG, "newProducers  get  " + args[0].toString());
-                        try {
-                            JSONArray jsonArray = new JSONArray(args[0].toString());
-                            if (jsonArray.length() > 0) {
-                                for (int i = 0; i < jsonArray.length(); i++) {
+            mSocket.on("newProducers", args -> {
+                Log.e(TAG, "call: newProducers");
+                if (args != null) {
+                    Log.e(TAG, "newProducers  get  " + args[0].toString());
+                    try {
+                        JSONArray jsonArray = new JSONArray(args[0].toString());
+                        if (jsonArray.length() > 0) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
 
-                                    JSONObject info = jsonArray.getJSONObject(i);
-                                    Logger.d(TAG, "device#createSendTransport() " + info);
-                                    String producer_id = info.optString("producer_id");
-                                    String producer_socket_id = info.optString("producer_socket_id");
+                                JSONObject info = jsonArray.getJSONObject(i);
+                                Logger.d(TAG, "device#createSendTransport() " + info);
+                                String producer_id = info.optString("producer_id");
+                                String producer_socket_id = info.optString("producer_socket_id");
 
-                                    JSONObject jsonObject = new JSONObject();
-                                    jsonObject.put("producerId", producer_id);
-                                    jsonObject.put("consumerTransportId", mRecvTransport.getId());
-                                    jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
-                                    Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
-                                    if (mCamProducer != null && producer_id.equals(mCamProducer.getId())){
-                                        continue;
-                                    }
-                                    if (mMicProducer != null && producer_id.equals(mMicProducer.getId())){
-                                        continue;
-                                    }
-
-                                    mSocket.emit("consume", jsonObject, (Ack) args1 -> {
-                                        if (args1 != null) {
-                                            try {
-
-                                                JSONObject data = new JSONObject(args1[0].toString());
-                                                Log.e(TAG, "call: consume callback = " + data);
-                                                String peerId = data.optString("peerId");
-                                                String producerId = data.optString("producerId");
-                                                String id = data.optString("id");
-                                                String kind = data.optString("kind");
-                                                String rtpParameters = data.optString("rtpParameters");
-                                                String type = data.optString("type");
-
-                                                boolean producerPaused = false;
-
-                                                Consumer consumer = mRecvTransport.consume(
-                                                        c -> {
-                                                            mConsumers.remove(c.getId());
-                                                            Logger.w(TAG, "onTransportClose for consume");
-                                                        },
-                                                        id,
-                                                        producerId,
-                                                        kind,
-                                                        rtpParameters,
-                                                        null);
-
-                                                mConsumers.put(consumer.getId(), new ConsumerHolder(peerId, consumer));
-
-                                                mStore.addConsumer(peerId, type, consumer, producerPaused);
-
-                                                if ("video".equals(consumer.getKind())) {
-                                                    consumer.resume();
-                                                    PersonItemViewModel consumerItemViewModel = new PersonItemViewModel();
-                                                    consumerItemViewModel.getConsumerList().add(consumer);
-                                                    mWorkHandler.post(() -> {
-                                                        mPeerAdapter.addConsumerItemViewModel(producer_socket_id,consumer,"nickname");
-                                                    });
-                                                }
-
-
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("producerId", producer_id);
+                                jsonObject.put("consumerTransportId", mRecvTransport.getId());
+                                jsonObject.put("rtpCapabilities", mMediasoupDevice.getRtpCapabilities());
+                                Log.e(TAG, "call: mSocket.emit(\"consume\",jsonObject);");
+                                if (mCamProducer != null && producer_id.equals(mCamProducer.getId())) {
+                                    continue;
+                                }
+                                if (mMicProducer != null && producer_id.equals(mMicProducer.getId())) {
+                                    continue;
                                 }
 
+                                mSocket.emit("consume", jsonObject, (Ack) args1 -> {
+                                    if (args1 != null) {
+                                        try {
+
+                                            JSONObject data = new JSONObject(args1[0].toString());
+                                            Log.e(TAG, "call: consume callback = " + data);
+                                            String peerId = data.optString("peerId");
+                                            String producerId = data.optString("producerId");
+                                            String id = data.optString("id");
+                                            String kind = data.optString("kind");
+                                            String rtpParameters = data.optString("rtpParameters");
+                                            String type = data.optString("type");
+
+                                            boolean producerPaused = false;
+
+                                            Consumer consumer = mRecvTransport.consume(
+                                                    c -> {
+                                                        mConsumers.remove(c.getId());
+                                                        Logger.w(TAG, "onTransportClose for consume");
+                                                    },
+                                                    id,
+                                                    producerId,
+                                                    kind,
+                                                    rtpParameters,
+                                                    null);
+
+                                            mConsumers.put(consumer.getId(), new ConsumerHolder(peerId, consumer));
+
+                                            mStore.addConsumer(peerId, type, consumer, producerPaused);
+                                            Log.e(TAG, "call: consumer.getKind() = " + consumer.getKind());
+                                            if ("video".equals(consumer.getKind())) {
+                                                consumer.resume();
+                                                Log.e(TAG, "call: mPeerAdapter.addConsumerItemViewModel ");
+                                                try {
+                                                    mPeerAdapter.addConsumerItemViewModel(producer_socket_id, consumer, "nickname");
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+//                                                    mWorkHandler.post(() -> {
+//
+//                                                        try {
+//                                                            mPeerAdapter.addConsumerItemViewModel(producer_socket_id,consumer,"nickname");
+//                                                        } catch (Exception e) {
+//                                                            Log.e(TAG, "call: mPeerAdapter.addConsumerItemViewModel error",e );
+//                                                            e.printStackTrace();
+//                                                        }
+//                                                    });
+                                            }
+
+
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
 
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -216,7 +224,6 @@ public class RoomClient extends RoomMessageHandler {
                         mPeerAdapter.removeConsumerByConsumerId(consumerId);
 
 
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -226,7 +233,7 @@ public class RoomClient extends RoomMessageHandler {
             mSocket.on("a user is disconnected", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    if(args != null){
+                    if (args != null) {
                         try {
                             JSONObject jsonObject = new JSONObject(args[0].toString());
                             String sockerId = jsonObject.optString("sockerid");
@@ -234,12 +241,12 @@ public class RoomClient extends RoomMessageHandler {
                             List<PersonItemViewModel> list = mPeerAdapter.getList();
                             for (int i = 0; i < list.size(); i++) {
                                 PersonItemViewModel personItemViewModel = list.get(i);
-                                if (sockerId.equals(personItemViewModel.getSocketId())){
+                                if (sockerId.equals(personItemViewModel.getSocketId())) {
 
                                     List<Consumer> consumerList = personItemViewModel.getConsumerList();
                                     for (Consumer consumer : consumerList) {
                                         String kind = consumer.getKind();
-                                        if ("video".equals(kind)){
+                                        if ("video".equals(kind)) {
                                             VideoTrack videoTrack = (VideoTrack) consumer.getTrack();
                                             MySurfaceViewRenderer surfaceViewRenderer = personItemViewModel.getSurfaceViewRenderer();
                                             videoTrack.removeSink(surfaceViewRenderer);
@@ -280,43 +287,37 @@ public class RoomClient extends RoomMessageHandler {
                 }
             });
 
-            mSocket.on("othersInRoom", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    if (args != null){
-                        try {
-                            JSONArray jsonArray = new JSONArray(args[0].toString());
-                            for (int i = 0; i < jsonArray.length() ; i++) {
-                                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                                String socketId = jsonObject.getString("socketid");
-                                String name = jsonObject.getString("name");
-                                mPeerAdapter.addPerson(socketId,name);
+            mSocket.on("othersInRoom", args -> {
+                if (args != null) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(args[0].toString());
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String socketId = jsonObject.getString("socketid");
+                            String name = jsonObject.getString("name");
+                            mPeerAdapter.addPerson(socketId, name);
 
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
 
-            mSocket.on("joined", new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    if(args != null){
-                        try {
-                            JSONObject jsonObject = new JSONObject(args[0].toString());
+            mSocket.on("joined", args -> {
+                if (args != null) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(args[0].toString());
 
-                            String room_id = jsonObject.optString("room_id");
-                            String socketId = jsonObject.optString("socketid");
-                            String name = jsonObject.optString("name");
+                        String room_id = jsonObject.optString("room_id");
+                        String socketId = jsonObject.optString("socketid");
+                        String name = jsonObject.optString("name");
 
-                            if (roomId.equals(room_id)){
-                                mPeerAdapter.addPerson(socketId,name);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        if (roomId.equals(room_id)) {
+                            mPeerAdapter.addPerson(socketId, name);
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -412,8 +413,11 @@ public class RoomClient extends RoomMessageHandler {
                         String sctpParameters = info.optString("sctpParameters");
 
                         this.mSendTransport = mMediasoupDevice.createSendTransport(sendTransportListener, id, iceParameters, iceCandidates, dtlsParameters);
-                        enableCam();
-                        enableMic();
+                        mStore.setMediaCapabilities(true, true);
+                        mMainHandler.post(this::enableMic);
+                        mMainHandler.post(this::enableCam);
+
+
                         initConsumerTransport();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -454,49 +458,119 @@ public class RoomClient extends RoomMessageHandler {
             e.printStackTrace();
         }
     }
+
     public void enableMic() {
         Logger.d(TAG, "enableMic()");
-        mWorkHandler.post(()->{
+        mWorkHandler.post(() -> {
+            enableMicImpl();
+        });
+    }
+
+    public void enableMicImpl(){
+        try {
+            if (mMicProducer != null) {
+                return;
+            }
+            if (!mMediasoupDevice.isLoaded()) {
+                Log.w(TAG, "enableMic() | not loaded");
+                return;
+            }
+            if (!mMediasoupDevice.canProduce("audio")) {
+                Log.w(TAG, "enableMic() | cannot produce audio");
+                return;
+            }
+            if (mSendTransport == null) {
+                Log.w(TAG, "enableMic() | mSendTransport doesn't ready");
+                return;
+            }
+            if (mLocalAudioTrack == null) {
+                mLocalAudioTrack = mPeerConnectionUtils.createAudioTrack(mContext, "mic");
+                mLocalAudioTrack.setEnabled(true);
+            }
+            mMicProducer =
+                    mSendTransport.produce(
+                            producer -> {
+                                Log.e(TAG, "onTransportClose(), micProducer");
+                                if (mMicProducer != null) {
+                                    mStore.removeProducer(mMicProducer.getId());
+                                    mMicProducer = null;
+                                }
+                            },
+                            mLocalAudioTrack,
+                            null,
+                            null);
+            mStore.addProducer(mMicProducer);
+        } catch (MediasoupException e) {
+            e.printStackTrace();
+            Log.e(TAG, "enableMic() | failed:", e);
+            mStore.addNotify("error", "Error enabling microphone: " + e.getMessage());
+            if (mLocalAudioTrack != null) {
+                mLocalAudioTrack.setEnabled(false);
+            }
+        }
+    }
+
+    public void disableMic() {
+        Logger.d(TAG, "disableMic()");
+        mWorkHandler.post(() -> {
+            disableMicImpl();
+        });
+    }
+
+    public void disableMicImpl(){
+        if (mMicProducer == null) {
+            return;
+        }
+
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("producer_id", mMicProducer.getId());
+            mSocket.emit("producerClosed", jsonObject);
+            Log.e(TAG, "disableMicImpl producerClosed: producer_id = "+ jsonObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        mMicProducer.close();
+        mStore.removeProducer(mMicProducer.getId());
+
+        mMicProducer = null;
+    }
+
+    public void unmuteMic() {
+        Logger.d(TAG, "unmuteMic()");
+        mWorkHandler.post(() -> {
+            Logger.d(TAG, "unmuteMicImpl()");
+            mMicProducer.resume();
             try {
-                if (mMicProducer != null) {
-                    return;
-                }
-                if (!mMediasoupDevice.isLoaded()) {
-                    Log.w(TAG, "enableMic() | not loaded");
-                    return;
-                }
-                if (!mMediasoupDevice.canProduce("audio")) {
-                    Log.w(TAG, "enableMic() | cannot produce audio");
-                    return;
-                }
-                if (mSendTransport == null) {
-                    Log.w(TAG, "enableMic() | mSendTransport doesn't ready");
-                    return;
-                }
-                if (mLocalAudioTrack == null) {
-                    mLocalAudioTrack = mPeerConnectionUtils.createAudioTrack(mContext, "mic");
-                    mLocalAudioTrack.setEnabled(true);
-                }
-                mMicProducer =
-                        mSendTransport.produce(
-                                producer -> {
-                                    Log.e(TAG, "onTransportClose(), micProducer");
-                                    if (mMicProducer != null) {
-                                        mStore.removeProducer(mMicProducer.getId());
-                                        mMicProducer = null;
-                                    }
-                                },
-                                mLocalAudioTrack,
-                                null,
-                                null);
-                mStore.addProducer(mMicProducer);
-            } catch (MediasoupException e) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("producer_id", mMicProducer.getId());
+                mSocket.emit("resumeProducer", jsonObject);
+                mStore.setProducerResumed(mMicProducer.getId());
+            } catch (Exception e) {
                 e.printStackTrace();
-                Log.e(TAG, "enableMic() | failed:", e);
-                mStore.addNotify("error", "Error enabling microphone: " + e.getMessage());
-                if (mLocalAudioTrack != null) {
-                    mLocalAudioTrack.setEnabled(false);
-                }
+                Log.e(TAG, "unmuteMicImpl: unmuteMic() | failed:", e);
+
+            }
+        });
+    }
+
+
+    private void muteMic() {
+        mWorkHandler.post(() -> {
+            Log.d(TAG, "muteMicImpl()");
+            mMicProducer.pause();
+
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("producer_id", mMicProducer.getId());
+                mSocket.emit("pauseProducer", jsonObject);
+                mStore.setProducerPaused(mMicProducer.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, " muteMic() | failed:", e);
+
             }
         });
     }
@@ -504,38 +578,74 @@ public class RoomClient extends RoomMessageHandler {
 
     public void enableCam() {
         Log.d(TAG, "enableCam()");
-        mStore.setCamInProgress(true);
-        mWorkHandler.post(
-                () -> {
-                    try {
-                        if (mLocalVideoTrack == null) {
-                            mLocalVideoTrack = mPeerConnectionUtils.createVideoTrack(mContext, "cam");
-                            mLocalVideoTrack.setEnabled(true);
-                        }
-                        mCamProducer =
-                                mSendTransport.produce(
-                                        producer -> {
-                                            Logger.e(TAG, "onTransportClose(), camProducer");
-                                            if (mCamProducer != null) {
-                                                mStore.removeProducer(mCamProducer.getId());
-                                                mCamProducer = null;
-                                            }
-                                        },
-                                        mLocalVideoTrack,
-                                        null,
-                                        null);
-                        Log.e(TAG, "enableCamImpl: mCamProducer ");
-                        Log.e(TAG, "tempProducerId = 3");
 
-                        System.out.println(mCamProducer);
-                        mStore.addProducer(mCamProducer);
-                        mStore.setCamInProgress(false);
-                    } catch (MediasoupException e) {
-                        e.printStackTrace();
-                    }
-                });
+        mWorkHandler.post(this::enableCamImpl);
     }
 
+
+    public void enableCamImpl() {
+        Log.e(TAG, "enableCamImpl: " );
+        try {
+
+            Log.e(TAG, "enableCamImpl: mLocalVideoTrack == null "+(mLocalVideoTrack == null) );
+            if (mLocalVideoTrack == null) {
+                mLocalVideoTrack = mPeerConnectionUtils.createVideoTrack(mContext, "cam");
+                mLocalVideoTrack.setEnabled(true);
+            }
+
+                mCamProducer = mSendTransport.produce(
+                                producer -> {
+                                    Log.e(TAG, "onTransportClose(), camProducer");
+                                    if (mCamProducer != null) {
+                                        mStore.removeProducer(mCamProducer.getId());
+                                        mCamProducer = null;
+                                    }
+                                },
+                                mLocalVideoTrack,
+                                null,
+                                null);
+
+
+                mStore.addProducer(mCamProducer);
+
+
+                Log.e(TAG, "enableCamImpl: mSendTransport.produce a mCamProducer and mCamProducer != null  "+ (mCamProducer != null) );
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disableCam() {
+        mWorkHandler.post(this::disableCamImpl);
+//        disableCamImpl();
+    }
+
+    public boolean disableCamImpl() {
+        Logger.e(TAG, "disableCamImpl()");
+        try {
+            Log.e(TAG, "disableCamImpl: mCamProducer == null"+(mCamProducer == null) );
+            if (mCamProducer == null) {
+                return false;
+            }
+
+
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("producer_id", mCamProducer.getId());
+            mSocket.emit("producerClosed", jsonObject);
+            Log.e(TAG, "disableCamImpl:  mSocket.emit producerClosed  = " +jsonObject);
+
+            mCamProducer.close();
+            mStore.removeProducer(mCamProducer.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "disableCamImpl: ", e);
+        }
+        mCamProducer = null;
+        return true;
+    }
 
     private final SendTransport.Listener sendTransportListener =
             new SendTransport.Listener() {
@@ -546,45 +656,55 @@ public class RoomClient extends RoomMessageHandler {
                 public String onProduce(
                         Transport transport, String kind, String rtpParameters, String appData) {
 
-
                     try {
 
                         JSONObject jsonObject = new JSONObject();
 
-                        jsonObject.put("producerTransportId", mSendTransport.getId());
+                        jsonObject.put("producerTransportId", transport.getId());
                         jsonObject.put("kind", kind);
                         jsonObject.put("rtpParameters", toJsonObject(rtpParameters));
                         jsonObject.put("appData", appData);
                         Log.e(TAG, "onProduce: appData = " + appData);
-
-                        mSocket.emit("produce", jsonObject, new Ack() {
-                            @Override
-                            public void call(Object... args) {
-                                if (args != null) {
-                                    for (Object arg : args) {
-                                        try {
-                                            JSONObject jsonObject1 = new JSONObject(arg.toString());
-                                            tempProducerId = jsonObject1.optString("producer_id");
-                                            System.out.println("tempProducerId = 1 " + tempProducerId);
-
-                                        } catch (JSONException e) {
-                                            tempProducerId = " ";
-                                            e.printStackTrace();
+                        Log.e(TAG, "msocket produce = "+jsonObject);
+                        mSocket.emit("produce", jsonObject, (Ack) args -> {
+                            if (args != null) {
+                                Log.e(TAG, kind+"生产 回调 = "+ args[0].toString());
+                                    try {
+                                        JSONObject jsonObject1 = new JSONObject(args[0].toString());
+                                        String producer_id = jsonObject1.optString("producer_id");
+                                        if ("video".equals(kind)){
+                                            tempVideoProducerId = producer_id;
+                                        }else if ("audio".equals(kind)){
+                                            tempAudioProducerId = producer_id;
                                         }
+
+                                    } catch (JSONException e) {
+                                        tempVideoProducerId = " ";
+                                        tempAudioProducerId = " ";
+                                        e.printStackTrace();
                                     }
-                                }
                             }
                         });
-                        while ("".equals(tempProducerId)) {
-                            // 阻塞等待tempProducerId
+                        if ("video".equals(kind)){
+                            while ("".equals(tempVideoProducerId)) {
+                                Log.d(TAG, "onProduce: wait tempVideoProducerId");
+                            }
+                        }else if ("audio".equals(kind)){
+                            while ("".equals(tempAudioProducerId)) {
+                                Log.d(TAG, "onProduce: wait tempAudioProducerId");
+                            }
                         }
 
-                        System.out.println("tempProducerId = 2 " + tempProducerId);
-                        String producerId = tempProducerId;
-                        tempProducerId = "";
-                        System.out.println("mCamProducer.resume();");
+                        String producerId = "";
+                        if ("video".equals(kind)){
+                            producerId = tempVideoProducerId;
+                            tempVideoProducerId = "";
+                        }else if ("audio".equals(kind)){
+                            producerId = tempAudioProducerId;
+                            tempAudioProducerId = "";
+                        }
                         System.out.println(mCamProducer);
-                        Log.d(listenerTAG, "producerId: " + producerId);
+                        Log.e(listenerTAG, "获取一个生产者id producerId: " + producerId+" & kind = " + kind);
 
                         return producerId;
                     } catch (Exception e) {
@@ -599,7 +719,7 @@ public class RoomClient extends RoomMessageHandler {
                     Log.d(listenerTAG + "_send", "onConnect()");
                     try {
                         JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("transport_id", mSendTransport.getId());
+                        jsonObject.put("transport_id", transport.getId());
                         jsonObject.put("dtlsParameters", toJsonObject(dtlsParameters));
                         mSocket.emit("connectTransport", jsonObject);
                         Log.e(listenerTAG, "connectTransport: " + jsonObject.toString());
@@ -684,13 +804,13 @@ public class RoomClient extends RoomMessageHandler {
     ;
 
     public void close() {
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
-        Log.e(TAG, "close: " );
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
+        Log.e(TAG, "close: ");
         mWorkHandler.post(
                 () -> {
 
@@ -724,6 +844,7 @@ public class RoomClient extends RoomMessageHandler {
         // Set room state.
         mStore.setRoomState(ConnectionState.CLOSED);
     }
+
     private void disposeTransportDevice() {
         Logger.d(TAG, "disposeTransportDevice()");
         // Close mediasoup Transports.

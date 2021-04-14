@@ -12,7 +12,10 @@ import android.graphics.Rect;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 
 import org.freeone.android.meeting.room.client.adapter.PeerAdapter;
@@ -23,19 +26,24 @@ import org.freeone.android.meeting.room.client.lib.lv.RoomStore;
 import org.mediasoup.droid.MediasoupClient;
 
 public class MeetingActivity extends AppCompatActivity {
-
+    String TAG = "MeetingActivity";
     String nickname;
     String roomId;
     String sfuServerAddress;
     RoomClient roomClient;
 
+    Button micBtn;
+    Button camBtn;
+    boolean enableMic = true;
+    boolean enableCam = true;
     RecyclerView recyclerView;
     PeerAdapter mPeerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meeting);
-
+        micBtn = findViewById(R.id.mic_btn);
+        camBtn = findViewById(R.id.cam_btn);
         try {
             MediasoupClient.initialize(getApplicationContext());
             Bundle extras = getIntent().getExtras();
@@ -62,6 +70,44 @@ public class MeetingActivity extends AppCompatActivity {
             this.roomClient = new RoomClient(MeetingActivity.this, roomId, nickname, sfuServerAddress, new RoomStore(),mPeerAdapter);
 
             PeerConnectionUtils.setPreferCameraFace("front");
+            enableCam = true;
+            enableMic = true;
+            camBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MeetingActivity.this, "camBtn", Toast.LENGTH_SHORT).show();
+                    if (enableCam){
+                        Log.e(TAG, "onClick: 关闭摄像头 start" );
+                        boolean ok = roomClient.disableCamImpl();
+                        enableCam = false;
+                        Log.e(TAG, "onClick: ok = "+ ok );
+                        camBtn.setText("开启摄像头");
+                        Log.e(TAG, "onClick: 关闭摄像头 end" );
+                    }else{
+                        Log.e(TAG, "onClick: 开启摄像头 start" );
+                        roomClient.enableCamImpl();
+                        enableCam = true;
+                        camBtn.setText("关闭摄像头");
+                        Log.e(TAG, "关闭摄像头" );
+                        Log.e(TAG, "onClick: 开启摄像头 end" );
+                    }
+                }
+            });
+
+            micBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (enableMic){
+                        roomClient.disableMicImpl();
+                        enableMic = false;
+                        micBtn.setText("开启麦克风");
+                    }else{
+                        roomClient.enableMicImpl();
+                        enableMic = true;
+                        micBtn.setText("关闭麦克风");
+                    }
+                }
+            });
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -64,7 +64,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
             Log.e(TAG, "handleMessage: PeerAdapter notifyItemInserted index = "+index );
             if (index != -1){
                 PersonItemViewModel personItemViewModel = list.get(index);
-                personItemViewModel.addNewConsumer(consumer);
+                personItemViewModel.getConsumerList().add(consumer);
                 MySurfaceViewRenderer surfaceViewRenderer = personItemViewModel.getSurfaceViewRenderer();
                 String kind = consumer.getKind();
                 if ("video".equals(kind)) {
@@ -149,7 +149,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
      * @param consumer 一个消费
      * @param nickname 昵称
      */
-    public void addConsumerItemViewModel(@NonNull String socketId, Consumer consumer, String nickname) {
+    public void addConsumerItemViewModel(String socketId, Consumer consumer, String nickname) {
         Log.e(TAG, "addConsumerItemViewModel: start" );
         try {
             JSONObject jsonObject = new JSONObject();
@@ -184,7 +184,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
     };
 
     public void addPerson(@NonNull String socketId,  String nickname) {
-        Log.e(TAG, "addConsumerItemViewModel: start" );
+        Log.e(TAG, "addPerson: start" );
         try {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("socketId",socketId);
@@ -193,7 +193,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
             message.obj = jsonObject;
             message.what = 1;
             addPersonHandler.sendMessage(message);
-            Log.e(TAG, "AddConsumerItemViewModel: end");
+            Log.e(TAG, "addPerson: end");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -370,7 +370,7 @@ public class PeerAdapter extends RecyclerView.Adapter<PeerAdapter.PeerViewHolder
 //                surfaceViewRenderer.setBackground(mContext.getResources().getDrawable(Color.BLUE));
                 ViewGroup.LayoutParams layoutParams = frameLayout.getLayoutParams();
                 layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                layoutParams.height = 768;
+                layoutParams.height = 576;
                 frameLayout.addView(surfaceViewRenderer,layoutParams);
 
                 List<Consumer> consumerList = personItemViewModel.getConsumerList();
