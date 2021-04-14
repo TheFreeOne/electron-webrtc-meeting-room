@@ -9,6 +9,7 @@ import Room from './Room';
 import Peer from './Peer';
 import * as SocketIO from 'socket.io';
 import { Worker } from 'mediasoup/src/Worker';
+import { Logger } from 'mediasoup/src/Logger';
 const bodyParser = require('body-parser');
 (async () => {
     await createWorkers()
@@ -28,26 +29,26 @@ const io: SocketIO.Server = require('socket.io')(http);
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
-app.get('/createValidRoomId',(req,resp)=>{
+app.get('/createValidRoomId', (req, resp) => {
     resp.send({ roomId: createValidRoomId() });
 });
 
-app.post('/isRoomExisted',(req,resp)=>{
-  try {
-    //   console.log(req.query)
-    // console.log(req.params)
-    let {roomId }=req.body;
-    // console.log(req.get('Origin'))
-    // console.log(req.url)
+app.post('/isRoomExisted', (req, resp) => {
+    try {
+        //   console.log(req.query)
+        // console.log(req.params)
+        let { roomId } = req.body;
+        // console.log(req.get('Origin'))
+        // console.log(req.url)
 
-    if(Array.from(roomList.keys()).includes(roomId)){
-        resp.status(200).json({existed:true});
-    }else{
-        resp.status(200).json({existed:false});
+        if (Array.from(roomList.keys()).includes(roomId)) {
+            resp.status(200).json({ existed: true });
+        } else {
+            resp.status(200).json({ existed: false });
+        }
+    } catch (error) {
+        resp.status(500).json({ error });
     }
-  } catch (error) {
-     resp.status(500).json({error});
-  }
 });
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
@@ -139,7 +140,7 @@ io.on('connection', (socket: NewSocket) => {
         console.dir('---try create room ---');
         try {
             // 保证在传输了房间号之后再处理
-            if(room_id){
+            if (room_id) {
                 if (roomList.has(room_id)) {
                     if (callback) {
                         callback('already exists');
@@ -348,9 +349,9 @@ io.on('connection', (socket: NewSocket) => {
         producerTransportId
     }, callback) => {
 
-        console.log(`---produce --- kind = ${kind}` );
-        console.log(`---produce --- rtpParameters = ${JSON.stringify(rtpParameters)}` );
-        console.log(`---produce --- producerTransportId = ${producerTransportId}` );
+        console.log(`---produce --- kind = ${kind}`);
+        console.log(`---produce --- rtpParameters = ${JSON.stringify(rtpParameters)}`);
+        console.log(`---produce --- producerTransportId = ${producerTransportId}`);
 
 
         if (!roomList.has(socket.room_id)) {
@@ -361,12 +362,12 @@ io.on('connection', (socket: NewSocket) => {
         console.log(`---produce--- type: ${kind} name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name} id: ${producer_id}`)
 
 
-        if(callback){
+        if (callback) {
             callback({
                 producer_id
             })
-        }else{
-            socket.emit('produce callback',{
+        } else {
+            socket.emit('produce callback', {
                 producer_id
             })
         }
@@ -384,7 +385,7 @@ io.on('connection', (socket: NewSocket) => {
         // console.log(`---consume producerId = ${producerId}`);
         // console.log(`---consume rtpCapabilities = ${rtpCapabilities}`);
 
-        if(typeof rtpCapabilities == 'string'){
+        if (typeof rtpCapabilities == 'string') {
             try {
                 rtpCapabilities = JSON.parse(rtpCapabilities);
             } catch (error) {
@@ -395,11 +396,11 @@ io.on('connection', (socket: NewSocket) => {
         try {
             let params = await roomList.get(socket.room_id).consume(socket.id, consumerTransportId, producerId, rtpCapabilities);
             console.log(`---consuming--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name} prod_id:${producerId} consumer_id:${params.id}`)
-            if(callback){
+            if (callback) {
                 callback(params);
-            }else{
+            } else {
                 (params as any).peerId = socket.id;
-                socket.emit('consume callback',params);
+                socket.emit('consume callback', params);
             }
         } catch (error) {
             console.error(error);
@@ -457,7 +458,7 @@ io.on('connection', (socket: NewSocket) => {
 
     })
 
-    socket.on('pauseProducer',({producer_id},callback) =>{
+    socket.on('pauseProducer', ({ producer_id }, callback) => {
         try {
             console.log(`---producer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
             producer_id && roomList.get(socket.room_id).pauseProducer(socket.id, producer_id);
@@ -467,7 +468,7 @@ io.on('connection', (socket: NewSocket) => {
         }
     })
 
-    socket.on('resumeProducer',({producer_id},callback)=>{
+    socket.on('resumeProducer', ({ producer_id }, callback) => {
         try {
             console.log(`---producer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
             producer_id && roomList.get(socket.room_id).resumeProducer(socket.id, producer_id);
@@ -506,7 +507,27 @@ io.on('connection', (socket: NewSocket) => {
         }
         socket.room_id = null
         callback('successfully exited room');
-    })
+    });
+
+    socket.on('restartIce', async ({ transport_id }, callback) => {
+
+        try {
+            console.log(`---restartIce---transport_id = `+transport_id)
+            const transport = roomList.get(socket.room_id).getPeers().get(socket.id).transports.get(transport_id);
+
+            if (transport) {
+                
+                const iceParameters = await transport.restartIce();
+                console.log(`---restartIce --- iceParameters = ${iceParameters}`);
+                
+                callback(iceParameters);
+            } else{
+                console.log(`transport unknow`)
+            }
+        } catch (error) {
+
+        }
+    });
 })
 
 function room() {
@@ -542,12 +563,12 @@ function getMediasoupWorker() {
  * @param time 生成随机号码
  * @returns
  */
-function randomNumber(time = 9):string{
+function randomNumber(time = 9): string {
     let str = '0123456789';
     let result = '';
-    for(let i = 0;i<time ;i++){
+    for (let i = 0; i < time; i++) {
 
-        result += str.charAt(parseInt((Math.random() * 10)+""));
+        result += str.charAt(parseInt((Math.random() * 10) + ""));
     }
     return result;
 }
@@ -555,20 +576,20 @@ function randomNumber(time = 9):string{
  *
  * @returns 生成房间号
  */
-function createValidRoomId():string {
+function createValidRoomId(): string {
 
     let number = randomNumber();
     let roomIds = Array.from(roomList.keys());
 
-    while(testRoomId(number)){
+    while (testRoomId(number)) {
         number = randomNumber();
     }
     return number;
 
-    function testRoomId(_number){
-        if(roomIds.includes(_number)){
+    function testRoomId(_number) {
+        if (roomIds.includes(_number)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
