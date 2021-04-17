@@ -40,7 +40,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'org.mediasoup.droid:mediasoup-client:3.0.8-beta-3'
+    implementation project(path: ':mediasoup-client')
+//    implementation 'org.mediasoup.droid:mediasoup-client:3.0.8-beta-3'
     // https://mvnrepository.com/artifact/io.socket/socket.io-client
     implementation 'io.socket:socket.io-client:2.0.0'
 

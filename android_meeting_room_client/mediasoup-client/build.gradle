@@ -1,0 +1,79 @@
+apply plugin: 'com.android.library'
+
+// Source of webrtc.
+def WEBRTC_INC_PATH = "${projectDir}/deps/webrtc/src"
+//def WEBRTC_INC_PATH = "D:/lqq/git/electron-webrtc-meeting-room/android_meeting_room_client/mediasoup-client/deps/webrtc/src"
+// Precompiled static libs and jar for webrtc android.
+def WEBRTC_LIB_PATH = "${projectDir}/deps/webrtc/lib"
+//def WEBRTC_LIB_PATH = "D:/lqq/git/electron-webrtc-meeting-room/android_meeting_room_client/mediasoup-client/deps/webrtc/lib"
+
+android {
+    compileSdkVersion 30
+    ndkVersion "21.0.6113669"
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 30
+        versionCode 308
+        versionName "3.0.8"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+
+//            cmake {
+//                arguments "-DOpenCV_DIR=" + project(':mediasoup-client').projectDir + "/native/jni",
+//                        "-DANDROID_TOOLCHAIN=clang",
+//                        "-DANDROID_STL=c++_shared"
+//                abiFilters 'armeabi-v7a'
+//            }
+            cmake {
+                // Passes optional arguments to CMake.
+                arguments "-DLIBWEBRTC_INCLUDE_PATH=" + WEBRTC_INC_PATH,
+                        "-DLIBWEBRTC_BINARY_PATH=" + WEBRTC_LIB_PATH,
+                        "-DMEDIASOUPCLIENT_BUILD_TESTS=false",
+                        "-DSDPTRANSFORM_BUILD_TESTS=OFF",
+                        "-DSDPTRANSFORM_BUILD_READMEHELPER=OFF",
+                        "-DMEDIASOUPCLIENT_LOG_TRACE=ON",
+                        "-DMEDIASOUPCLIENT_LOG_DEV=ON"
+
+            }
+        }
+
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters 'x86' ,'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    externalNativeBuild {
+        cmake {
+            // Provides a relative path to your CMake build script.
+            path "CMakeLists.txt"
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: WEBRTC_LIB_PATH, include: ['libwebrtc.jar'])
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
+

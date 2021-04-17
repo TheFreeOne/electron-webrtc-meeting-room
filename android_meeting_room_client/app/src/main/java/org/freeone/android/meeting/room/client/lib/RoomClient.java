@@ -158,36 +158,41 @@ public class RoomClient extends RoomMessageHandler {
                                             String kind = data.optString("kind");
                                             String rtpParameters = data.optString("rtpParameters");
                                             String type = data.optString("type");
-
+                                            String appData = data.optString("appData");
                                             boolean producerPaused = false;
 
-                                            Consumer consumer = mRecvTransport.consume(
-                                                    c -> {
-                                                        try {
-                                                            mConsumers.remove(c.getId());
-                                                        } catch (Exception e) {
-                                                            Log.e(TAG, "initSocketIO: mConsumers.remove ", e);
-                                                        }
-                                                        Log.e(TAG, "onTransportClose for consume");
-                                                    },
-                                                    id,
-                                                    producerId,
-                                                    kind,
-                                                    rtpParameters,
-                                                    null);
+                                            try {
+                                                Consumer consumer = mRecvTransport.consume(
+                                                        c -> {
+                                                            try {
+                                                                mConsumers.remove(c.getId());
+                                                            } catch (Exception e) {
+                                                                Log.e(TAG, "initSocketIO: mConsumers.remove ", e);
+                                                            }
+                                                            Log.e(TAG, "onTransportClose for consume");
+                                                        },
+                                                        id,
+                                                        producerId,
+                                                        kind,
+                                                        rtpParameters,
+                                                        null);
 
-                                            mConsumers.put(consumer.getId(), new ConsumerHolder(peerId, consumer));
+                                                mConsumers.put(consumer.getId(), new ConsumerHolder(peerId, consumer));
 
-                                            mStore.addConsumer(peerId, type, consumer, producerPaused);
-                                            Log.e(TAG, "call: consumer.getKind() = " + consumer.getKind());
-                                            if ("video".equals(consumer.getKind())) {
-                                                consumer.resume();
-                                                Log.e(TAG, "call: mPeerAdapter.addConsumerItemViewModel ");
-                                                try {
-                                                    mPeerAdapter.addConsumerItemViewModel(producer_socket_id, consumer, "nickname");
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
+                                                mStore.addConsumer(peerId, type, consumer, producerPaused);
+                                                Log.e(TAG, "call: consumer.getKind() = " + consumer.getKind());
+                                                if ("video".equals(consumer.getKind())) {
+                                                    consumer.resume();
+                                                    Log.e(TAG, "call: mPeerAdapter.addConsumerItemViewModel ");
+                                                    try {
+                                                        mPeerAdapter.addConsumerItemViewModel(producer_socket_id, consumer, "nickname");
+                                                    } catch (Exception e) {
+                                                        e.printStackTrace();
+                                                    }
                                                 }
+                                            } catch (MediasoupException e) {
+                                                e.printStackTrace();
+                                                Log.e(TAG, "initSocketIO: ",e );
                                             }
 
 
@@ -411,8 +416,8 @@ public class RoomClient extends RoomMessageHandler {
 
                         this.mSendTransport = mMediasoupDevice.createSendTransport(sendTransportListener, id, iceParameters, iceCandidates, dtlsParameters);
                         mStore.setMediaCapabilities(true, true);
-                        mMainHandler.post(this::enableMic);
-                        mMainHandler.post(this::enableCam);
+//                        mMainHandler.post(this::enableMic);
+//                        mMainHandler.post(this::enableCam);
 
 
                         initConsumerTransport();
