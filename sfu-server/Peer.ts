@@ -42,7 +42,7 @@ export default  class Peer {
     }
 
     async createProducer(producerTransportId, rtpParameters, kind,producer_socket_id?):Promise<Producer> {
-        // console.log(`createProducer`,producerTransportId, rtpParameters, kind,producer_socket_id);
+        console.log(`createProducer`,producerTransportId, rtpParameters, kind,producer_socket_id);
 
         //TODO handle null errors
         let producer:Producer = await (this.transports.get(producerTransportId) as  WebRtcTransport).produce({
@@ -136,6 +136,10 @@ export default  class Peer {
             console.error(e)
         }
 
+    }
+
+    getConsumer(consumer_id){
+        return this.consumers.get(consumer_id)
     }
 
     getProducer(producer_id) {

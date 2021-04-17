@@ -477,6 +477,30 @@ io.on('connection', (socket: NewSocket) => {
             console.error(error);
         }
     })
+
+    socket.on('pauseConsumer', ({ consumer_id }, callback) => {
+        if (consumer_id) {
+            console.log(`---consumer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+            let consumer = roomList.get(socket.room_id).getPeers().get(socket.id).getConsumer(consumer_id);
+            if (consumer) {
+                consumer.pause();
+                callback("success");
+            }
+        }
+    });
+
+    socket.on('resumeConsumer', ({ consumer_id }, callback) => {
+        if (consumer_id) {
+            console.log(`---consumer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+            let consumer = roomList.get(socket.room_id).getPeers().get(socket.id).getConsumer(consumer_id);
+            if (consumer) {
+                consumer.resume();
+                callback("success");
+            }
+        }
+    });
+
+
     /**
      * 点击了退出房间,此时检测并销毁房间
      */
@@ -512,16 +536,16 @@ io.on('connection', (socket: NewSocket) => {
     socket.on('restartIce', async ({ transport_id }, callback) => {
 
         try {
-            console.log(`---restartIce---transport_id = `+transport_id)
+            console.log(`---restartIce---transport_id = ` + transport_id)
             const transport = roomList.get(socket.room_id).getPeers().get(socket.id).transports.get(transport_id);
 
             if (transport) {
-                
+
                 const iceParameters = await transport.restartIce();
                 console.log(`---restartIce --- iceParameters = ${iceParameters}`);
-                
+
                 callback(iceParameters);
-            } else{
+            } else {
                 console.log(`transport unknow`)
             }
         } catch (error) {
