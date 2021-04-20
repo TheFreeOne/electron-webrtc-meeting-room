@@ -33,12 +33,25 @@ module.exports = {
         router: {
             mediaCodecs:
                 [
+                    // https://github.com/haiyangwu/mediasoup-client-android/issues/36#issuecomment-768499443
                     {
-                        kind: 'audio',
-                        mimeType: 'audio/opus',
-                        clockRate: 48000,
-                        channels: 2
-                    },
+						kind: 'audio',
+						mimeType: 'audio/PCMU',
+						preferredPayloadType: 0,
+						clockRate: 8000
+					},
+					{
+						kind: 'audio',
+						mimeType: 'audio/PCMA',
+						preferredPayloadType: 8,
+						clockRate: 8000
+					},
+                    {
+						kind: 'audio',
+						mimeType: 'audio/opus',
+						clockRate: 48000,
+						channels: 2
+					},
                     {
                         kind: 'video',
                         mimeType: 'video/VP8',
