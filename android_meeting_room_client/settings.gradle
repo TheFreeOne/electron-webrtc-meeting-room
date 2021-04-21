@@ -1,3 +1,2 @@
 include ':app'
-include ':mediasoup-client'
 rootProject.name = "android_meeting_room_client"
