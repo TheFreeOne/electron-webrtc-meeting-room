@@ -6,7 +6,7 @@
     python ./worker/scripts/configure.py --format=msvs -R mediasoup-worker
     cd worker
 
-Then use vs2019 open ‘mediasoup-worker.sln’ with VS to complie。
+打开 vs2019 打开'mediasoup-worker.sln' 编译
 
 ##### 如果提示MSVSVersion.py keyError:${MSBuild.exe的路径}
 那么找到报错的地方versions[str(name)] -> versions[str('2017')]
