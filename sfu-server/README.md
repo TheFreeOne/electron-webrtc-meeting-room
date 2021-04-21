@@ -5,6 +5,11 @@
     cd node_modules/mediasoup
     python ./worker/scripts/configure.py --format=msvs -R mediasoup-worker
     cd worker
+    msbuild
+
+运行msbuild
+
+或
 
 打开 vs2019 打开'mediasoup-worker.sln' 编译 ：选择 Release|Win32 菜单栏 - 生成 - 生成解决方案
 
