@@ -1,6 +1,6 @@
 {
   "name": "electron-meeting-root-client",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "electron-log": "^4.3.1",
+    "electron-updater": "^4.3.8",
     "jquery": "^3.5.1",
     "toastr": "^2.1.4"
   },
@@ -26,6 +27,11 @@
   "author": "",
   "license": "MIT",
   "build": {
+    "publish": {
+      "provider": "generic",  
+      "url": "http://127.0.0.1:8031/winrelease/" 
+    },
+    "copyright":"版權信息",
     "productName": "会议室electron客户端",
     "appId": "org.freeone.electron-webrtc-meeting-room",
     "directories": {

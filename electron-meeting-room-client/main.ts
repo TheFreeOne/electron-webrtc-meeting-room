@@ -1,6 +1,8 @@
 import {app, BrowserWindow, globalShortcut, screen, session} from 'electron';
 import IpcMainListener from './IpcMainListener';
 import * as log from 'electron-log';
+import {updateHandle} from './util/UpdateUtil';
+const packages = require('./package.json')
 // const log = require('electron-log');
 
 let mainWindow: BrowserWindow;
@@ -23,7 +25,7 @@ let ipcMainListener:IpcMainListener;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        title: '会议室',
+        title: '会议室 - '+packages.version,
         width: 340,
         height: 490,
         minWidth: 80,
@@ -53,11 +55,18 @@ function createWindow() {
             BrowserWindow.getFocusedWindow().webContents.openDevTools();
         });
         log.debug('创建了一个窗口');
+        try {
+            updateHandle(mainWindow);
+        } catch (error) {
+            console.dir(error)
+        }
     });
 
     mainWindow.on('closed',()=>{
         app.quit();
     });
+
+    
 }
 
 app.on('ready', () => {
