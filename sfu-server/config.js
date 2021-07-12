@@ -3,8 +3,9 @@ const os = require('os')
 module.exports = {
     listenIp: '0.0.0.0',
     listenPort: 3016,
-    sslCrt: '../ssl/cert.pem',
-    sslKey: '../ssl/key.pem',
+    // 证书，目前不需要
+    // sslCrt: '../ssl/cert.pem',
+    // sslKey: '../ssl/key.pem',
 
     mediasoup: {
         // Worker settings
@@ -97,7 +98,7 @@ module.exports = {
                     }
                 ]
         },
-        // WebRtcTransport settings
+        // WebRtcTransport 主要用来进行 client 端 与 mediasoup server 端 Router 进行通讯。
         webRtcTransport: {
             listenIps: [
                 {
@@ -109,16 +110,16 @@ module.exports = {
             maxSctpMessageSize: 262144,
             maxIncomingBitrate: 1500000,
             initialAvailableOutgoingBitrate: 1000000
-        },
-        plainTransportOptions:
-            {
-                listenIp:
-                    {
-                        ip: process.env.MEDIASOUP_LISTEN_IP || '1.2.3.4',
-                        announcedIp: process.env.MEDIASOUP_ANNOUNCED_IP|| '192.168.0.142'
-                    },
-                maxSctpMessageSize: 262144
-            }
+        }
+        // PlainTransport 主要用于 RTP/RTCP （或者采用安全的srtp）以及 SCTP(DataChannel)的通讯连接。
+        // ,  plainTransportOptions: {
+        //         listenIp:
+        //             {
+        //                 ip: process.env.MEDIASOUP_LISTEN_IP || '1.2.3.4',
+        //                 announcedIp: process.env.MEDIASOUP_ANNOUNCED_IP|| '192.168.0.142'
+        //             },
+        //         maxSctpMessageSize: 262144
+        //     }
     }
 };
 
