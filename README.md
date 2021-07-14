@@ -17,7 +17,7 @@
 #### 相关技术
 
  | 模块  | 说明  |
-|---|---|---|
+|---|---|
 | node-room-server  | webrtc房间服务器  |
 | sfu-server  | mediasoup为基础的sfu服务器  |
 | electron-meeting-room-client | electron写的客户端， |
