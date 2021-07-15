@@ -90,7 +90,7 @@ function roomOpen() {
   //@ts-ignore
   reveal(exitButton)
   //@ts-ignore
-  control.className = 'layui-from'
+  control.className = 'layui-form'
   //@ts-ignore
   // reveal(videoMedia)
 }
