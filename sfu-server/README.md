@@ -22,3 +22,6 @@
 ##### Release|x64不是..
 MSBuild mediasoup-worker.sln /p:Configuration=Release /p:plat(忘记了)
 
+#### [centos 编译报gcc版本过低]
+    可参考https://www.cnblogs.com/jixiaohua/p/11732225.html
+
