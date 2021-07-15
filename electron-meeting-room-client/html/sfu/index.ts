@@ -180,6 +180,7 @@ navigator.mediaDevices.enumerateDevices().then(devices =>
     option.value = device.deviceId;
     option.innerText = device.label;
     el.appendChild(option);
+    layui.form.render('select')
   })
 );
 // 复制文本
