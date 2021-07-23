@@ -8,7 +8,7 @@ module.exports = {
     // sslKey: '../ssl/key.pem',
 
     mediasoup: {
-        // Worker settings
+        // 获取的是处理器的线程数量，比如电脑是六核十二线程，那么就是12
         numWorkers: Object.keys(os.cpus()).length,
         worker: {
 			logLevel : 'warn',

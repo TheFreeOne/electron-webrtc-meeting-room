@@ -16,6 +16,8 @@ const bodyParser = require('body-parser');
 })();
 
 const app = express();
+
+// 
 const options = {
     // key: fs.readFileSync(path.join(__dirname,config.sslKey), 'utf-8'),
     // cert: fs.readFileSync(path.join(__dirname,config.sslCrt), 'utf-8')
@@ -29,18 +31,20 @@ const io: SocketIO.Server = require('socket.io')(http);
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
+
+/**
+ * 生成一个没有使用的房间号码
+ */
 app.get('/createValidRoomId', (req, resp) => {
     resp.send({ roomId: createValidRoomId() });
 });
-
+/**
+ * 用于查询房间号码是否存在
+ */
 app.post('/isRoomExisted', (req, resp) => {
     try {
-        //   console.log(req.query)
-        // console.log(req.params)
+        // 解构赋值
         let { roomId } = req.body;
-        // console.log(req.get('Origin'))
-        // console.log(req.url)
-
         if (Array.from(roomList.keys()).includes(roomId)) {
             resp.status(200).json({ existed: true });
         } else {
@@ -52,15 +56,17 @@ app.post('/isRoomExisted', (req, resp) => {
 });
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
-
+/**
+ * 启动完成之后,打印端口
+ */
 http.listen(config.listenPort, () => {
-    console.log('listening https ' + config.listenPort)
+    console.log('listening port at ' + config.listenPort)
 });
 
 
-// all mediasoup workers
-// let workers = new Array<mediasoup.types.Worker>();
+
 let workers = new Array<Worker>();
+
 let nextMediasoupWorkerIdx = 0;
 
 /**
@@ -83,10 +89,14 @@ let nextMediasoupWorkerIdx = 0;
  */
 let roomList = new Map<string, Room>();
 
+/**
+ * 创建mediasoup的worker
+ */
 async function createWorkers() {
     let {
         numWorkers
     } = config.mediasoup
+    // numWorkers 一般等于线程数
     console.log(`create  ${numWorkers} workers `)
 
     for (let i = 0; i < numWorkers; i++) {
@@ -102,9 +112,11 @@ async function createWorkers() {
                 console.error('mediasoup worker died, exiting in 2 seconds... [pid:%d]', worker.pid);
                 setTimeout(() => process.exit(1), 2000);
             });
+
             //@ts-ignore
             workers.push(worker);
 
+            // 打印日志
             try {
                 // setInterval(async () => {
                 //     const usage = await worker.getResourceUsage();
@@ -130,10 +142,14 @@ interface NewSocket extends SocketIO.Socket {
      */
     room_id;
 }
-
+/**
+ * 通过socketio创建websocket
+ */
 io.on('connection', (socket: NewSocket) => {
 
-    // 创建房间
+    /**
+     * 监听 创建房间
+     */
     socket.on('createRoom', async ({
         room_id
     }, callback) => {
@@ -161,11 +177,12 @@ io.on('connection', (socket: NewSocket) => {
                 }
             }
         } catch (error) {
-            console.error(error);
-
+            console.error("创建房间异常",error);
         }
     });
-    // 加入房间
+    /**
+     *  加入房间
+     */
     socket.on('join', ({
         room_id,
         name
@@ -221,7 +238,9 @@ io.on('connection', (socket: NewSocket) => {
 
 
     })
-
+    /**
+     * 监听消息  获取生产者
+     */
     socket.on('getProducers', () => {
         console.log(`---get producers--- name:${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
         // send all the current producer to newly joined member
@@ -233,6 +252,9 @@ io.on('connection', (socket: NewSocket) => {
         socket.emit('newProducers', producerList);
     });
 
+    /**
+     * 获取路由能力，编码器和解码器的相关信息
+     */
     socket.on('getRouterRtpCapabilities', (_, callback) => {
 
         console.log(`---get RouterRtpCapabilities--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -322,6 +344,9 @@ io.on('connection', (socket: NewSocket) => {
         }
     });
 
+    /**
+     * 监听消息  连接传输通道
+     */
     socket.on('connectTransport', async ({
         transport_id,
         dtlsParameters
@@ -343,6 +368,9 @@ io.on('connection', (socket: NewSocket) => {
 
     })
 
+    /**
+     * 监听消息  开始生产
+     */
     socket.on('produce', async ({
         kind,
         rtpParameters,
@@ -373,7 +401,7 @@ io.on('connection', (socket: NewSocket) => {
         }
     })
     /**
-     * 开始消费
+     * 监听消息 开始消费
      */
     socket.on('consume', async ({
         consumerTransportId,
@@ -443,6 +471,9 @@ io.on('connection', (socket: NewSocket) => {
         }
     });
 
+    /**
+     * 监听消息 生产关闭，就是不再传输音频和视频流了
+     */
     socket.on('producerClosed', ({
         producer_id
     }) => {
@@ -457,7 +488,9 @@ io.on('connection', (socket: NewSocket) => {
         }
 
     })
-
+    /**
+     * 暂停生产
+     */
     socket.on('pauseProducer', ({ producer_id }, callback) => {
         try {
             console.log(`---producer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -468,6 +501,9 @@ io.on('connection', (socket: NewSocket) => {
         }
     })
 
+    /**
+     * 继续生产
+     */
     socket.on('resumeProducer', ({ producer_id }, callback) => {
         try {
             console.log(`---producer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -478,6 +514,9 @@ io.on('connection', (socket: NewSocket) => {
         }
     })
 
+    /**
+     * 暂停消费
+     */
     socket.on('pauseConsumer', ({ consumer_id }, callback) => {
         if (consumer_id) {
             console.log(`---consumer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -489,6 +528,9 @@ io.on('connection', (socket: NewSocket) => {
         }
     });
 
+    /**
+     * 继续消费
+     */
     socket.on('resumeConsumer', ({ consumer_id }, callback) => {
         if (consumer_id) {
             console.log(`---consumer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
@@ -571,7 +613,7 @@ function room() {
 }
 
 /**
- * Get next mediasoup Worker.
+ *通过轮询的方式 获取worker
  */
 function getMediasoupWorker() {
     const worker = workers[nextMediasoupWorkerIdx];

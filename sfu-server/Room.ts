@@ -8,6 +8,9 @@ import { WebRtcTransport, WebRtcTransportStat } from 'mediasoup/src/WebRtcTransp
 
 export default class Room {
 
+    /**
+     * 房间的号码
+     */
     private id:string;
 
     private peers:Map<any,Peer>;
