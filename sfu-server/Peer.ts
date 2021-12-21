@@ -1,6 +1,6 @@
-import { Consumer } from "mediasoup/src/Consumer";
-import { Producer } from "mediasoup/src/Producer";
-import { WebRtcTransport } from "mediasoup/src/WebRtcTransport";
+import { Consumer } from "mediasoup/node/lib/Consumer";
+import { Producer } from "mediasoup/node/lib/Producer";
+import { WebRtcTransport } from "mediasoup/node/lib/WebRtcTransport";
 /**
  * 房间里头的人
  */
