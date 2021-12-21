@@ -7,9 +7,9 @@ const config = require('./config');
 import * as path from 'path';
 import Room from './Room';
 import Peer from './Peer';
-import * as SocketIO from 'socket.io';
-import { Worker } from 'mediasoup/src/Worker';
-import { Logger } from 'mediasoup/src/Logger';
+import * as socketio from 'socket.io';
+import { Worker } from 'mediasoup/node/lib/Worker';
+import { Logger } from 'mediasoup/node/lib/Logger';
 const bodyParser = require('body-parser');
 (async () => {
     await createWorkers()
@@ -22,11 +22,11 @@ const options = {
     // key: fs.readFileSync(path.join(__dirname,config.sslKey), 'utf-8'),
     // cert: fs.readFileSync(path.join(__dirname,config.sslCrt), 'utf-8')
 }
-const http: HTTP.Server = new HTTP.Server(app);
+const http: HTTP.Server = require("http").Server(app);
 // const httpsServer = https.createServer(options, app)
 
 
-const io: SocketIO.Server = require('socket.io')(http);
+const io: socketio.Server = require('socket.io')(http);
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
@@ -164,7 +164,7 @@ async function createWorkers() {
 
 
 }
-interface NewSocket extends SocketIO.Socket {
+interface NewSocket extends socketio.Socket {
     /**
      * 给连接的添加房间号
      */
