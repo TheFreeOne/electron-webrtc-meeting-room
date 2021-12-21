@@ -10,6 +10,7 @@ sfu/mesh的服务端+electron客户端的webrtc音视频会议室方案
 
 > 如果在体验之后觉得还行，请麻烦点个star，觉得不行，可以在issues或者下方评论留下建议或意见
 
+> clone 的时候 添加` --depth 1` 只克隆最近一次 commit
 
 #### 相关技术
 
