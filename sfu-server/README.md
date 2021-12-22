@@ -67,7 +67,7 @@ D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup> node 
 meson.build:147:0: ERROR: could not get https://www.openssl.org/source/openssl-1.1.1l.tar.gz is the internet available?
 ```
 
-> 认为下载，修改名字一直后移动到``D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\packagecache`
+> 可以人为下载*.wrap中所有的文件，修改名字一致后移动到``D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\packagecache`
 
 编辑
 D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\openssl.wrap
