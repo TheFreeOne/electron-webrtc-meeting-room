@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "android_meeting_room_client"

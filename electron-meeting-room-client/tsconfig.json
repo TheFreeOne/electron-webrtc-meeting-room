@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",//用commonjs模块，不用AMD、CMD、es6标准模块
+    "target": "es6",//只需翻译成es6
+    "sourceMap": true //方便调试js时映射到ts
+  },
+  "exclude": [
+    "./node_modules/**",
+    "**/node_modules/*",
+    "./node_modules/electron-updater/node_modules/builder-util-runtime/out/httpExecutor.d.ts"
+  ]
+}

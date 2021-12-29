@@ -1,0 +1,69 @@
+{
+  "name": "electron-meeting-root-client",
+  "version": "0.3.4",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prestart": "tsc",
+    "pack": "electron-builder --dir",
+    "build": "electron-builder --win --x64",
+    "start": "chcp 65001 & electron ."
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.5",
+    "@types/layui-src": "^2.5.0",
+    "electron": "^10.3.0",
+    "electron-builder": "^21.1.0",
+    "electron-rebuild": "^2.3.4"
+  },
+  "dependencies": {
+    "electron-log": "^4.3.1",
+    "jquery": "^3.5.1",
+    "toastr": "^2.1.4"
+  },
+  "keywords": [],
+  "author": "freeone",
+  "license": "MIT",
+  "build": {
+    "publish": {
+      "provider": "generic",
+      "url": "http://127.0.0.1:8031/winrelease/"
+    },
+    "copyright": "版權信息",
+    "productName": "会议室electron客户端",
+    "appId": "org.freeone.electron-webrtc-meeting-room",
+    "directories": {
+      "output": "builder-build",
+      "app": "."
+    },
+    "npmRebuild": false,
+    "extraResources": [
+      {
+        "from": "E:/NeedLibX64/libcrypto-1_1-x64.dll",
+        "to": "../"
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "allowElevation": true,
+      "installerIcon": "./icon.ico",
+      "createDesktopShortcut": true
+    },
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        "nsis",
+        "zip",
+        "portable",
+        "msi"
+      ],
+      "asar": true,
+      "asarUnpack": [
+        "./config.json"
+      ]
+    }
+  }
+}

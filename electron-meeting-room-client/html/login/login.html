@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    
+    <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
+    <script src="../../static/layui-v2.5.7/layui.all.js"></script>
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+         *{
+            overflow-y: hidden
+        }
+        .layui-form{
+            margin-top: 120px;
+            padding-right: 25px;
+        }
+
+    </style>
+</head>
+<body>
+<form class="layui-form" action="" id="action-form" onsubmit="return false"  >
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="username"  autocomplete="off" placeholder="请输入用户名" class="layui-input" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password"  autocomplete="off" placeholder="请输入密码" class="layui-input" >
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit" style="width: 181px;" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="login-submit">立即提交</button>
+        </div>
+    </div>
+
+    <div style="width: 100%;position: absolute; bottom: 0;height: 30px; background-color: #EDEDED;line-height: 30px;text-align: right;">
+        <button id="setting" class="layui-btn layui-btn-xs layui-btn-primary" style="margin-right: 10px;" ><i  class="layui-icon layui-icon-set-fill" style="font-size: 20px; "></i>设置</button>
+    </div>
+</form>
+
+
+
+
+<div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px; ">
+
+    <div class="layui-form-item">
+
+        <label class="layui-form-label" title="登陆地址">登陆地址</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="javaLoginServer" />
+        </div>
+
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="sfuServer" />
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="mesh信令服务器">mesh信令服务器</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="nodeRoomServer" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="sturnserver">sturnserver</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="sturnserver" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turnserver">turnserver</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turnserver" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turnusername">turnusername</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turnusername" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="turncredential">turncredential</label>
+        <div class="layui-input-block">
+             <input class="layui-input" name="turncredential" />
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" title="会议模式">会议模式</label>
+        <div class="layui-input-block">
+            <select name="meetingPattern" id="meetingPattern"  >
+                <option value="mesh">MESH-P2P模式</option>
+                <option value="sfu">SFU服务器模式</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+
+        <div class="layui-input-block" >
+            <button type="submit" style="width:130px" class="layui-btn layui-btn-normal layui-btn-sm " id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
+        </div>
+    </div>
+
+
+    </div>
+</body>
+<script src="login.js"></script>
+</html>

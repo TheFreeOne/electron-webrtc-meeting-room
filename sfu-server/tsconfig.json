@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",//用commonjs模块，不用AMD、CMD、es6标准模块
+    "target": "es6",//只需翻译成es6
+    "sourceMap": true //方便调试js时映射到ts
+  },
+  "include": ["./"],
+  "exclude": [
+    "node_modules",
+    "node_modules/**",
+    "./node_modules/**",
+    "./node_modules/mediasoup/src/Router.ts",
+    "./node_modules/mediasoup/src/ortc.ts",
+    "./node_modules/@types/express-serve-static-core/index.d.ts",
+    "./node_modules/@types/express/index.d.ts",
+    "./node_modules/mediasoup/node/lib/Logger.d.ts"
+  ]
+}

@@ -1,0 +1,339 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="../../static/layui-v2.5.7/css/layui.css">
+    <link href="../../static/toastr/toastr.css" rel="stylesheet" />
+    <script>
+        (function () {
+            let config = require('../../config.json');
+            window.config = config;
+            let script = document.createElement("script");
+            script.src = `${config.sfuServer}/socket.io/socket.io.js`
+            console.dir(script)
+            document.write(script.outerHTML);
+        })()
+    </script>
+    <script src="./modules/mediasoupclient.min.js"></script>
+    <script src="./modules/EventEmitter.min.js"></script>
+    <!-- <script src="./RoomClient.js"></script> -->
+
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .vid {
+            flex: 0 1 auto;
+            /* height: 400px; */
+        }
+
+        .settings {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 2px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none
+        }
+    </style>
+
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        .layui-row,
+        .layui-xs-col10,
+        .layui-xs-col2 {
+            width: 100%;
+            height: 100%;
+        }
+
+        .main-content {
+            background-color: gainsboro;
+            height: 100%;
+        }
+
+        .left-content {
+            background-color: grey;
+            height: 100%;
+        }
+
+        .layui-row {
+            height: calc(100% - 150px);
+        }
+
+        .window-item,
+        .window-item>img {
+            display: inline-block;
+
+            position: relative;
+            margin: 4px;
+        }
+
+        .window-item {
+            width: 192px;
+            height: 120px;
+            border: 2px solid darkgray;
+            float: left;
+            text-align: center;
+            box-sizing: border-box;
+            padding-bottom: 5px;
+        }
+
+        .window-item:hover {
+            border: 2px solid deepskyblue;
+        }
+
+        .window-item>img {
+            height: 100%;
+            max-width: 96%;
+        }
+
+        .window-item p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            position: absolute;
+            background: white;
+            bottom: -20px;
+            width: 100%;
+        }
+
+
+
+        .window-item-content {
+            display: grid;
+            grid-template-columns: 220px 220px 220px;
+            grid-template-rows: 150px 150px 150px;
+        }
+
+        .main-video-content {
+            padding-right: 20px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            box-sizing: border-box;
+            background-color: #c3c2c2;
+            display: grid;
+            grid-gap: 10px;
+            grid-template-rows: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr);
+            overflow-y: scroll;
+        }
+
+        .bottom-util {
+            height: 15%;
+        }
+
+        .talking-now-btn {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #audio-wave-canvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .local-audio-wave-div {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            max-height: 100px;
+        }
+
+        .person-video-item {
+            position: relative;
+            box-sizing: border-box;
+            background-color: #000;
+            min-width: 212px;
+            min-height: 116px;
+            z-index: 1;
+        }
+
+        .person-video-item .screen-video {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .person-video-item .camera-video {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            bottom: 25px;
+            right: 0;
+            z-index: 2;
+        }
+
+        .person-video-item .person-info {
+            height: 25px;
+            background-color: rebeccapurple;
+            position: absolute;
+            width: 100%;
+            z-index: 3;
+            left: 0;
+            bottom: 0;
+        }
+
+        .person-video-item audio {
+            display: none;
+        }
+    </style>
+
+    <style>
+        .person-video-item video {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+        }
+        .video-max {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 2020;
+        }
+        .video-max .person-info{
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <div id="login" style="display: none;">
+
+        <input id="roomidInput" value="" type="hidden" />
+
+
+    </div>
+
+    <div class="layui-row">
+        <div class="layui-col-xs10 main-content">
+            <div class="main-audio-content">
+                <audio id="main-audio"></audio>
+            </div>
+
+            <div class="main-video-content container" id="remoteVideos">
+
+                <div class="person-video-item" onclick="videoMax(this)" id="localMedia">
+                    <div class="person-info">
+                        <span class="person-name">我:</span>
+                        <span class="person-status"></span>
+                    </div>
+                </div>
+
+            </div>
+            <div id="remoteAudios"></div>
+        </div>
+        <div class="layui-col-xs2 left-content">
+            <div class="left-video-content" style="position: relative;height: calc(100% - 100px);">
+
+
+            </div>
+            <div class="local-audio-wave-div">
+                <canvas id="audio-wave-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="hidden layui-form" id="control">
+        <div class="layui-form-item">
+      
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">操作</label>
+                    <div class="layui-input-block">
+                        <button id='exitButton' class="layui-btn layui-btn-normal layui-btn-sm layui-btn-disabled" disabled onclick="roomClient.exit()" remark="123">退出</button>
+                        <button id='copyRoomNumberButton' class='layui-btn layui-btn-normal layui-btn-sm' onclick="roomClient.exit()">复制房间号</button>
+                    </div>
+
+                </div>
+             
+ 
+
+            <div class="layui-inline">
+                  <label class="layui-form-label">分辨率</label>
+                <div class="layui-input-block">
+                    <select id="video-resolution" name="video-resolution" >
+                        <option value="1920*1080">1920*1080</option>
+                        <option value="1280*768" selected >1280*768</option>
+                    </select>
+                </div>
+            </div>
+
+          
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">音频设备</label>
+                <div class="layui-input-block">
+                    <select id="audioSelect" name="audio-select" style="display: none;"></select>
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <label class="layui-form-label">视频设备</label>
+                <div class="layui-input-block">
+                    <select id="videoSelect" name="video-select" style="display: none;"></select>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline"></div>
+            <label class="layui-form-label">会议</label>
+            <div class="layui-input-block">
+                <button id='startAudioButton' class='hidden layui-btn layui-btn-normal layui-btn-sm' style="margin-left: 10px;" onclick="roomClient.produce(RoomClient.mediaType.audio, audioSelect.value)">会议发言</button>
+                <button id='stopAudioButton' class='hidden layui-btn layui-btn-warm layui-btn-sm' onclick="roomClient.closeProducer(RoomClient.mediaType.audio)">关闭发言</button>
+                <button id='startVideoButton' class='hidden layui-btn layui-btn-normal layui-btn-sm'  onclick="roomClient.produce(RoomClient.mediaType.video, videoSelect.value)">开启摄像头</button>
+                <button id='stopVideoButton' class='hidden layui-btn layui-btn-warm layui-btn-sm' onclick="roomClient.closeProducer(RoomClient.mediaType.video)">关闭摄像头</button>
+                <button id='startScreenButton' class='hidden layui-btn layui-btn-normal layui-btn-sm'  onclick="roomClient.produce(RoomClient.mediaType.screen)">分享屏幕</button>
+                <button id='stopScreenButton' class='hidden layui-btn layui-btn-warm layui-btn-sm' onclick="roomClient.closeProducer(RoomClient.mediaType.screen)">停止分享</button>
+            </div>
+        </div>
+
+       
+
+
+ 
+    </div>
+
+
+
+
+
+
+</body>
+<footer>
+    <script src="../../static/layui-v2.5.7/layui.all.js"></script>
+    <script src="index.js"></script>
+</footer>
+
+</html>
