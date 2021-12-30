@@ -31,7 +31,7 @@ function createWindow() {
         height: 490,
         minWidth: 80,
         minHeight: 60,
-        icon: 'icon.ico',
+        icon: './icon.ico',
         resizable:true,
         
         maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
@@ -40,10 +40,13 @@ function createWindow() {
         useContentSize: true,
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
+            contextIsolation: false,
         }
         
     });
+
+    require('@electron/remote/main').initialize()
+    require('@electron/remote/main').enable(mainWindow.webContents)
 
     mainWindow.loadFile('./html/login/login.html');
     mainWindow.once('ready-to-show', () => {

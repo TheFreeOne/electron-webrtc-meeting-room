@@ -1,6 +1,6 @@
 import { dialog, ipcRenderer } from "electron";
 import ChannelConstant from "../../../util/ChannelConstant";
-
+// const { app } = require("@electron/remote");
 export default class StreamToWebRTC {
 
 
@@ -91,7 +91,8 @@ export default class StreamToWebRTC {
         // 房间已经满
         (window as any).socket.on('full', room => {
             (window as any).toastr.info('加入失败，房间已满');
-            require('electron').remote.dialog.showMessageBoxSync({ type: 'info', message: '房间已满', title: '提示' });
+            // remote.dialog.showMessageBoxSync({ type: 'info', message: '房间已满', title: '提示' });
+            alert('房间已满')
             window.close();
         });
 

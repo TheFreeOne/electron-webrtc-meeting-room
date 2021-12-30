@@ -40,8 +40,8 @@ export default class IpcMainListener{
                 useContentSize: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: true,
-                    webSecurity:false
+                    webSecurity:false,
+                    contextIsolation: false
                 }
             });
             webSocketWindow.loadFile('./html/webSocket/webSocket.html');
@@ -82,8 +82,8 @@ export default class IpcMainListener{
                 useContentSize: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: true,
-                    webSecurity:false
+                    webSecurity:false,
+                    contextIsolation: false
                 }
             });
             this._meetingWindow = meetingWindow;
@@ -123,7 +123,6 @@ export default class IpcMainListener{
                 useContentSize: true,
                 webPreferences: {
                     nodeIntegration: true,
-                    enableRemoteModule: false,
                     webSecurity: false
                 }
             });
