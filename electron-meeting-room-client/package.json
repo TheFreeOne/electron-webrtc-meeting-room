@@ -1,6 +1,6 @@
 {
   "name": "electron-meeting-root-client",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -56,6 +56,7 @@
         "zip",
         "portable"
       ],
+      "asar": false,
       "asarUnpack": [
         "./config.json",
         "./icon.ico"
@@ -63,3 +64,4 @@
     }
   }
 }
+ 
