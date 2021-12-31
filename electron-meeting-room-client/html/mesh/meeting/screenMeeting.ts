@@ -190,7 +190,6 @@ export default class ScreenMeeting {
                                     let trackReplacedPromise = await sender.replaceTrack(desktopTrack);
                                     console.log(trackReplacedPromise);
 
-
                                 }
                             };
 

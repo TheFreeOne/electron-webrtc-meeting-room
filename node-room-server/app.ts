@@ -99,7 +99,7 @@ io.on('connection', (socket    ) => {
 
         const clientSize = personInRoom.length;
         console.log(room, 'has', clientSize, 'clients');
-
+        socket.room_id = room;
         if (clientSize === 0) {
             socket.join(room);
             socket.emit('created', { "room": room, "socketId": socket.id, "personInRoom": Array.from(io.sockets.adapter.rooms.get(room)) });
@@ -143,6 +143,7 @@ io.on('connection', (socket    ) => {
         let toSocketId = event.toSocketId;
         event.sdp.fromSocketId = socket.id;
         event.sdp.fromNickName = event.fromNickName;
+        socket.nickname = event.fromNickName;
         // socket.broadcast.to(event.room).emit('offer', event.sdp);
         if (toSocketId && personInServer[toSocketId]) {
             personInServer[toSocketId].emit('offer', event.sdp);
@@ -171,6 +172,22 @@ io.on('connection', (socket    ) => {
                 }).then(error => {
 
                 });
+        }
+    });
+
+    /**
+     * 断开连接，关掉窗口之类的
+     */
+     socket.on('disconnect', () => {
+        
+        try {
+            socket.broadcast.to(socket.room_id).emit('out of room', {
+                fromSocketId: socket.id,
+                room: socket.room_id,
+                nickname: socket.nickname
+            });
+        } catch (error) {
+            
         }
     });
 })

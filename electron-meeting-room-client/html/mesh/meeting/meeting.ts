@@ -223,7 +223,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
     });
 
     /**
-     * 白板
+     * 白板关闭
      */
     ipcRenderer.on(ChannelConstant.BOARDWINDOW_CLOSED, () => {
         console.log(ChannelConstant.BOARDWINDOW_CLOSED);
@@ -231,7 +231,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         for (let rtcPeerConnection of rtcPcMap.values()) {
             if (rtcPeerConnection) {
                 rtcPeerConnection.getSenders()[2].replaceTrack(disabledVideoTrack.clone());
-                $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
+                // $('#screen-select').find('option[value="close"]').first().attr('selected', 'selected');
                 layui.form.render();
 
 
@@ -241,6 +241,10 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         localStream = new MediaStream([localStream.getTracks()[0], localStream.getTracks()[1], disabledVideoTrack]);
 
     });
+
+    ipcRenderer.on(ChannelConstant.CREATE_BOARD_WINODW, () => {
+        
+    })
 
     $('.permissionQuery').off().on('click', () => {
         // @ts-ignore

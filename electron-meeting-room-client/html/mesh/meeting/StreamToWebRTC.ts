@@ -5,7 +5,6 @@ export default class StreamToWebRTC {
 
 
 
-
     public run(_localStream) {
 
 
@@ -156,7 +155,6 @@ export default class StreamToWebRTC {
         });
 
         (window as any).socket.on('out of room', (event) => {
-            (window as any).toastr.info(event.nickname + '离开了会议');
             let fromSocketId = event.fromSocketId;
             try {
 
@@ -170,7 +168,9 @@ export default class StreamToWebRTC {
 
             }
             console.log(`${fromSocketId} out of room`);
-
+            if($(`#${fromSocketId}`).find('span').first()){
+                (window as any).toastr.info($(`#${fromSocketId}`).find('span').first().html() + '离开了会议');
+            }
             $(`#${fromSocketId}`).remove();
         });
 
