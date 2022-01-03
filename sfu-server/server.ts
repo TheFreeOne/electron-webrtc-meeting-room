@@ -8,8 +8,8 @@ import * as path from 'path';
 import Room from './Room';
 import Peer from './Peer';
 import * as SocketIO from 'socket.io';
-import { Worker } from 'mediasoup/src/Worker';
-import { Logger } from 'mediasoup/src/Logger';
+import { Worker } from 'mediasoup/node/lib/Worker';
+import { Logger } from 'mediasoup/node/lib/Logger';
 const bodyParser = require('body-parser');
 (async () => {
     await createWorkers()

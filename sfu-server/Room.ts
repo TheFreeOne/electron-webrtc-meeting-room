@@ -1,9 +1,9 @@
 const config = require('./config')
 import * as SocketIO from 'socket.io';
 import Peer from './Peer' ;
-import { Worker } from 'mediasoup/src/Worker';
-import { Router } from 'mediasoup/src/Router';
-import { WebRtcTransport, WebRtcTransportStat } from 'mediasoup/src/WebRtcTransport';
+import { Worker } from 'mediasoup/node/lib/Worker';
+import { Router } from 'mediasoup/node/lib/Router';
+import { WebRtcTransport, WebRtcTransportStat } from 'mediasoup/node/lib/WebRtcTransport';
 
 
 export default class Room {
