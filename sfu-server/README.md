@@ -45,11 +45,11 @@ client ->> server : getProducers 获取房间中的生产者
 
 ```
 
-####  mediasoup 3.9.0 windows 编译
+####  ~~mediasoup 3.9.0 windows 编译~~ 最好在linux上编译,本人使用kali(python3)
 
-最好提前安装好 meson
+- 最好提前安装好 meson
 
-> 按这里装https://blog.csdn.net/wo198711203217/article/details/105032057   x86_64-posix-sjlj这个版本
+- 按这里装`MinGW-w64`https://blog.csdn.net/wo198711203217/article/details/105032057   x86_64-posix-sjlj这个版本
 
 1. 编辑node_module/worker/Makefile，去掉 47行 `ifeq ($(wildcard $(PIP_DIR)),)` 到与其匹配的`endif`中的 `#` 开头的注释，因为这些注释可能在windows下被错误地识别
 执行
@@ -69,8 +69,8 @@ meson.build:147:0: ERROR: could not get https://www.openssl.org/source/openssl-1
 
 > 人为下载，修改名字一直后移动到`\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\packagecache`
 
-> 或从 链接：https://pan.baidu.com/s/1rmYpy_3-tCeGNWNfm6MW5w 
-提取码：lor8  下载相关文件
+> 或从 链接：链接：https://pan.baidu.com/s/1ugcWmKZuWQKzk-AHeT-0ZQ 
+提取码：mwww  下载相关文件
 
 编辑
 D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\openssl.wrap
