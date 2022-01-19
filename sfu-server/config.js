@@ -29,7 +29,7 @@ module.exports = {
                 "message"  // 消息日志(包括SCTP消息和直连消息)。
 			],
 			rtcMinPort : process.env.MEDIASOUP_MIN_PORT || 10000,
-			rtcMaxPort : process.env.MEDIASOUP_MAX_PORT || 59999
+			rtcMaxPort : process.env.MEDIASOUP_MAX_PORT || 10100
 		},
         // Router settings
         router: {
@@ -37,65 +37,53 @@ module.exports = {
                 [
                     // https://github.com/haiyangwu/mediasoup-client-android/issues/36#issuecomment-768499443
                     {
-						kind: 'audio',
-						mimeType: 'audio/PCMU',
-						preferredPayloadType: 0,
-						clockRate: 8000
-					},
-					{
-						kind: 'audio',
-						mimeType: 'audio/PCMA',
-						preferredPayloadType: 8,
-						clockRate: 8000
-					},
-                    {
-						kind: 'audio',
-						mimeType: 'audio/opus',
-						clockRate: 48000,
-						channels: 2
-					},
-                    {
-                        kind: 'video',
-                        mimeType: 'video/VP8',
-                        clockRate: 90000,
-                        parameters:
-                            {
-                                'x-google-start-bitrate': 1000
-                            }
+                        kind      : 'audio',
+                        mimeType  : 'audio/opus',
+                        clockRate : 48000,
+                        channels  : 2
                     },
                     {
-                        kind: 'video',
-                        mimeType: 'video/VP9',
-                        clockRate: 90000,
-                        parameters:
-                            {
-                                'profile-id': 2,
-                                'x-google-start-bitrate': 1000
-                            }
+                        kind       : 'video',
+                        mimeType   : 'video/VP8',
+                        clockRate  : 90000,
+                        parameters :
+                        {
+                            'x-google-start-bitrate' : 1000
+                        }
                     },
                     {
-                        kind: 'video',
-                        mimeType: 'video/h264',
-                        clockRate: 90000,
-                        parameters:
-                            {
-                                'packetization-mode': 1,
-                                'profile-level-id': '4d0032',
-                                'level-asymmetry-allowed': 1,
-                                'x-google-start-bitrate': 1000
-                            }
+                        kind       : 'video',
+                        mimeType   : 'video/VP9',
+                        clockRate  : 90000,
+                        parameters :
+                        {
+                            'profile-id'             : 2,
+                            'x-google-start-bitrate' : 1000
+                        }
                     },
                     {
-                        kind: 'video',
-                        mimeType: 'video/h264',
-                        clockRate: 90000,
-                        parameters:
-                            {
-                                'packetization-mode': 1,
-                                'profile-level-id': '42e01f',
-                                'level-asymmetry-allowed': 1,
-                                'x-google-start-bitrate': 1000
-                            }
+                        kind       : 'video',
+                        mimeType   : 'video/h264',
+                        clockRate  : 90000,
+                        parameters :
+                        {
+                            'packetization-mode'      : 1,
+                            'profile-level-id'        : '4d0032',
+                            'level-asymmetry-allowed' : 1,
+                            'x-google-start-bitrate'  : 1000
+                        }
+                    },
+                    {
+                        kind       : 'video',
+                        mimeType   : 'video/h264',
+                        clockRate  : 90000,
+                        parameters :
+                        {
+                            'packetization-mode'      : 1,
+                            'profile-level-id'        : '42e01f',
+                            'level-asymmetry-allowed' : 1,
+                            'x-google-start-bitrate'  : 1000
+                        }
                     }
                 ]
         },
