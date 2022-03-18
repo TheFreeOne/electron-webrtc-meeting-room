@@ -1,4 +1,8 @@
 {
+  
+  "exclude": [
+    "node_modules"
+],
   "compilerOptions": {
     "module": "commonjs",//用commonjs模块，不用AMD、CMD、es6标准模块
     "target": "es6",//只需翻译成es6

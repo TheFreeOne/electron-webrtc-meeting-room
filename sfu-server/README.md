@@ -2,7 +2,7 @@
 
  [windows平台安装](https://mediasoup.discourse.group/t/mediasoup-unable-to-install-in-windows/551/4)
 
-    npm i --ignore-scripts
+    npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts
     cd node_modules/mediasoup
     python ./worker/scripts/configure.py --format=msvs -R mediasoup-worker
     cd worker
@@ -45,64 +45,21 @@ client ->> server : getProducers 获取房间中的生产者
 
 ```
 
-####  ~~mediasoup 3.9.0 windows 编译~~ 最好在linux上编译,本人使用kali(python3)
+
+####  linux上编译,本人使用kali(python3)
+
+- `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 安装相关依赖
 
 - 最好提前安装好 meson
 
-- 按这里装`MinGW-w64`https://blog.csdn.net/wo198711203217/article/details/105032057   x86_64-posix-sjlj这个版本
+- 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下
 
-1. 编辑node_module/worker/Makefile，去掉 47行 `ifeq ($(wildcard $(PIP_DIR)),)` 到与其匹配的`endif`中的 `#` 开头的注释，因为这些注释可能在windows下被错误地识别
-执行
-```
-D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup> node npm-scripts.js worker:build
-```
-接下来可能输出
-```
-  ......
-  Source dir: D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker
-  Build dir: D:\out\Release // 目录是错误地，到时候需要放到worker下面
-```
-##### err1 
-```
-meson.build:147:0: ERROR: could not get https://www.openssl.org/source/openssl-1.1.1l.tar.gz is the internet available?
-```
-
-> 人为下载，修改名字一直后移动到`\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\packagecache`
 
 > 或从 链接：链接：https://pan.baidu.com/s/1ugcWmKZuWQKzk-AHeT-0ZQ 
 提取码：mwww  下载相关文件
 
-编辑
-D:\lqq\git\electron-webrtc-meeting-room\sfu-server\node_modules\mediasoup\worker\subprojects\openssl.wrap
-修改openssl的下载地址
-提前下载，并用nginx代理 到下载地文件夹，
- 下载一边之后 查看 D:\out\Release\meson-logs\meson-log.txt 将 actual 的文件hash替换  openssl.warp中的source_hash
-
- 
-
-参考
- ```
-
-[wrap-file]
-directory = openssl-1.1.1l
-source_url = http://127.0.0.1:18000/openssl-1.1.1l.tar.gz
-source_filename = openssl-1.1.1l.zip
-source_hash = 12e87ea1e5d60da771551117457e40d908bf13e4c071f06a1bf71fa13a7199ed
-patch_filename = openssl_1.1.1l-2_patch.zip
-patch_url =  http://127.0.0.1:18000/get_patch
-patch_hash = 852521fb016fa2deee8ebf9ffeeee0292c6de86a03c775cf72ac04e86f9f177e
-
-[provide]
-libcrypto = libcrypto_dep
-libssl = libssl_dep
-openssl = openssl_dep
-
-
- ```
-
- ##### crypto\aes\aes_cbc.c文件不存在
- 将openssl-1.1.1l中所有文件拷贝到 与openssl中meson.build同一层级
-
- #### undefined reference to `_Unwind_Resume'
-
-  -Wl,-Bdynamic -lgcc_s  
+- 之后运行
+```
+(kali㉿kali)-[~/…/electron-webrtc-meeting-room/sfu-server/node_modules/mediasoup]
+$ node npm-scripts.js worker:build
+```
