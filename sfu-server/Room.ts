@@ -85,9 +85,10 @@ export default class Room {
             }
         }.bind(this))
 
-        transport.on('close', () => {
-            console.log('---transport close--- ' + this.peers.get(socket_id).name + ' closed')
-        })
+         
+        // transport.on('close', function() {
+        //     console.log('---transport close--- ' + this.peers.get(socket_id).name + ' closed')
+        // })
         console.log('---adding transport---', transport.id)
         this.peers.get(socket_id).addTransport(transport)
         return {
