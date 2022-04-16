@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 })();
 
 const app = express();
+const room2Password = new Map<string, string>()
 
 // 
 const options = {
@@ -35,8 +36,16 @@ app.use(bodyParser.json());
 /**
  * 生成一个没有使用的房间号码
  */
-app.get('/createValidRoomId', (req, resp) => {
-    resp.send({ roomId: createValidRoomId() });
+app.post('/createValidRoomId', (req, resp) => {
+    console.dir(req.body.password)
+    let password = req.body.password
+    if (typeof password === 'undefined' || password == null) {
+        resp.send({ roomId: createValidRoomId(null) });
+    } else {
+        password = '' + password
+        resp.send({ roomId: createValidRoomId(password) });
+    }
+
 });
 /**
  * 用于查询房间号码是否存在
@@ -46,7 +55,12 @@ app.post('/isRoomExisted', (req, resp) => {
         // 解构赋值
         let { roomId } = req.body;
         if (Array.from(roomList.keys()).includes(roomId)) {
-            resp.status(200).json({ existed: true });
+            const password = room2Password.get(roomId)
+            let needPassword = true;
+            if(typeof password === 'undefined' || password === null){
+                needPassword = false
+            }
+            resp.status(200).json({ existed: true ,'needPassword': needPassword});
         } else {
             resp.status(200).json({ existed: false });
         }
@@ -54,6 +68,22 @@ app.post('/isRoomExisted', (req, resp) => {
         resp.status(500).json({ error });
     }
 });
+
+app.post('/checkPassword', (req, resp) => {
+    try {
+        // 解构赋值
+        let { roomId,password } = req.body;
+        const passwordInMap = room2Password.get(roomId)
+        if(passwordInMap == password){
+            resp.status(200).json({ valid: true });
+        }else{
+            resp.status(200).json({ valid: false });
+        }
+    } catch (error) {
+        resp.status(500).json({ error });
+    }
+});
+ 
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
 /**
@@ -179,7 +209,7 @@ io.on('connection', (socket: NewSocket) => {
      * 监听 创建房间
      */
     socket.on('createRoom', async ({
-        room_id
+        room_id, password
     }, callback) => {
         console.dir('---try create room ---');
         try {
@@ -192,16 +222,22 @@ io.on('connection', (socket: NewSocket) => {
                         socket.emit('createRoom callback', 'already exists')
                     }
 
+
                 } else {
-                    console.log('---created room--- ', room_id)
-                    let worker = await getMediasoupWorker();
-                    let room = new Room(room_id, worker, io)
-                    roomList.set(room_id, room);
-                    if (callback) {
-                        callback(room_id);
-                    } else {
-                        socket.emit('createRoom callback', room_id)
+                    let passwordInMap = room2Password.get(room_id)
+                    if (typeof passwordInMap === 'undefined' || passwordInMap === null || passwordInMap === password) {
+                        // 如果没有密码就直接创建,又或者密码相同
+                        console.log('---created room--- ', room_id)
+                        let worker = await getMediasoupWorker();
+                        let room = new Room(room_id, worker, io)
+                        roomList.set(room_id, room);
+                        if (callback) {
+                            callback(room_id);
+                        } else {
+                            socket.emit('createRoom callback', room_id)
+                        }
                     }
+
                 }
             }
         } catch (error) {
@@ -213,7 +249,8 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('join', ({
         room_id,
-        name
+        name,
+        password
     }, cb) => {
         console.log(cb);
 
@@ -229,36 +266,46 @@ io.on('connection', (socket: NewSocket) => {
                         error: 'room does not exist'
                     });
                 }
-
-            }
-            // 获取进入房间之前的人
-            let peers = roomList.get(room_id).getPeers();
-            let peerInfos = new Array();
-            for (let peerid of Array.from(peers.keys())) {
-                peerInfos.push({
-                    socketid: peerid,
-                    name: peers.get(peerid).name
-                });
-            }
-
-            roomList.get(room_id).addPeer(new Peer(socket.id, name));
-            socket.room_id = room_id;
-            // 广播
-            roomList.get(room_id).broadCast(socket.id, 'joined', {
-                room_id: room_id,
-                name: name,
-                socketid: socket.id
-            });
-            let jsonObject = roomList.get(room_id).toJson();
-            (jsonObject as any).socketid = socket.id;
-            if (cb) {
-                cb(jsonObject);
             } else {
-                socket.emit('join callback', jsonObject);
+
+                let passwordInMap = room2Password.get(room_id)
+                if (typeof passwordInMap === 'undefined' || passwordInMap === null || passwordInMap === password) {
+
+
+                    // 获取进入房间之前的人
+                    let peers = roomList.get(room_id).getPeers();
+                    let peerInfos = new Array();
+                    for (let peerid of Array.from(peers.keys())) {
+                        peerInfos.push({
+                            socketid: peerid,
+                            name: peers.get(peerid).name
+                        });
+                    }
+
+                    roomList.get(room_id).addPeer(new Peer(socket.id, name));
+                    socket.room_id = room_id;
+                    // 广播
+                    roomList.get(room_id).broadCast(socket.id, 'joined', {
+                        room_id: room_id,
+                        name: name,
+                        socketid: socket.id
+                    });
+                    let jsonObject = roomList.get(room_id).toJson();
+                    (jsonObject as any).socketid = socket.id;
+                    if (cb) {
+                        cb(jsonObject);
+                    } else {
+                        socket.emit('join callback', jsonObject);
+                    }
+                    setTimeout(() => {
+                        socket.emit('othersInRoom', peerInfos);
+                    }, 1);
+                }
+
+
+
             }
-            setTimeout(() => {
-                socket.emit('othersInRoom', peerInfos);
-            }, 1);
+
         } catch (error) {
             console.error(error);
         }
@@ -493,6 +540,12 @@ io.on('connection', (socket: NewSocket) => {
                     "sockerid": socket.id
                 });
             }
+            // 回收
+            if (roomList.get(socket.room_id).getPeers().size === 0) {
+                roomList.delete(socket.room_id)
+                room2Password.delete(socket.room_id)
+                console.log('room2Password', room2Password)
+            }
 
         } catch (error) {
 
@@ -586,6 +639,7 @@ io.on('connection', (socket: NewSocket) => {
         await roomList.get(socket.room_id).removePeer(socket.id)
         if (roomList.get(socket.room_id).getPeers().size === 0) {
             roomList.delete(socket.room_id)
+            room2Password.delete(socket.room_id)
         }
 
         try {
@@ -670,7 +724,7 @@ function randomNumber(time = 9): string {
  *
  * @returns 生成房间号
  */
-function createValidRoomId(): string {
+function createValidRoomId(password: string): string {
 
     let number = randomNumber();
     let roomIds = Array.from(roomList.keys());
@@ -678,6 +732,7 @@ function createValidRoomId(): string {
     while (testRoomId(number)) {
         number = randomNumber();
     }
+    room2Password.set(number, password)
     return number;
 
     function testRoomId(_number) {
