@@ -33,7 +33,7 @@ var personMap = new Map<string,string>();
 //@ts-ignore
 const socket = io(window.config.sfuServer, { path: '/socket.io' });
 
-ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType,_nickname) => {
+ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber, _actionType,_nickname,_password) => {
   console.log(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS)
   //@ts-ignore
   document.getElementById("roomidInput").value = _roomNumber;
@@ -41,7 +41,7 @@ ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roo
   let nickname = _nickname || 'bob' + Math.round(Math.random() * 1000);
   console.log('nickname',nickname);
   
-  joinRoom( nickname , roomNumber);
+  joinRoom( nickname , roomNumber,_password);
 });
 
 
@@ -61,12 +61,12 @@ socket.request = function request(type, data = {}) {
 
 let roomClient = null;
 
-function joinRoom(name, room_id) {
+function joinRoom(name, room_id, password) {
   if (roomClient && roomClient.isOpen()) {
     console.log('already connected to a room')
   } else {
     //@ts-ignore
-    roomClient = new RoomClient(localMedia, remoteVideos,  window.mediasoupClient, socket, room_id, name, roomOpen)
+    roomClient = new RoomClient(localMedia, remoteVideos,  window.mediasoupClient, socket, room_id, name,password, roomOpen)
     addListeners()
   }
 

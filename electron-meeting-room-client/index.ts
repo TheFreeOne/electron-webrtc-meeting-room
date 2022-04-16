@@ -40,16 +40,16 @@ layui.use(['form'], () => {
     /**
      * 监听创建会议按钮
      */
-    form.on('submit(create-meeting)', () => {
+    form.on('submit(create-open-meeting)', () => {
 
         let token = ipcRenderer.sendSync(ChannelConstant.GET_TOKEN);
         let config = readJsonFromFile(path.join(app.getAppPath(), './config.json'));
         $.ajax({
             url: `${config.meetingPattern == 'sfu' ? config.sfuServer : config.nodeRoomServer}/createValidRoomId`,
             headers: {
-                'token': token
+                'token': ''
             },
-            type: 'get',
+            type: 'post',
             timeout: 1000,
             success: (result) => {
                 ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, result.roomId, "CREATE");
@@ -59,6 +59,56 @@ layui.use(['form'], () => {
                 alert('请求错误');
             }
         });
+    });
+
+    form.on('submit(create-private-meeting)', ()=>{
+
+        let config = readJsonFromFile(path.join(app.getAppPath(), './config.json'));
+        if(config.meetingPattern !== 'sfu'){
+            layui.layer.msg("仅支持sfu模式");
+            return ;
+        }
+
+        layui.layer.prompt({
+
+         
+            value: '',
+
+            title: '输入密码，并确认', formType: 0,shadeClose: true, success: () => {
+                console.dir($('.layui-layer-content input')[0]);
+                $('.layui-layer-content input')[0].focus()
+                $('.layui-layer-btn').css('top', '-5px');
+                layui.form.render();
+            }
+        }, function (pass, index) {
+            if (pass.length < 6) {
+                layui.layer.msg("请输入至少6位密码");
+                return;
+            }
+
+            let config = readJsonFromFile(path.join(app.getAppPath(), './config.json'));
+            $.ajax({
+                url: `${config.meetingPattern == 'sfu' ? config.sfuServer : config.nodeRoomServer}/createValidRoomId`,
+                headers: {
+                    'token': ''
+                },
+                type: 'post',
+                data: {
+                    password: pass
+                },
+                timeout: 1000,
+                success: (result) => {
+                    ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, result.roomId, "CREATE",pass);
+                    layui.layer.closeAll();
+                }, error: (err) => {
+                    console.log(err);
+                    alert('请求错误');
+                }
+            });
+           
+
+        });
+       
     });
 
 
@@ -99,7 +149,61 @@ layui.use(['form'], () => {
                 success: (result) => {
                     layui.layer.closeAll();
                     if (result.existed) {
-                        ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, pass, "JOIN");
+                        if(result.needPassword){
+
+                            layui.layer.prompt({
+
+         
+                                value: '',
+                    
+                                title: '请输入此房间的密码，并确认', formType: 0,shadeClose: true, success: () => {
+                                    console.log(1);
+                                    console.dir($('.layui-layer-content input')[0]);
+                                    $('.layui-layer-content input')[0].focus()
+                                    $('.layui-layer-btn').css('top', '-5px');
+                                    layui.form.render();
+                                }
+                            }, function (pass1, index1) {
+
+
+                                $.ajax({
+                                    url: `${config.meetingPattern == 'sfu' ? config.sfuServer : config.nodeRoomServer}/checkPassword`,
+                                    headers: {
+                                        'token': token
+                                    },
+                                    data: {
+                                        roomId: pass,
+                                        password: pass1
+                                    },
+                                    type: 'post',
+                                    timeout: 3000,
+                                    success: (result) => {
+                                        layui.layer.closeAll();
+                                        if (result.valid) {
+                                            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, pass, "JOIN", pass1);
+                                        } else {
+                                            layui.layer.msg('密码错误');
+                                        }
+                    
+                    
+                                    }, error: (err) => {
+                                        console.log(err);
+                                        alert('请求错误');
+                                    }
+                                })
+
+
+
+
+                              
+                            });
+
+                           
+                        }else{
+                            ipcRenderer.send(ChannelConstant.CREATE_MEETING_WINDOW, pass, "JOIN",null);
+                        }
+
+                        
                     } else {
                         layui.layer.msg('不存在的房间');
                     }

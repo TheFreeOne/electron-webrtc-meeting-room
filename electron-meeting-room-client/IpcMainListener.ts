@@ -65,7 +65,7 @@ export default class IpcMainListener{
         });
 
         // 创建会议窗口
-        ipcMain.on(ChannelConstant.CREATE_MEETING_WINDOW,(event,roomNumber,actionType)=>{
+        ipcMain.on(ChannelConstant.CREATE_MEETING_WINDOW,(event,roomNumber,actionType, password)=>{
             let meetingWindow = new BrowserWindow({
                 title: '会议室--会议中：'+roomNumber,
                 width: 830,
@@ -100,7 +100,7 @@ export default class IpcMainListener{
             // meetingWindow.webContents.openDevTools();
             meetingWindow.on('ready-to-show',()=>{
                 meetingWindow.show();
-                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType,this._nickname);
+                meetingWindow.webContents.send(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS,roomNumber,actionType,this._nickname, password);
                 meetingWindow.webContents.send("windowId",meetingWindow.id);
             });
         });

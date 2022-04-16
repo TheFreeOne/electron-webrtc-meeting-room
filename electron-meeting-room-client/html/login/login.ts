@@ -10,6 +10,7 @@ const { app } = require("@electron/remote");
 
 layui.use(['form'], () => {
     let form = layui.form;
+    form.render()
 
     $('#setting').on('click',() =>{
         $('#config-form').show();
@@ -30,47 +31,57 @@ layui.use(['form'], () => {
 
     form.on('submit(login-submit)', (formData) => {
         console.log(formData);
-        let config = readJsonFromFile(path.join(app.getAppPath(),'./config.json'));
-        $.ajax({
-            url: config.javaLoginServer + '/login.json',
-            data: formData.field,
-            type: 'post',
-            timeout:1000,
-            success: (result) => {
-                if (result.success) {
-                    console.log(result);
-                    debugger
-                    ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, result.data);
-                    // ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
-                    //     nickname: `nickname-${formData.field.username}:`+Math.random()*1000,
-                    //     token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
-                    // });
+        // let config = readJsonFromFile(path.join(app.getAppPath(),'./config.json'));
+        // $.ajax({
+        //     url: config.javaLoginServer + '/login.json',
+        //     data: formData.field,
+        //     type: 'post',
+        //     timeout:1000,
+        //     success: (result) => {
+        //         if (result.success) {
+        //             console.log(result);
+        //             debugger
+        //             ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, result.data);
+        //             // ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
+        //             //     nickname: `nickname-${formData.field.username}:`+Math.random()*1000,
+        //             //     token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
+        //             // });
 
-                } else {
-                    layui.layer.msg(result.msg);
-                }
-            },
-            error: (xmlHttpRequest, textStatus, errorThrown) => {
-                if (xmlHttpRequest.status == 0) {
-                    layui.layer.alert(`登陆地址没有响应，开启模拟登陆`,{end:()=>{
+        //         } else {
+        //             layui.layer.msg(result.msg);
+        //         }
+        //     },
+        //     error: (xmlHttpRequest, textStatus, errorThrown) => {
+        //         if (xmlHttpRequest.status == 0) {
+        //             layui.layer.alert(`登陆地址没有响应，开启模拟登陆`,{end:()=>{
 
-                        let nickname = `nickname-${formData.field.username}`+parseInt(""+Math.random()*100000);
-                        sessionStorage.setItem('nickname',nickname);
-                        ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
-                            nickname: nickname,
-                            // jwttoken
-                            token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
-                        });
-                    }});
+        //                 let nickname = `nickname-${formData.field.username}`+parseInt(""+Math.random()*100000);
+        //                 sessionStorage.setItem('nickname',nickname);
+        //                 ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
+        //                     nickname: nickname,
+        //                     // jwttoken
+        //                     token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
+        //                 });
+        //             }});
                    
                 
-                } else {
-                    alert('请求异常 ：' + xmlHttpRequest.status)
-                } 
+        //         } else {
+        //             alert('请求异常 ：' + xmlHttpRequest.status)
+        //         } 
 
-            }
-        });
+        //     }
+        // });
 
+        layui.layer.alert(`模拟登陆`,{end:()=>{
+
+            let nickname = `nickname-${formData.field.username}`+parseInt(""+Math.random()*100000);
+            sessionStorage.setItem('nickname',nickname);
+            ipcRenderer.send(ChannelConstant.LOGIN_SUCCESS, {
+                nickname: nickname,
+                // jwttoken
+                // token:"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MTk0OTE2MTAsInVzZXJJZCI6IjE2MTgwMjAzODIwMTkiLCJ1c2VybmFtZSI6IjEifQ.fHBeYh6NDHe3GP0sMluXE9Y_Rwv5bya8BbplLQTcOew"
+            });
+        }});
 
     });
 });

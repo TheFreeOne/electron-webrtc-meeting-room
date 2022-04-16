@@ -266,8 +266,8 @@ export default class ScreenUtil {
                                 //@ts-ignore
                                 mandatory: {
                                     chromeMediaSource: 'screen',
-
-                                    maxFrameRate:defaultWidth==1920?60:20,
+                                    frameRate: {min: 90, max: 120},
+                                    maxFrameRate:defaultWidth==1920?120:120,
                                     minWidth: defaultWidth,
                                     maxWidth: defaultWidth,
                                     minHeight: defaultHeight,

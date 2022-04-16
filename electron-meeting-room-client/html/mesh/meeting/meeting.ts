@@ -58,7 +58,7 @@ var windowId;
 var rtcPcMap = new Map<string,RTCPeerConnection>();
 // @ts-ignore
 
-ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType) => {
+ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roomNumber: string, _actionType, _nickname, _password:string  ) => {
 
     nickname = ipcRenderer.sendSync(ChannelConstant.GET_NICKNAME);
 

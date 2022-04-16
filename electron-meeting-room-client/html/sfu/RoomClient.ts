@@ -45,6 +45,7 @@ export default class RoomClient {
 
     private _isOpen;
     private eventListeners;
+    private password
     /**
      *
      * @param localMediaEl 用于存放本地流的div
@@ -55,9 +56,10 @@ export default class RoomClient {
      * @param name 自己的名字
      * @param successCallback 回调
      */
-    constructor(localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, successCallback) {
+    constructor(localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, password,successCallback) {
         console.log(`constructor  `, localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, successCallback)
         this.name = name
+        this.password = password
         this.localMediaEl = localMediaEl
         this.remoteVideoEl = remoteVideoEl
 
@@ -84,8 +86,8 @@ export default class RoomClient {
         }.bind(this))
 
 
-        this.createRoom(room_id).then(async function () {
-            await this.join(name, room_id)
+        this.createRoom(room_id, password).then(async function () {
+            await this.join(name, room_id, password)
             this.initSockets()
             this._isOpen = true
             successCallback()
@@ -98,20 +100,22 @@ export default class RoomClient {
 
     ////////// INIT /////////
 
-    async createRoom(room_id) {
+    async createRoom(room_id, password) {
         console.log(`createRoom`)
         await this.socket.request('createRoom', {
-            room_id
+            room_id,
+            password
         }).catch(err => {
             console.log(err)
         })
     }
 
-    async join(name, room_id) {
+    async join(name, room_id, password) {
         console.log(`join`)
         this.socket.request('join', {
             name,
-            room_id
+            room_id,
+            password
         }).then(async function (e) {
             console.log(e)
             const data = await this.socket.request('getRouterRtpCapabilities');

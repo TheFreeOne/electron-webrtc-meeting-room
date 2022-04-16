@@ -29,10 +29,16 @@
 <body style="overflow-y: hidden ">
     <div class="layui-form" id="action-form" style="margin-top: 176px;">
         <div class="layui-form-item" style="text-align: center;">
-            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="join-meeting">加入会议</button>
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="join-meeting">&emsp;加&emsp;入&emsp;会&emsp;议&emsp;</button>
         </div>
+
         <div class="layui-form-item" style="text-align: center;">
-            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-meeting">创建会议</button>
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-open-meeting">创建公开会议 / 直播</button>
+        </div>
+
+
+        <div class="layui-form-item" style="text-align: center;">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-private-meeting">&emsp;&emsp;创建私密会议&emsp;</button>
         </div>
         
 
@@ -45,13 +51,13 @@
 
 
         <div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px; ">
-            <div class="layui-form-item">
+            <!-- <div class="layui-form-item">
 
                 <label class="layui-form-label" title="登陆地址">登陆地址</label>
                 <div class="layui-input-block">
                      <input class="layui-input" name="javaLoginServer" >
                 </div>
-            </div>
+            </div> -->
             <div class="layui-form-item">
                 <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
                 <div class="layui-input-block">
