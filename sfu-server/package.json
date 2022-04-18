@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "httpolyglot": "^0.1.2",
     "socket.io": "^4.0.0",
-    "mediasoup": "^3.9.9",
+    "mediasoup": "^3.9.4",
     "negotiator": "^0.6.2",
     "netstring": "^0.3.0",
     "random-number": "^0.0.9",
