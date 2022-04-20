@@ -1,3 +1,25 @@
+#### linux上编译,本人使用kali(python3)
+
+- 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题
+
+- `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 安装相关依赖
+
+- 最好提前安装好 meson
+
+- 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下
+
+> 或从 链接：链接：https://pan.baidu.com/s/1ugcWmKZuWQKzk-AHeT-0ZQ 
+> 提取码：mwww  下载相关文件
+
+- 之后运行
+  
+  ```
+  (kali㉿kali)-[~/…/electron-webrtc-meeting-room/sfu-server/node_modules/mediasoup]
+  $ node npm-scripts.js worker:build
+  ```
+
+**以下只作为window上mediasoup3.7.0的编译记录，不推荐使用**
+
 #### mediasoup 3.7.0 windows 编译
 
  [windows平台安装](https://mediasoup.discourse.group/t/mediasoup-unable-to-install-in-windows/551/4)
@@ -19,47 +41,28 @@
 菜单栏 - 生成 - 批生成 Relase
 
 ##### 如果提示MSVSVersion.py keyError:${MSBuild.exe的路径}
+
 那么找到报错的地方versions[str(name)] -> versions[str('2017')]
 
-##### 无法找到 Visual Studio 2010 的生成工具(平台工具集 =“v100”) 
+##### 无法找到 Visual Studio 2010 的生成工具(平台工具集 =“v100”)
+
 使用visual studio  2017/2019 打开项目，点击菜单栏-项目-重定目标解决方案，然后会提示修改版本，然后只修改版本
 
 ##### Release|x64不是..
+
 MSBuild mediasoup-worker.sln /p:Configuration=Release /p:plat(忘记了)
 
 #### [centos 编译报gcc版本过低]
+
     可参考https://www.cnblogs.com/jixiaohua/p/11732225.html
 
 #### 客户端与服务器websocket交互流程(省略返回)
 
 ```sequence
-
 client ->> server : createRoom 创建房间
 client ->> server : join 加入房间
 client ->> server : getRouterRtpCapabilities 获取编码器和解码器
 client ->> server : createWebRtcTransport 携带参数rtpCapabilities，表示创建一个生产通道
 client ->> server : createWebRtcTransport 不携带参数rtpCapabilities，表示创建一个消费通道
 client ->> server : getProducers 获取房间中的生产者
-
-
-
-```
-
-
-####  linux上编译,本人使用kali(python3)
-
-- `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 安装相关依赖
-
-- 最好提前安装好 meson
-
-- 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下
-
-
-> 或从 链接：链接：https://pan.baidu.com/s/1ugcWmKZuWQKzk-AHeT-0ZQ 
-提取码：mwww  下载相关文件
-
-- 之后运行
-```
-(kali㉿kali)-[~/…/electron-webrtc-meeting-room/sfu-server/node_modules/mediasoup]
-$ node npm-scripts.js worker:build
 ```
