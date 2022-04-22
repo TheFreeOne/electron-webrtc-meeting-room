@@ -6,10 +6,9 @@
 
 - 最好提前安装好 meson
 
-- 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下
+- 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下, 没有文件夹就在subprojects下新建一个
 
-> 或从 链接：链接：https://pan.baidu.com/s/1ugcWmKZuWQKzk-AHeT-0ZQ 
-> 提取码：mwww  下载相关文件
+> 或从 链接：https://pan.baidu.com/s/1xdEEyOQTY4Sxyernsu0XDw  提取码：gd7x  下载相关文件
 
 - 之后运行
   
