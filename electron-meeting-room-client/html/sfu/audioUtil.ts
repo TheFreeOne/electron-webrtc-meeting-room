@@ -40,6 +40,10 @@ export default class AudioUtil {
         // });
     }
 
+    /**
+     * 获取系统的流
+     * @returns 系统的流
+     */
     public async getSystemStream(){
         let sources = await desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width: 0, height: 0 } });
         for (const source of sources) {
@@ -56,7 +60,7 @@ export default class AudioUtil {
                                 chromeMediaSource: 'desktop',
                                 chromeMediaSourceId: source.id
                             }
-                        },
+                        }, 
                         video: {
                             //@ts-ignore
                             mandatory: {
@@ -71,7 +75,7 @@ export default class AudioUtil {
                         }
                     });
 
-
+                    // 音频工具不需要视频流，此处设置视频轨道为不可用
                     if (desktopAudioStream.getVideoTracks().length > 0) {
                         desktopAudioStream.getVideoTracks()[0].enabled = false;
                     }

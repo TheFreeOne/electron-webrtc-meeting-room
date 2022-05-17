@@ -387,24 +387,41 @@ export default class RoomClient {
 
             } else if (audio) {
                 let audioUtil = new AudioUtil();
-                try {
-                    stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
-                } catch (error) {
-                    (window as any).toastr.error('获取音频流失败');
+                if(deviceId === 'system'){
 
+                    // 判断目标是获取系统的声音
                     try {
-
-                        (window as any).toastr.info('更改为获取系统声音');
+                        (window as any).toastr.info('获取屏幕声音');
                         let _stream = await audioUtil.getSystemStream();
                         (window as any)._stream = _stream;
                         console.log(_stream);
-
+                        // 获取整个流之后只取音轨部分
                         stream = new MediaStream([_stream.getAudioTracks()[0]]);
                     } catch (error) {
                         console.error(error);
-                        (window as any).toastr.error('获取系统声音失败');
+                        (window as any).toastr.error('获取屏幕声音失败');
                     }
+                    
+                } else {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+                    } catch (error) {
+                        (window as any).toastr.error('获取音频流失败');
 
+                        try {
+
+                            (window as any).toastr.info('更改为获取系统声音');
+                            let _stream = await audioUtil.getSystemStream();
+                            (window as any)._stream = _stream;
+                            console.log(_stream);
+
+                            stream = new MediaStream([_stream.getAudioTracks()[0]]);
+                        } catch (error) {
+                            console.error(error);
+                            (window as any).toastr.error('获取系统声音失败');
+                        }
+
+                    }
                 }
                 (window as any).currentStream = stream;
                 (window as any).drawAudioWave(stream);

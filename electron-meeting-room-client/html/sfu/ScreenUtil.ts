@@ -59,13 +59,13 @@ export default class ScreenUtil {
                             try {
                                 desktopStream = await navigator.mediaDevices.getUserMedia(
                                     {
-                                        // audio: {
-                                        //     //@ts-ignore
-                                        //     mandatory: {
-                                        //         chromeMediaSource: 'desktop',
-                                        //         chromeMediaSourceId: source.id
-                                        //     }
-                                        // },
+                                        audio: {
+                                            //@ts-ignore
+                                            mandatory: {
+                                                chromeMediaSource: 'screen',
+                                                chromeMediaSourceId: source.id
+                                            }
+                                        },
                                         video: {
                                             //@ts-ignore
                                             mandatory: {
@@ -83,7 +83,8 @@ export default class ScreenUtil {
                                 (window as any).toastr.info("获取【有声屏幕】的流 ==》 成功");
                             } catch (deskTopError) {
 
-                                console.error(deskTopError);
+                                console.log('deskTopError');
+                                console.error( deskTopError);
                                 (window as any).toastr.info("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
                                 desktopStream = await navigator.mediaDevices.getUserMedia(
                                     {
@@ -252,48 +253,65 @@ export default class ScreenUtil {
                 console.log("准备获取【有声屏幕】的流");
 
                 // 获取的是窗口，做特殊处理
-                try {
-                    _desktopStream = await navigator.mediaDevices.getUserMedia(
-                        {
-                            audio: {
-                                //@ts-ignore
-                                mandatory: {
-                                    chromeMediaSource: 'desktop',
-                                    chromeMediaSourceId: source.id
-                                }
-                            },
-                            video: {
-                                //@ts-ignore
-                                mandatory: {
-                                    chromeMediaSource: 'screen',
-                                    frameRate: {min: 90, max: 120},
-                                    maxFrameRate:defaultWidth==1920?120:120,
-                                    minWidth: defaultWidth,
-                                    maxWidth: defaultWidth,
-                                    minHeight: defaultHeight,
-                                    maxHeight: defaultHeight
-                                }
-                            }
-                        }
-                    );
-                    (window as any).toastr.info("获取【有声屏幕】的流 ==》 成功");
-                } catch (deskTopError) {
+                // try {
+                //     _desktopStream = await navigator.mediaDevices.getUserMedia(
+                //         {
+                //             audio: {
+                //                 //@ts-ignore
+                //                 mandatory: {
+                //                     chromeMediaSource: 'desktop',
+                //                     chromeMediaSourceId: source.id
+                //                 }
+                //             },
+                //             video: {
+                //                 //@ts-ignore
+                //                 mandatory: {
+                //                     chromeMediaSource: 'screen',
+                //                     // 此处设置帧率会使获取音频出现异常
+                //                     // frameRate: {min: 90, max: 120},
+                //                     maxFrameRate:defaultWidth==1920?120:120,
+                //                     minWidth: defaultWidth,
+                //                     maxWidth: defaultWidth,
+                //                     minHeight: defaultHeight,
+                //                     maxHeight: defaultHeight
+                //                 }
+                //             }
+                //         }
+                //     );
+                //     (window as any).toastr.info("获取【屏幕】成功");
+                // } catch (deskTopError) {
 
-                    console.error(deskTopError);
-                    (window as any).toastr.info("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
-                    _desktopStream = await navigator.mediaDevices.getUserMedia(
-                        {
-                            audio: false,
-                            video: {
-                                //@ts-ignore
-                                mandatory: {
-                                    chromeMediaSource: 'screen'
-                                }
+                //     console.error(deskTopError);
+                //     (window as any).toastr.info("获取【有声屏幕】的流 错误，切换【无声屏幕】流");
+                //     _desktopStream = await navigator.mediaDevices.getUserMedia(
+                //         {
+                //             audio: false,
+                //             video: {
+                //                 //@ts-ignore
+                //                 mandatory: {
+                //                     chromeMediaSource: 'screen'
+                //                 }
+                //             }
+                //         }
+                //     );
+                //     (window as any).toastr.info("获取【无声屏幕】的流 ==》成功");
+                // }
+
+                // (window as any).toastr.info("获取屏幕】的流 错误，切换【无声屏幕】流");
+                _desktopStream = await navigator.mediaDevices.getUserMedia(
+                    {
+                        audio: false,
+                        video: {
+                            //@ts-ignore
+                            mandatory: {
+                                chromeMediaSource: 'screen'
                             }
                         }
-                    );
-                    (window as any).toastr.info("获取【无声屏幕】的流 ==》成功");
-                }
+                    }
+                );
+                (window as any).toastr.info("获取【屏幕】成功");
+
+                console.log(_desktopStream)
                 return _desktopStream;
             }
 

@@ -163,8 +163,16 @@ function addListeners() {
   })
 }
 
-// Load mediaDevice options
-navigator.mediaDevices.enumerateDevices().then(devices =>
+//  加载可支持的设备
+navigator.mediaDevices.enumerateDevices().then(devices => {
+
+  // 2022-05-17 添加系统声音
+  let audioDefaultOption = document.createElement('option');
+  audioDefaultOption.value = 'system';
+  audioDefaultOption.innerText = '系统声音';
+  // @ts-ignore
+  audioSelect.appendChild(audioDefaultOption);
+
   devices.forEach(device => {
     let el = null;
     if ('audioinput' === device.kind) {
@@ -182,7 +190,7 @@ navigator.mediaDevices.enumerateDevices().then(devices =>
     el.appendChild(option);
     layui.form.render('select')
   })
-);
+});
 // 复制文本
 document.getElementById('copyRoomNumberButton').onclick = function(){
   clipboard.writeText(roomNumber, 'clipboard');
