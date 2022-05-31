@@ -46,7 +46,7 @@ ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roo
 
 
 let producer = null;
-
+// socketIo 同步设置
 socket.request = function request(type, data = {}) {
   return new Promise((resolve, reject) => {
     socket.emit(type, data, (data) => {
@@ -61,16 +61,26 @@ socket.request = function request(type, data = {}) {
 
 let roomClient = null;
 
-function joinRoom(name, room_id, password) {
+/**
+ * 加入房间
+ * @param name 以此参数为加入房间时的昵称
+ * @param roomId 房间号
+ * @param password 房间的密码
+ */
+function joinRoom(name, roomId, password) {
   if (roomClient && roomClient.isOpen()) {
     console.log('already connected to a room')
   } else {
     //@ts-ignore
-    roomClient = new RoomClient(localMedia, remoteVideos,  window.mediasoupClient, socket, room_id, name,password, roomOpen)
+    roomClient = new RoomClient(localMedia, remoteVideos,  window.mediasoupClient, socket, roomId, name,password, roomOpen)
     addListeners()
   }
 
 }
+
+/**
+ * 加入之后一些操作
+ */
 //@ts-ignore
 function roomOpen() {
   //@ts-ignore
@@ -103,8 +113,8 @@ function hide(elem) {
 }
 
 /**
- *
- * @param elem 显示元素
+ * 显示元素
+ * @param elem 
  */
 function reveal(elem) {
   $(elem).show();
@@ -265,7 +275,7 @@ function drawAudioWave(audioStream:MediaStream) {
 }
 
 (window as any).drawAudioWave = drawAudioWave;
-
+// layui事件监听
 layui.use(['form'],()=>{
   let form = layui.form;
   form.render();
@@ -281,8 +291,37 @@ layui.use(['form'],()=>{
       $('#stopVideoButton').trigger('click');
     }
   });
+  (window as any).mainBodyFull = false
+  $('#control-panel-max-min').on('click', (e) => {
+    console.log(`$('#control').css('height')`, $('#main-body').css('height'))
+    console.log(`(window as any).mainBodyFull`, (window as any).mainBodyFull)
+    if ((window as any).mainBodyFull) {
+      // 恢复
+      $('#main-body').addClass('main-body-height')
+      $('#control-panel-max-min').css('transform', 'rotate(90deg)')
+    } else {
+      // 最大化
+      $('#main-body').removeClass('main-body-height')
+      $('#control-panel-max-min').css('transform', 'rotate(-90deg)')
+    }
+    (window as any).mainBodyFull = !(window as any).mainBodyFull
+  })
+
+  // 使用layui监听音量显示开关
+  form.on('switch(audioWaveStatus)', function (data) {
+    // 显示
+    if (data.elem.checked) {
+      $('.main-content').first().removeClass('layui-col-xs12').addClass('layui-col-xs10')
+      $('.left-content').first().show()
+    } else {
+      // 右侧不显示
+      $('.left-content').first().hide()
+      $('.main-content').first().removeClass('layui-col-xs10').addClass('layui-col-xs12')
+    }
+  });
 
 })
+
 
 function videoMax(e){
   console.log(e);
@@ -290,6 +329,7 @@ function videoMax(e){
     $(e).toggleClass('video-max')
  
 }
+
 //@ts-ignore
 window.videoMax = videoMax ;
 export = {}

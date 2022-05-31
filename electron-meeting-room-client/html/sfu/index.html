@@ -70,7 +70,7 @@
             height: 100%;
         }
 
-        .layui-row {
+        .main-body-height {
             height: calc(100% - 150px);
         }
 
@@ -214,6 +214,19 @@
         .video-max .person-info{
             display: none;
         }
+        #control {
+            position: relative;
+        }
+        #control-panel-max-min {
+            float: left;
+            position: absolute;
+            left:0;
+            top: -18px;
+            background-color: #ffffff;
+            transform: rotate(90deg);
+            z-index: 10000;
+        }
+        
     </style>
 </head>
 
@@ -228,7 +241,7 @@
 
     </div>
 
-    <div class="layui-row">
+    <div class="layui-row main-body-height" id="main-body">
         <div class="layui-col-xs10 main-content">
             <div class="main-audio-content">
                 <audio id="main-audio"></audio>
@@ -246,6 +259,7 @@
             </div>
             <div id="remoteAudios"></div>
         </div>
+        <!-- 右侧音量显示 -->
         <div class="layui-col-xs2 left-content">
             <div class="left-video-content" style="position: relative;height: calc(100% - 100px);">
 
@@ -260,8 +274,9 @@
 
 
 
-
+    <!-- 底部控制 -->
     <div class="hidden layui-form" id="control">
+        <i class="layui-icon layui-icon-next" id="control-panel-max-min"></i>
         <div class="layui-form-item">
       
 
@@ -286,6 +301,13 @@
                 </div>
             </div>
 
+            <div class="layui-inline">
+                <label class="layui-form-label">音量状态</label>
+                <div class="layui-input-block">
+                  <input type="checkbox" name="audioWaveStatus" lay-filter="audioWaveStatus" lay-skin="switch" lay-text="显示|关闭" checked>
+                </div>
+            </div>
+
           
         </div>
 
@@ -305,7 +327,6 @@
             </div>
         </div>
 
-
         <div class="layui-form-item">
             <div class="layui-inline"></div>
             <label class="layui-form-label">会议</label>
@@ -319,10 +340,6 @@
             </div>
         </div>
 
-       
-
-
- 
     </div>
 
 
