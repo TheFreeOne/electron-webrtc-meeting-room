@@ -302,10 +302,21 @@ export default class ScreenUtil {
                     {
                         audio: false,
                         video: {
-                            //@ts-ignore
+                            // do no work
+                            // deviceId: source.id,
+                            // frameRate: 60
+                            // @ts-ignore
                             mandatory: {
-                                chromeMediaSource: 'screen'
-                            }
+                                chromeMediaSource: 'desktop',
+                                chromeMediaSourceId: source.id,
+                                minFrameRate: 30,
+                                maxFrameRate: 30,
+                                // minRate: 60,
+                                minWidth: 1280,
+                                maxWidth: 1920,
+                                minHeight: 720,
+                                maxHeight: 1080
+                              }
                         }
                     }
                 );
