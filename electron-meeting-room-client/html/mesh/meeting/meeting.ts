@@ -1,4 +1,5 @@
-import { ipcRenderer, desktopCapturer, clipboard, ipcMain } from 'electron';
+import { ipcRenderer, clipboard, ipcMain } from 'electron';
+const { desktopCapturer } = require("@electron/remote");
 import $ = require('jquery');
 import ChannelConstant from '../../../util/ChannelConstant';
 import AudioMeeting from './audioMeeting';
@@ -246,37 +247,37 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         
     })
 
-    $('.permissionQuery').off().on('click', () => {
-        // @ts-ignore
-        navigator.permissions.query(
-            { name: 'camera' }
-            //{ name: 'microphone' }
-            // { name: 'geolocation' }
-            // { name: 'notifications' }
-            // { name: 'midi', sysex: false }
-            // { name: 'midi', sysex: true }
-            // { name: 'push', userVisibleOnly: true }
-        ).then(function (permissionStatus) {
-            console.log(permissionStatus.state); // granted, denied, prompt
-            toastr.info('相机权限' + permissionStatus.state);
-        });
-        // @ts-ignore
-        navigator.permissions.query(
-            // { name: 'camera' }
-            { name: 'microphone' }
-            // { name: 'geolocation' }
-            // { name: 'notifications' }
-            // { name: 'midi', sysex: false }
-            // { name: 'midi', sysex: true }
-            // { name: 'push', userVisibleOnly: true }
-        ).then(function (permissionStatus) {
-            console.log(permissionStatus.state); // granted, denied, prompt
-            toastr.info('麦克风权限' + permissionStatus.state);
-        });
+    // $('.permissionQuery').off().on('click', () => {
+    //     // @ts-ignore
+    //     navigator.permissions.query(
+    //         { name: 'camera' }
+    //         //{ name: 'microphone' }
+    //         // { name: 'geolocation' }
+    //         // { name: 'notifications' }
+    //         // { name: 'midi', sysex: false }
+    //         // { name: 'midi', sysex: true }
+    //         // { name: 'push', userVisibleOnly: true }
+    //     ).then(function (permissionStatus) {
+    //         console.log(permissionStatus.state); // granted, denied, prompt
+    //         toastr.info('相机权限' + permissionStatus.state);
+    //     });
+    //     // @ts-ignore
+    //     navigator.permissions.query(
+    //         // { name: 'camera' }
+    //         { name: 'microphone' }
+    //         // { name: 'geolocation' }
+    //         // { name: 'notifications' }
+    //         // { name: 'midi', sysex: false }
+    //         // { name: 'midi', sysex: true }
+    //         // { name: 'push', userVisibleOnly: true }
+    //     ).then(function (permissionStatus) {
+    //         console.log(permissionStatus.state); // granted, denied, prompt
+    //         toastr.info('麦克风权限' + permissionStatus.state);
+    //     });
 
 
 
-    });
+    // });
 
     $('.copy-room-number').off().on('click', () => {
         clipboard.writeText(roomNumber, 'clipboard');

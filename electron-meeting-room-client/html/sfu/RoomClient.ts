@@ -2,7 +2,8 @@ import VideoUtil from './videoUtil';
 import AudioUtil from './audioUtil';
 import ScreenUtil from './ScreenUtil';
 
-
+import { Device } from 'mediasoup-client';
+import { ProducerCodecOptions, ProducerOptions, Transport } from 'mediasoup-client/lib/types';
 
 
 export default class RoomClient {
@@ -34,7 +35,7 @@ export default class RoomClient {
     private mediasoupClient;
 
     private socket;
-    private producerTransport;
+    private producerTransport:Transport;
     private consumerTransport;
     private device;
     private room_id;
@@ -62,7 +63,7 @@ export default class RoomClient {
         this.password = password
         this.localMediaEl = localMediaEl
         this.remoteVideoEl = remoteVideoEl
-
+        // 先保留从js引入的mediasoupClient 但不使用
         this.mediasoupClient = mediasoupClient
 
         this.socket = socket
@@ -129,11 +130,12 @@ export default class RoomClient {
         })
     }
 
-    async loadDevice(routerRtpCapabilities) {
+    async loadDevice(routerRtpCapabilities):Promise<Device> {
         console.log(`loadDevice`)
-        let device;
+        let device:Device;
         try {
-            device = new this.mediasoupClient.Device();
+            // device = new this.mediasoupClient.Device();
+            device = new Device();
         } catch (error) {
             if (error.name === 'UnsupportedError') {
                 console.error('browser not supported');
@@ -147,7 +149,7 @@ export default class RoomClient {
 
     }
 
-    async initTransports(device) {
+    async initTransports(device:Device) {
         console.log(`initTransports`)
         // init producerTransport
         {
@@ -324,7 +326,7 @@ export default class RoomClient {
 
     async produce(type, deviceId = null) {
         console.log(`produce: ${type} ${deviceId}`)
-        let mediaConstraints = {}
+        let mediaConstraints = {} as MediaStreamConstraints
         let audio = false
         let screen = false
         switch (type) {
@@ -342,17 +344,38 @@ export default class RoomClient {
                 audio = true
                 break
             case RoomClient.mediaType.video:
+                let resolution = document.getElementById('video-resolution');
+                let defaultWidth = 1280;
+                let defaultHeight = 760;
+                if(resolution){
+                    //@ts-ignore
+                    let value = resolution.value;
+                    if(value === '1280*768'){
+                        defaultWidth = 1280;
+                        defaultHeight = 760;
+                    }else if(value === '1920*1080'){
+                        defaultWidth = 1920;
+                        defaultHeight = 1080;
+                    }
+                }
                 mediaConstraints = {
                     audio: false,
                     video: {
                         width: {
                             min: 640,
-                            ideal: 1920
+                            ideal: defaultWidth,
+                            max: defaultWidth,
+                            exact: defaultWidth
                         },
                         height: {
                             min: 400,
-                            ideal: 1080
+                            ideal: defaultHeight,
+                            max: defaultHeight,
+                            exact: defaultHeight
                         },
+                        // 必须是一个数字，对象报错
+                        frameRate: 60,
+                        // frameRate:{ideal: 48,min:24,max:60, exact:60},
                         deviceId: deviceId
                         /*aspectRatio: {
                             ideal: 1.7777777778
@@ -361,7 +384,7 @@ export default class RoomClient {
                 }
                 break
             case RoomClient.mediaType.screen:
-                mediaConstraints = false
+                mediaConstraints = {}
                 screen = true
                 break;
             default:
@@ -429,8 +452,9 @@ export default class RoomClient {
                 try {
 
                     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+                    console.log('ddddddddddddddddddddddddddddddddddddddddddddd')
                 } catch (error) {
-
+                    console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv')
                     console.error(error);
                     let videoMeeting = new VideoUtil();
                     let _stream = await videoMeeting.getStream();
@@ -446,7 +470,7 @@ export default class RoomClient {
 
             const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
 
-            const params: any = {
+            const params: ProducerOptions = {
                 track
             };
             if (!audio && !screen) {
@@ -469,9 +493,12 @@ export default class RoomClient {
                 }
                 ];
 
-                params.codecOptions = {
-                    videoGoogleStartBitrate: 1000
-                };
+                const codecOptions:ProducerCodecOptions = {
+                    videoGoogleStartBitrate: 1000,
+                    videoGoogleMaxBitrate: 1000,
+                    videoGoogleMinBitrate: 600
+                } ;
+                params.codecOptions = codecOptions;
             }
 
             let producer = await this.producerTransport.produce(params);

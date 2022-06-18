@@ -1,4 +1,4 @@
-import { desktopCapturer } from "electron";
+const { desktopCapturer } = require("@electron/remote");
 
 export default class VideoMeeting {
 

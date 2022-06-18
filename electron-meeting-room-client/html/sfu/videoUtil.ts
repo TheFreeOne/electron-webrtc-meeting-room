@@ -35,14 +35,14 @@ export default class VideoUtil {
                 // audio: false,
                 video: {
                     deviceId: $('#video-select').val(),
-                    width: {ideal: defaultWidth,min:320},
-                    height: {ideal:defaultHeight,min:240},
-                    frameRate:{ideal: 20,min:10,max:60}
+                    width: {ideal: defaultWidth,min:320,max: defaultWidth, exact: defaultWidth},
+                    height: {ideal:defaultHeight,min:240, max: defaultHeight, exact: defaultHeight},
+                    frameRate:{ideal: 48,min:24,max:60, exact:60}
                     // echoCancellation: true,
                     // sampleRate:30,
                     // groupId: $('#video-select').val() as ConstrainDOMString
                     // optional: [{ deviceId: $('#video-select').val() }]
-                }
+                } as MediaTrackConstraints
             };
             // @ts-ignore
             let videoStream = await navigator.mediaDevices.getUserMedia(streamConstraints);

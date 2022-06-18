@@ -22,6 +22,7 @@
     "@electron/remote": "^2.0.8",
     "electron-log": "^4.3.1",
     "jquery": "^3.5.1",
+    "mediasoup-client": "^3.6.52",
     "toastr": "^2.1.4"
   },
   "keywords": [],
@@ -40,7 +41,7 @@
     "extraResources": [],
     "nsis": {
       "oneClick": false,
-      "perMachine": false, 
+      "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "allowElevation": true,
       "installerIcon": "icon.ico",
