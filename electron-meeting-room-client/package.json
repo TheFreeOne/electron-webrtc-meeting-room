@@ -14,12 +14,12 @@
   "devDependencies": {
     "@types/jquery": "^3.5.5",
     "@types/layui-src": "^2.5.0",
-    "electron": "^16.0.0",
-    "electron-builder": "^22.14.5",
+    "electron": "^19.0.4",
+    "electron-builder": "^23.0.3",
     "electron-rebuild": "^3.2.5"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.1",
+    "@electron/remote": "^2.0.8",
     "electron-log": "^4.3.1",
     "jquery": "^3.5.1",
     "toastr": "^2.1.4"
@@ -35,15 +35,12 @@
     "copyright": "版權信息",
     "productName": "会议室electron客户端",
     "appId": "org.freeone.electron-webrtc-meeting-room",
-    "directories": {
-     
-    },
+    "directories": {},
     "npmRebuild": false,
-    "extraResources": [
-    ],
+    "extraResources": [],
     "nsis": {
       "oneClick": false,
-      "perMachine": true,
+      "perMachine": false, 
       "allowToChangeInstallationDirectory": true,
       "allowElevation": true,
       "installerIcon": "icon.ico",
@@ -64,4 +61,3 @@
     }
   }
 }
- 
