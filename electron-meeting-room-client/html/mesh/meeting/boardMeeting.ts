@@ -1,4 +1,5 @@
-import { desktopCapturer, ipcRenderer } from "electron";
+import { ipcRenderer } from "electron";
+const { desktopCapturer } = require("@electron/remote");
 import ChannelConstant from "../../../util/ChannelConstant";
 
 export default class BoardMeeting {

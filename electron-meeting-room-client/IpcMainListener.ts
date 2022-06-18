@@ -30,7 +30,7 @@ export default class IpcMainListener{
                 // height: 560,
                 // minWidth: 830,
                 // minHeight: 560,
-                icon: 'icon.ico',
+                icon: './icon.ico',
                 // parent: this._mainWindow,
                 // modal: true,
                 autoHideMenuBar:true,
@@ -87,6 +87,9 @@ export default class IpcMainListener{
                 }
             });
             this._meetingWindow = meetingWindow;
+            // require('@electron/remote/main').initialize()
+            require('@electron/remote/main').enable(meetingWindow.webContents)
+
             let config = this.readJsonFromFile(path.join(app.getAppPath(),'./config.json'));
             console.log(config.meetingPattern );
             

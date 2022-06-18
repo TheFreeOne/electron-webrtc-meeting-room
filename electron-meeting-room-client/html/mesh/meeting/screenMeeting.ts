@@ -1,4 +1,5 @@
-import { desktopCapturer, NativeImage, screen as electronScreen } from "electron";
+import { NativeImage, screen as electronScreen } from "electron";
+const { desktopCapturer } = require("@electron/remote");
 import $ = require('jquery');
 
 export default class ScreenMeeting {

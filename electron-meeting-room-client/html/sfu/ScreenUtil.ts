@@ -1,5 +1,6 @@
-import { desktopCapturer, NativeImage, screen as electronScreen } from "electron";
+import { NativeImage, screen as electronScreen } from "electron";
 import $ = require('jquery');
+const { desktopCapturer } = require("@electron/remote");
 
 export default class ScreenUtil {
 
@@ -309,13 +310,13 @@ export default class ScreenUtil {
                             mandatory: {
                                 chromeMediaSource: 'desktop',
                                 chromeMediaSourceId: source.id,
-                                minFrameRate: 30,
-                                maxFrameRate: 30,
+                                minFrameRate: 60,
+                                maxFrameRate: 60,
                                 // minRate: 60,
-                                minWidth: 1280,
-                                maxWidth: 1920,
-                                minHeight: 720,
-                                maxHeight: 1080
+                                minWidth: window.screen.width,
+                                maxWidth: window.screen.width,
+                                minHeight: window.screen.height,
+                                maxHeight: window.screen.height
                               }
                         }
                     }
