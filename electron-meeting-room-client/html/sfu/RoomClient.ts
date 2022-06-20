@@ -122,6 +122,7 @@ export default class RoomClient {
             const data = await this.socket.request('getRouterRtpCapabilities');
             let device = await this.loadDevice(data)
             this.device = device
+            ;(window as any).device = device
             await this.initTransports(device);
             this.socket.emit('getProducers');
             (window as any).socketid = e.socketid;
@@ -400,7 +401,7 @@ export default class RoomClient {
             return
         }
         console.log('mediacontraints:', mediaConstraints)
-        let stream;
+        let stream:MediaStream;
         try {
             // 获取流
             if (screen) {
@@ -468,13 +469,15 @@ export default class RoomClient {
 
             console.log("audio ? ", audio ? 'YES' : "NO");
 
-            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
-
+            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0].clone();
+   
             const params: ProducerOptions = {
-                track
+                track: track
             };
+       
             if (!audio && !screen) {
-
+                // 强制使用h264
+                params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
                 params.encodings = [{
                     rid: 'r0',
                     maxBitrate: 100000,
@@ -496,11 +499,24 @@ export default class RoomClient {
                 const codecOptions:ProducerCodecOptions = {
                     videoGoogleStartBitrate: 1000,
                     videoGoogleMaxBitrate: 1000,
-                    videoGoogleMinBitrate: 600
+                    videoGoogleMinBitrate: 1000
                 } ;
                 params.codecOptions = codecOptions;
-            }
+            } else if (screen) {
+                // params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
+                // 强制使用h264
+                params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+  
+                params.encodings = [{
+                    maxBitrate: 900000,
+                    maxFramerate: 120,
+                    priority: 'high',
+                    networkPriority: 'high'
+                }]
 
+                // params.codecOptions = codecOptions;
+            }
+            console.log('params = ' , params)
             let producer = await this.producerTransport.produce(params);
             (window as any).currentProducer = producer;
             console.log('producer', producer)
