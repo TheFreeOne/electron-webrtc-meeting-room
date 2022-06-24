@@ -1,7 +1,9 @@
 import VideoUtil from './videoUtil';
 import AudioUtil from './audioUtil';
 import ScreenUtil from './ScreenUtil';
-
+import * as path from 'path';
+import * as fs from 'fs';
+const { app } = require("@electron/remote");
 import { Device } from 'mediasoup-client';
 import { ProducerCodecOptions, ProducerOptions, Transport } from 'mediasoup-client/lib/types';
 
@@ -135,8 +137,8 @@ export default class RoomClient {
         console.log(`loadDevice`)
         let device:Device;
         try {
-            // device = new this.mediasoupClient.Device();
-            device = new Device();
+            device = new this.mediasoupClient.Device();
+            // device = new Device();
         } catch (error) {
             if (error.name === 'UnsupportedError') {
                 console.error('browser not supported');
@@ -477,7 +479,13 @@ export default class RoomClient {
        
             if (!audio && !screen) {
                 // 强制使用h264
-                params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                let config = this.readJsonFromFile(path.join(app.getAppPath(), './config.json'));
+                debugger
+                if (config && config.videoCodec === 'h264') {
+                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                } else {
+                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
+                }
                 params.encodings = [{
                     rid: 'r0',
                     maxBitrate: 100000,
@@ -505,14 +513,19 @@ export default class RoomClient {
             } else if (screen) {
                 // params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
                 // 强制使用h264
-                params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                let config = this.readJsonFromFile(path.join(app.getAppPath(), './config.json'));
+                if (config && config.videoCodec === 'h264') {
+                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                } else {
+                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
+                }
   
-                params.encodings = [{
-                    maxBitrate: 900000,
-                    maxFramerate: 120,
-                    priority: 'high',
-                    networkPriority: 'high'
-                }]
+                // params.encodings = [{
+                //     maxBitrate: 900000,
+                //     maxFramerate: 120,
+                //     priority: 'high',
+                //     networkPriority: 'high'
+                // }]
 
                 // params.codecOptions = codecOptions;
             }
@@ -685,6 +698,7 @@ export default class RoomClient {
             rtpCapabilities
         } = this.device
         console.log(`request consume`);
+        // rtpCapabilities = 
         const data = await this.socket.request('consume', {
             rtpCapabilities,
             consumerTransportId: this.consumerTransport.id, // might be
@@ -855,4 +869,9 @@ export default class RoomClient {
     static get EVENTS() {
         return RoomClient._EVENTS
     }
+
+    readJsonFromFile(jsonFilePath: string) {
+        return JSON.parse(fs.readFileSync(jsonFilePath).toString());
+    }
+    
 }
