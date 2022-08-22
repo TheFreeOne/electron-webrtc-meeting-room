@@ -9,6 +9,8 @@ const packages = require('./package.json')
 let mainWindow: BrowserWindow;
 let ipcMainListener:IpcMainListener;
 
+app.disableHardwareAcceleration()
+
  // 日志文件等级，默认值：false
  log.transports.file.level = 'debug';
  // 日志控制台等级，默认值：false
@@ -74,6 +76,8 @@ function createWindow() {
 }
 
 app.on('ready', () => {
+
+    console.log('versison ', process.versions)
     createWindow();
     
     session.fromPartition("default").setPermissionRequestHandler((webContents, permission, callback) => {
