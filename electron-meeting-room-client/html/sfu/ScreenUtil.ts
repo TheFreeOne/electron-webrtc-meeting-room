@@ -9,27 +9,27 @@ export default class ScreenUtil {
      */
     public async getScreenStream() {
 
-        let defaultWidth = 1280;
-        let defaultHeight = 760;
+        // let defaultWidth = 1280;
+        // let defaultHeight = 760;
 
-        try{
-            let resolution = document.getElementById('video-resolution');
-            if(resolution){
-                //@ts-ignore
-                let value = resolution.value;
-                if(value === '1280*768'){
-                      defaultWidth = 1280;
-                      defaultHeight = 760;
-                }else if(value === '1920*1080'){
-                    defaultWidth = 1920;
-                    defaultHeight = 1080;
-                }
-            }
-        }catch(e){
-            console.error(e)
-        }
+        // try{
+        //     let resolution = document.getElementById('video-resolution');
+        //     if(resolution){
+        //         //@ts-ignore
+        //         let value = resolution.value;
+        //         if(value === '1280*768'){
+        //               defaultWidth = 1280;
+        //               defaultHeight = 760;
+        //         }else if(value === '1920*1080'){
+        //             defaultWidth = 1920;
+        //             defaultHeight = 1080;
+        //         }
+        //     }
+        // }catch(e){
+        //     console.error(e)
+        // }
         let _desktopStream;
-        let sources = await desktopCapturer.getSources({ types: ['screen'], fetchWindowIcons: true });
+        let sources = await desktopCapturer.getSources({ types: ['screen'], fetchWindowIcons: false });
         for (let source of sources ) {
             
             if (source.id.startsWith('screen:')) {
@@ -41,10 +41,11 @@ export default class ScreenUtil {
                         video: {
                             // @ts-ignore
                             mandatory: {
-                                chromeMediaSource: 'desktop',
+                                chromeMediaSource: 'screen',
+                                // chromeMediaSource: 'desktop',
                                 chromeMediaSourceId: source.id,
                                 minFrameRate: 30,
-                                maxFrameRate: 60,
+                                maxFrameRate: 30,
                                 // minRate: 60,
                                 minWidth: window.screen.width,
                                 maxWidth: window.screen.width,

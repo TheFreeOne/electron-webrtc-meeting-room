@@ -122,6 +122,7 @@ export default class RoomClient {
         }).then(async function (e) {
             console.log(e)
             const data = await this.socket.request('getRouterRtpCapabilities');
+            console.log('getRouterRtpCapabilities', data)
             let device = await this.loadDevice(data)
             this.device = device
             ;(window as any).device = device
@@ -156,6 +157,7 @@ export default class RoomClient {
         console.log(`initTransports`)
         // init producerTransport
         {
+            console.log('createWebRtcTransport', device.rtpCapabilities)
             const data = await this.socket.request('createWebRtcTransport', {
                 forceTcp: false,
                 rtpCapabilities: device.rtpCapabilities,
@@ -471,7 +473,7 @@ export default class RoomClient {
 
             console.log("audio ? ", audio ? 'YES' : "NO");
 
-            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0].clone();
+            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
    
             const params: ProducerOptions = {
                 track: track
@@ -505,9 +507,9 @@ export default class RoomClient {
                 ];
 
                 const codecOptions:ProducerCodecOptions = {
-                    videoGoogleStartBitrate: 1000,
-                    videoGoogleMaxBitrate: 1000,
-                    videoGoogleMinBitrate: 1000
+                    videoGoogleStartBitrate: 4000,
+                    videoGoogleMaxBitrate: 4000,
+                    videoGoogleMinBitrate: 4000
                 } ;
                 params.codecOptions = codecOptions;
             } else if (screen) {
@@ -516,6 +518,10 @@ export default class RoomClient {
                 let config = this.readJsonFromFile(path.join(app.getAppPath(), './config.json'));
                 if (config && config.videoCodec === 'h264') {
                     params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                } else if(config && config.videoCodec === 'vp9'){
+                    // @ts-ignore
+                    // params.codec = RTCRtpSender.getCapabilities("video").codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp9')
+                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp9')
                 } else {
                     params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
                 }
@@ -528,6 +534,12 @@ export default class RoomClient {
                 // }]
 
                 // params.codecOptions = codecOptions;
+                const codecOptions:ProducerCodecOptions = {
+                    videoGoogleStartBitrate: 4000,
+                    videoGoogleMaxBitrate: 4000,
+                    videoGoogleMinBitrate: 4000
+                } ;
+                params.codecOptions = codecOptions;
             }
             console.log('params = ' , params)
             let producer = await this.producerTransport.produce(params);
@@ -675,6 +687,8 @@ export default class RoomClient {
                     personInfo.appendChild(personName);
                     personInfo.appendChild(personStatus);
                     div.appendChild(personInfo);
+
+                    div.setAttribute('onclick','videoMax(this)');
                     this.remoteVideoEl.appendChild(div);
                 }
 

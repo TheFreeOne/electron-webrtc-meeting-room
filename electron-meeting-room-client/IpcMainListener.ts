@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, ipcMain,ipcRenderer,screen} from "electron";
+import { app, BrowserWindow, dialog, ipcMain,ipcRenderer,nativeImage,screen} from "electron";
 import ChannelConstant from "./util/ChannelConstant";
 import * as fs from 'fs';
 import * as path from 'path';
@@ -15,9 +15,10 @@ export default class IpcMainListener{
 
 
     public startListen(){
-
+        const iconImage = nativeImage.createFromPath(path.join(app.getAppPath(), './icon.ico'))
         // 登陆成功
         ipcMain.on(ChannelConstant.LOGIN_SUCCESS,(event,data)=>{
+            
             this._token = data.token;
             this._nickname = data.nickname;
             this._mainWindow.loadFile('index.html');
@@ -30,7 +31,7 @@ export default class IpcMainListener{
                 // height: 560,
                 // minWidth: 830,
                 // minHeight: 560,
-                icon: './icon.ico',
+                icon: iconImage,
                 // parent: this._mainWindow,
                 // modal: true,
                 autoHideMenuBar:true,
@@ -72,7 +73,7 @@ export default class IpcMainListener{
                 height: 560,
                 minWidth: 830,
                 minHeight: 560,
-                icon: 'icon.ico',
+                icon: iconImage,
                 // parent: this._mainWindow,
                 // modal: true,
                 autoHideMenuBar:true,
@@ -118,7 +119,7 @@ export default class IpcMainListener{
                 height: 560,
                 minWidth: 830,
                 minHeight: 560,
-                icon:  '/icon.ico',
+                icon:  iconImage,
                 // modal:true,
                 autoHideMenuBar: true,
                 show: true,

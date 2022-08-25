@@ -1,4 +1,4 @@
-import {app, BrowserWindow, globalShortcut, screen, session} from 'electron';
+import {app, BrowserWindow, globalShortcut, nativeImage, screen, session} from 'electron';
 import IpcMainListener from './IpcMainListener';
 import * as log from 'electron-log';
 import * as path from 'path';
@@ -27,13 +27,14 @@ app.disableHardwareAcceleration()
 
 
 function createWindow() {
+    const iconImage = nativeImage.createFromPath(path.join(app.getAppPath(), './icon.ico'))
     mainWindow = new BrowserWindow({
         title: '会议室 - '+packages.version,
         width: 340,
         height: 490,
         minWidth: 80,
         minHeight: 60,
-        icon: './icon.ico',
+        icon: iconImage,
         resizable:true,
         
         maxWidth: screen.getPrimaryDisplay().workAreaSize.width,
