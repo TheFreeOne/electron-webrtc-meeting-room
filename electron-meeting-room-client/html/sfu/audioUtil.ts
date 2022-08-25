@@ -52,6 +52,28 @@ export default class AudioUtil {
                     console.log('source.id', source.id);
 
                     // @ts-ignore
+                    // const desktopAudioStream:MediaStream = await navigator.mediaDevices.getUserMedia({
+                    //     audio: {
+                    //         //@ts-ignore
+                    //         mandatory: {
+                    //             chromeMediaSource: 'desktop',
+                    //             chromeMediaSourceId: source.id
+                    //         }
+                    //     }, 
+                    //     video: {
+                    //         //@ts-ignore
+                    //         mandatory: {
+                    //             chromeMediaSource: 'desktop',
+                    //             chromeMediaSourceId: source.id,
+                    //             minWidth: 2,
+                    //             maxWidth: 2,
+                    //             minHeight: 2,
+                    //             maxHeight: 2,
+                    //             maxFrameRate: 2
+                    //         }
+                    //     }
+                    // });
+
                     const desktopAudioStream:MediaStream = await navigator.mediaDevices.getUserMedia({
                         video: {
                             // @ts-ignore
