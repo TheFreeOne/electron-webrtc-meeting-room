@@ -53,23 +53,16 @@ export default class AudioUtil {
 
                     // @ts-ignore
                     const desktopAudioStream:MediaStream = await navigator.mediaDevices.getUserMedia({
-                        audio: {
-                            //@ts-ignore
-                            mandatory: {
-                                chromeMediaSource: 'desktop',
-                                chromeMediaSourceId: source.id
-                            }
-                        }, 
                         video: {
-                            //@ts-ignore
+                            // @ts-ignore
+                            mandatory: {
+                                chromeMediaSource: 'desktop'
+                            }
+                        },
+                        audio: {
+                            // @ts-ignore
                             mandatory: {
                                 chromeMediaSource: 'desktop',
-                                chromeMediaSourceId: source.id,
-                                minWidth: 2,
-                                maxWidth: 2,
-                                minHeight: 2,
-                                maxHeight: 2,
-                                maxFrameRate: 2
                             }
                         }
                     });
