@@ -267,7 +267,7 @@ io.on('connection', (originSocket: SocketIO.Socket) => {
             } else {
 
                 let passwordInMap = room2Password.get(room_id)
-                if (typeof passwordInMap === 'undefined' || passwordInMap === null || passwordInMap === password) {
+                if (typeof passwordInMap === 'undefined' || passwordInMap === null || passwordInMap === '' || passwordInMap === password) {
 
 
                     // 获取进入房间之前的人
