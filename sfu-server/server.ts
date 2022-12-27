@@ -9,7 +9,6 @@ import Room from './Room';
 import Peer from './Peer';
 import * as SocketIO from 'socket.io';
 import { Worker } from 'mediasoup/node/lib/Worker';
-import { Logger } from 'mediasoup/node/lib/Logger';
 const bodyParser = require('body-parser');
 (async () => {
     await createWorkers()
@@ -40,7 +39,7 @@ app.post('/createValidRoomId', (req, resp) => {
     console.dir(req.body.password)
     let password = req.body.password
     if (typeof password === 'undefined' || password == null) {
-        resp.send({ roomId: createValidRoomId(null) });
+        resp.send({ roomId: createValidRoomId('') });
     } else {
         password = '' + password
         resp.send({ roomId: createValidRoomId(password) });
@@ -57,10 +56,10 @@ app.post('/isRoomExisted', (req, resp) => {
         if (Array.from(roomList.keys()).includes(roomId)) {
             const password = room2Password.get(roomId)
             let needPassword = true;
-            if(typeof password === 'undefined' || password === null){
+            if (password === undefined || password === null || password === '') {
                 needPassword = false
             }
-            resp.status(200).json({ existed: true ,'needPassword': needPassword});
+            resp.status(200).json({ existed: true, 'needPassword': needPassword });
         } else {
             resp.status(200).json({ existed: false });
         }
@@ -72,18 +71,18 @@ app.post('/isRoomExisted', (req, resp) => {
 app.post('/checkPassword', (req, resp) => {
     try {
         // 解构赋值
-        let { roomId,password } = req.body;
+        let { roomId, password } = req.body;
         const passwordInMap = room2Password.get(roomId)
-        if(passwordInMap == password){
+        if (passwordInMap == password) {
             resp.status(200).json({ valid: true });
-        }else{
+        } else {
             resp.status(200).json({ valid: false });
         }
     } catch (error) {
         resp.status(500).json({ error });
     }
 });
- 
+
 
 app.use(express.static(path.join(__dirname, '.', 'public')));
 /**
@@ -198,13 +197,14 @@ interface NewSocket extends SocketIO.Socket {
     /**
      * 给连接的添加房间号
      */
-    room_id;
+    room_id: any;
 }
+
 /**
  * 通过socketio创建websocket
  */
-io.on('connection', (socket: NewSocket) => {
-
+io.on('connection', (originSocket: SocketIO.Socket) => {
+    let socket = originSocket as NewSocket
     /**
      * 监听 创建房间
      */
@@ -221,11 +221,9 @@ io.on('connection', (socket: NewSocket) => {
                     } else {
                         socket.emit('createRoom callback', 'already exists')
                     }
-
-
                 } else {
                     let passwordInMap = room2Password.get(room_id)
-                    if (typeof passwordInMap === 'undefined' || passwordInMap === null || passwordInMap === password) {
+                    if (passwordInMap === undefined || passwordInMap === null || passwordInMap === '' || passwordInMap === password) {
                         // 如果没有密码就直接创建,又或者密码相同
                         console.log('---created room--- ', room_id)
                         let worker = await getMediasoupWorker();
@@ -273,24 +271,27 @@ io.on('connection', (socket: NewSocket) => {
 
 
                     // 获取进入房间之前的人
-                    let peers = roomList.get(room_id).getPeers();
+                    let peers = roomList.get(room_id)?.getPeers();
                     let peerInfos = new Array();
-                    for (let peerid of Array.from(peers.keys())) {
-                        peerInfos.push({
-                            socketid: peerid,
-                            name: peers.get(peerid).name
-                        });
+                    if (peers) {
+                        for (let peerid of Array.from(peers.keys())) {
+                            peerInfos.push({
+                                socketid: peerid,
+                                name: peers.get(peerid)?.name
+                            });
+                        }
                     }
 
-                    roomList.get(room_id).addPeer(new Peer(socket.id, name));
+
+                    roomList.get(room_id)?.addPeer(new Peer(socket.id, name));
                     socket.room_id = room_id;
                     // 广播
-                    roomList.get(room_id).broadCast(socket.id, 'joined', {
+                    roomList.get(room_id)?.broadCast(socket.id, 'joined', {
                         room_id: room_id,
                         name: name,
                         socketid: socket.id
                     });
-                    let jsonObject = roomList.get(room_id).toJson();
+                    let jsonObject = roomList.get(room_id)?.toJson();
                     (jsonObject as any).socketid = socket.id;
                     if (cb) {
                         cb(jsonObject);
@@ -317,12 +318,12 @@ io.on('connection', (socket: NewSocket) => {
      * 监听消息  获取生产者
      */
     socket.on('getProducers', () => {
-        console.log(`---get producers--- name:${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---get producers--- name:${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
         // send all the current producer to newly joined member
         if (!roomList.has(socket.room_id)) {
             return
         }
-        let producerList = roomList.get(socket.room_id).getProducerListForPeer(socket.id)
+        let producerList = roomList.get(socket.room_id)?.getProducerListForPeer(socket.id)
 
         socket.emit('newProducers', producerList);
     });
@@ -332,14 +333,14 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('getRouterRtpCapabilities', (_, callback) => {
 
-        console.log(`---get RouterRtpCapabilities--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---get RouterRtpCapabilities--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
         try {
             if (callback) {
-                callback(roomList.get(socket.room_id).getRtpCapabilities());
+                callback(roomList.get(socket.room_id)?.getRtpCapabilities());
             } else {
-                socket.emit('getRouterRtpCapabilities callback', roomList.get(socket.room_id).getRtpCapabilities());
+                socket.emit('getRouterRtpCapabilities callback', roomList.get(socket.room_id)?.getRtpCapabilities());
             }
-        } catch (e) {
+        } catch (e: any) {
             callback && callback({
                 error: e.message
             })
@@ -348,19 +349,21 @@ io.on('connection', (socket: NewSocket) => {
     });
 
     socket.on('createWebRtcTransport', async (_, callback) => {
-        console.log(`---create webrtc transport--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---create webrtc transport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
         try {
-            const {
-                params
-            } = await roomList.get(socket.room_id).createWebRtcTransport(socket.id);
+            const result = await roomList.get(socket.room_id)?.createWebRtcTransport(socket.id)
+            if (result) {
+                const {
+                    params
+                } = result;
 
-            if (callback) {
-                callback(params);
-            } else {
-                socket.emit('createWebRtcTransport callback', params)
+                if (callback) {
+                    callback(params);
+                } else {
+                    socket.emit('createWebRtcTransport callback', params)
+                }
             }
-
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             callback && callback({
                 error: err.message
@@ -373,19 +376,18 @@ io.on('connection', (socket: NewSocket) => {
      * @deprecated
      */
     socket.on('createSendTransport', async (_, callback) => {
-        console.log(`---createSendTransport--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---createSendTransport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
         try {
-            const {
-                params
-            } = await roomList.get(socket.room_id).createWebRtcTransport(socket.id);
-
-            if (callback) {
-                callback(params);
-            } else {
-                socket.emit('createSendTransport callback', params)
+            const result = await roomList.get(socket.room_id)?.createWebRtcTransport(socket.id)
+            if (result) {
+                const params = result.params;
+                if (callback) {
+                    callback(params);
+                } else {
+                    socket.emit('createSendTransport callback', params)
+                }
             }
-
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             callback && callback({
                 error: err.message
@@ -399,22 +401,22 @@ io.on('connection', (socket: NewSocket) => {
      * @deprecated
      */
     socket.on('createRecvTransport', async (_, callback) => {
-        console.log(`---createRecvTransport--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---createRecvTransport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
         try {
-            const {
-                params
-            } = await roomList.get(socket.room_id).createWebRtcTransport(socket.id);
-
-            if (callback) {
-                callback(params);
-            } else {
-                socket.emit('createRecvTransport callback', params)
+            const result = await roomList.get(socket.room_id)?.createWebRtcTransport(socket.id)
+            if (result) {
+                const { params } = result;
+                if (callback) {
+                    callback(params);
+                } else {
+                    socket.emit('createRecvTransport callback', params)
+                }
             }
 
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             callback && callback({
-                error: err.message
+                error: err?.message || ''
             });
         }
     });
@@ -428,11 +430,11 @@ io.on('connection', (socket: NewSocket) => {
     }, callback) => {
 
         try {
-            console.log(`---connect transport--- name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+            console.log(`---connect transport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
             console.log(`---connect transport--- transport_id: ${transport_id}`)
             console.log(`---connect transport--- dtlsParameters: ${dtlsParameters}`)
             if (!roomList.has(socket.room_id)) return
-            await roomList.get(socket.room_id).connectPeerTransport(socket.id, transport_id, dtlsParameters)
+            await roomList.get(socket.room_id)?.connectPeerTransport(socket.id, transport_id, dtlsParameters)
 
             callback && callback('success')
             console.log(`---connectTransport success---`);
@@ -461,8 +463,8 @@ io.on('connection', (socket: NewSocket) => {
             return callback && callback({ error: 'not is a room' })
         }
 
-        let producer_id = await roomList.get(socket.room_id).produce(socket.id, producerTransportId, rtpParameters, kind)
-        console.log(`---produce--- type: ${kind} name: ${roomList.get(socket.room_id).getPeers().get(socket.id).name} id: ${producer_id}`)
+        let producer_id = await roomList.get(socket.room_id)?.produce(socket.id, producerTransportId, rtpParameters, kind)
+        console.log(`---produce--- type: ${kind} name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name} id: ${producer_id}`)
 
 
         if (callback) {
@@ -497,8 +499,8 @@ io.on('connection', (socket: NewSocket) => {
         }
 
         try {
-            let params = await roomList.get(socket.room_id).consume(socket.id, consumerTransportId, producerId, rtpCapabilities);
-            console.log(`---consuming--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name} prod_id:${producerId} consumer_id:${params.id}`)
+            let params = await roomList.get(socket.room_id)?.consume(socket.id, consumerTransportId, producerId, rtpCapabilities);
+            console.log(`---consuming--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name} prod_id:${producerId} consumer_id:${params?.id}`)
             if (callback) {
                 callback(params);
             } else {
@@ -519,7 +521,7 @@ io.on('connection', (socket: NewSocket) => {
 
     socket.on('getMyRoomInfo', (_, cb) => {
         try {
-            cb(roomList.get(socket.room_id).toJson())
+            cb(roomList.get(socket.room_id)?.toJson())
         } catch (error) {
             console.error(error);
         }
@@ -528,24 +530,27 @@ io.on('connection', (socket: NewSocket) => {
      * 断开连接，关掉窗口之类的
      */
     socket.on('disconnect', () => {
-        console.log(`---disconnect--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        console.log(`---disconnect--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id)?.getPeers()?.get(socket.id)?.name}`)
         if (!socket.room_id) return
-        roomList.get(socket.room_id).removePeer(socket.id);
+        roomList.get(socket.room_id)?.removePeer(socket.id);
         try {
             let room = roomList.get(socket.room_id);
-            console.log(`room[${socket.room_id}].getPeers().size`, room.getPeers().size);
+            if (room) {
+                console.log(`room[${socket.room_id}].getPeers().size`, room.getPeers().size);
 
-            if (room.getPeers().size > 0) {
-                roomList.get(socket.room_id).broadCast(socket.id, 'a user is disconnected', {
-                    "sockerid": socket.id
-                });
+                if (room.getPeers().size > 0) {
+                    room.broadCast(socket.id, 'a user is disconnected', {
+                        "sockerid": socket.id
+                    });
+                }
+                // 回收
+                if (room.getPeers().size === 0) {
+                    roomList.delete(socket.room_id)
+                    room2Password.delete(socket.room_id)
+                    console.log('room2Password', room2Password)
+                }
             }
-            // 回收
-            if (roomList.get(socket.room_id).getPeers().size === 0) {
-                roomList.delete(socket.room_id)
-                room2Password.delete(socket.room_id)
-                console.log('room2Password', room2Password)
-            }
+
 
         } catch (error) {
 
@@ -561,8 +566,8 @@ io.on('connection', (socket: NewSocket) => {
         console.log(`---producer close--- producer_id = ${producer_id}`);
 
         try {
-            console.log(`---producer close--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
-            roomList.get(socket.room_id).closeProducer(socket.id, producer_id)
+            console.log(`---producer close--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name}`)
+            roomList.get(socket.room_id)?.closeProducer(socket.id, producer_id)
         } catch (error) {
             console.error(error);
 
@@ -574,9 +579,12 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('pauseProducer', ({ producer_id }, callback) => {
         try {
-            console.log(`---producer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
-            producer_id && roomList.get(socket.room_id).pauseProducer(socket.id, producer_id);
-            callback && callback("success")
+            const room = roomList.get(socket.room_id);
+            if (room) {
+                console.log(`---producer pause--- name: ${room.getPeers()?.get(socket.id)?.name}`)
+                producer_id && room.pauseProducer(socket.id, producer_id);
+                callback && callback("success")
+            }
         } catch (error) {
             console.error(error);
         }
@@ -587,9 +595,13 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('resumeProducer', ({ producer_id }, callback) => {
         try {
-            console.log(`---producer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
-            producer_id && roomList.get(socket.room_id).resumeProducer(socket.id, producer_id);
-            callback && callback("success")
+            const room = roomList.get(socket.room_id);
+            if (room) {
+                console.log(`---producer resume--- name: ${room.getPeers()?.get(socket.id)?.name}`)
+                producer_id && room.resumeProducer(socket.id, producer_id);
+                callback && callback("success")
+            }
+
         } catch (error) {
             console.error(error);
         }
@@ -600,12 +612,16 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('pauseConsumer', ({ consumer_id }, callback) => {
         if (consumer_id) {
-            console.log(`---consumer pause--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
-            let consumer = roomList.get(socket.room_id).getPeers().get(socket.id).getConsumer(consumer_id);
-            if (consumer) {
-                consumer.pause();
-                callback("success");
+            const room = roomList.get(socket.room_id);
+            if (room) {
+                console.log(`---consumer pause--- name: ${room && room.getPeers()?.get(socket.id)?.name}`)
+                let consumer = room.getPeers()?.get(socket.id)?.getConsumer(consumer_id);
+                if (consumer) {
+                    consumer.pause();
+                    callback("success");
+                }
             }
+
         }
     });
 
@@ -614,11 +630,14 @@ io.on('connection', (socket: NewSocket) => {
      */
     socket.on('resumeConsumer', ({ consumer_id }, callback) => {
         if (consumer_id) {
-            console.log(`---consumer resume--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
-            let consumer = roomList.get(socket.room_id).getPeers().get(socket.id).getConsumer(consumer_id);
-            if (consumer) {
-                consumer.resume();
-                callback("success");
+            const room = roomList.get(socket.room_id);
+            if (room) {
+                console.log(`---consumer resume--- name: ${room.getPeers()?.get(socket.id)?.name}`)
+                let consumer = room.getPeers()?.get(socket.id)?.getConsumer(consumer_id);
+                if (consumer) {
+                    consumer.resume();
+                    callback("success");
+                }
             }
         }
     });
@@ -628,7 +647,8 @@ io.on('connection', (socket: NewSocket) => {
      * 点击了退出房间,此时检测并销毁房间
      */
     socket.on('exitRoom', async (_, callback) => {
-        console.log(`---exit room--- name: ${roomList.get(socket.room_id) && roomList.get(socket.room_id).getPeers().get(socket.id).name}`)
+        const room = roomList.get(socket.room_id);
+        console.log(`---exit room--- name: ${room && room.getPeers()?.get(socket.id)?.name}`)
         if (!roomList.has(socket.room_id)) {
             callback({
                 error: 'not currently in a room'
@@ -636,19 +656,25 @@ io.on('connection', (socket: NewSocket) => {
             return
         }
         // close transports
-        await roomList.get(socket.room_id).removePeer(socket.id)
-        if (roomList.get(socket.room_id).getPeers().size === 0) {
-            roomList.delete(socket.room_id)
-            room2Password.delete(socket.room_id)
+
+        if (room) {
+            await room.removePeer(socket.id)
+            if (room.getPeers().size === 0) {
+                roomList.delete(socket.room_id)
+                room2Password.delete(socket.room_id)
+            }
+
         }
 
         try {
-            let room = roomList.get(socket.room_id);
-            if (room.getPeers().size > 0) {
-                roomList.get(socket.room_id).broadCast(socket.id, 'a user is exits the room', {
-                    "sockerid": socket.id
-                });
-            };
+
+            if (room && room.getPeers()) {
+                if (room.getPeers().size > 0) {
+                    room.broadCast(socket.id, 'a user is exits the room', {
+                        "sockerid": socket.id
+                    });
+                };
+            }
 
         } catch (error) {
 
@@ -661,8 +687,7 @@ io.on('connection', (socket: NewSocket) => {
 
         try {
             console.log(`---restartIce---transport_id = ` + transport_id)
-            const transport = roomList.get(socket.room_id).getPeers().get(socket.id).transports.get(transport_id);
-
+            const transport = roomList.get(socket.room_id)?.getPeers()?.get(socket.id)?.transports.get(transport_id);
             if (transport) {
 
                 const iceParameters = await transport.restartIce();
@@ -735,7 +760,7 @@ function createValidRoomId(password: string): string {
     room2Password.set(number, password)
     return number;
 
-    function testRoomId(_number) {
+    function testRoomId(_number: any) {
         if (roomIds.includes(_number)) {
             return true;
         } else {

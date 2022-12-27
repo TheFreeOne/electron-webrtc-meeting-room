@@ -13,13 +13,14 @@
   "dependencies": {
     "axios": "^0.21.1",
     "base": "^3.0.0",
+    "debug": "^4.3.4",
     "express": "^4.17.1",
     "httpolyglot": "^0.1.2",
-    "socket.io": "^4.0.0",
-    "mediasoup": "^3.10.4",
+    "mediasoup": "^3.11.4",
     "negotiator": "^0.6.2",
     "netstring": "^0.3.0",
     "random-number": "^0.0.9",
+    "socket.io": "^4.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

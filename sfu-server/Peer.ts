@@ -1,159 +1,171 @@
 import { Consumer } from "mediasoup/node/lib/Consumer";
 import { Producer } from "mediasoup/node/lib/Producer";
-import { WebRtcTransport } from "mediasoup/node/lib/WebRtcTransport";
+import { MediaKind, RtpCapabilities, RtpParameters } from "mediasoup/node/lib/RtpParameters";
+import { DtlsParameters, WebRtcTransport } from "mediasoup/node/lib/WebRtcTransport";
 /**
  * 房间里头的人
  */
-export default  class Peer {
+export default class Peer {
 
     /**
      * 连接的socket的id
      */
-    public id;
+    public id: string;
     /**
      * 连接socket的名
      */
-    public name ;
+    public name: string;
 
-    public transports:Map<any,WebRtcTransport> ;
+    public transports: Map<string, WebRtcTransport>;
 
-    public consumers:Map<any,Consumer> ;
+    public consumers: Map<string, Consumer>;
 
-    public producers:Map<any,Producer> ;
+    public producers: Map<string, Producer>;
 
-    constructor(socket_id, name = 'unknow') {
-        this.id = socket_id
+    constructor(socketId: string, name = 'unknow') {
+        this.id = socketId
         this.name = name
-        this.transports = new Map<any,WebRtcTransport>()
-        this.consumers = new Map()
-        this.producers = new Map<any,Producer>()
+        this.transports = new Map<string, WebRtcTransport>()
+        this.consumers = new Map<string, Consumer>()
+        this.producers = new Map<string, Producer>()
     }
 
 
-    addTransport(transport:WebRtcTransport) {
+    addTransport(transport: WebRtcTransport) {
         this.transports.set(transport.id, transport)
     }
 
-    async connectTransport(transport_id, dtlsParameters) {
-        if (!this.transports.has(transport_id)) return
-        await this.transports.get(transport_id).connect({
-            dtlsParameters: dtlsParameters
-        });
+    async connectTransport(transportId: string, dtlsParameters: DtlsParameters) {
+        if (!this.transports.has(transportId)) return
+        const transport = this.transports.get(transportId)
+        if (transport) {
+            await transport.connect({
+                dtlsParameters: dtlsParameters
+            });
+        }
     }
 
-    async createProducer(producerTransportId, rtpParameters, kind,producer_socket_id?):Promise<Producer> {
-        console.log(`createProducer`,producerTransportId, rtpParameters, kind,producer_socket_id);
+    async createProducer(producerTransportId: string, rtpParameters: RtpParameters, kind: MediaKind, producerSocketId?: any): Promise<Producer> {
+        console.log(`createProducer`, producerTransportId, rtpParameters, kind, producerSocketId);
 
         //TODO handle null errors
-        let producer:Producer = await (this.transports.get(producerTransportId) as  WebRtcTransport).produce({
+        let producer: Producer = await (this.transports.get(producerTransportId) as WebRtcTransport).produce({
             kind,
             rtpParameters
         })
         // @ts-ignore 额外添加属性
-        producer.producer_socket_id = producer_socket_id;
+        producer.producer_socket_id = producerSocketId;
         this.producers.set(producer.id, producer)
 
-        producer.on('transportclose', function() {
+        // producer.on('transportclose', function () {
+        //     console.log(`---producer transport close--- name: ${this.name} consumer_id: ${producer.id}`)
+        //     producer.close()
+        //     this.producers.delete(producer.id)
+        // }.bind(this))
+        producer.on('transportclose', () => {
             console.log(`---producer transport close--- name: ${this.name} consumer_id: ${producer.id}`)
             producer.close()
             this.producers.delete(producer.id)
-
-        }.bind(this))
+        })
 
         return producer;
     }
 
-    async createConsumer(consumer_transport_id, producer_id, rtpCapabilities)  {
-        let consumerTransport = this.transports.get(consumer_transport_id)
+    async createConsumer(consumerTransportId: string, producerId: string, rtpCapabilities: RtpCapabilities) {
+        const consumerTransport = this.transports.get(consumerTransportId)
+        if (consumerTransport) {
+            let consumer: Consumer
+            try {
+                consumer = await consumerTransport.consume({
+                    producerId: producerId,
+                    rtpCapabilities,
+                    paused: false //producer.kind === 'video',
+                });
+            } catch (error) {
+                console.error('consume failed', error);
+                return;
+            }
 
-        let consumer:Consumer = null
-        try {
-            consumer = await consumerTransport.consume({
-                producerId: producer_id,
-                rtpCapabilities,
-                paused: false //producer.kind === 'video',
-            });
-        } catch (error) {
-            console.error('consume failed', error);
-            return;
+            if (consumer.type === 'simulcast') {
+                await consumer.setPreferredLayers({
+                    spatialLayer: 2,
+                    temporalLayer: 2
+                });
+            }
+
+            this.consumers.set(consumer.id, consumer)
+
+            // consumer.on('transportclose', function () {
+            //     console.log(`---consumer transport close--- name: ${this.name} consumer_id: ${consumer.id}`)
+            //     this.consumers.delete(consumer.id)
+            // }.bind(this))
+
+            consumer.on('transportclose', () => {
+                console.log(`---consumer transport close--- name: ${this.name} consumer_id: ${consumer.id}`)
+                this.consumers.delete(consumer.id)
+            })
+            return {
+                consumer,
+                params: {
+                    producerId: producerId,
+                    id: consumer.id,
+                    kind: consumer.kind,
+                    rtpParameters: consumer.rtpParameters,
+                    type: consumer.type,
+                    producerPaused: consumer.producerPaused
+                }
+            }
         }
 
-        if (consumer.type === 'simulcast') {
-            await consumer.setPreferredLayers({
-                spatialLayer: 2,
-                temporalLayer: 2
-            });
+    }
+
+    closeProducer(producerId: string) {
+        const producer = this.producers.get(producerId)
+        if (producer) {
+            try {
+                producer.close()
+            } catch (e) {
+                console.warn(e)
+            }
+            this.producers.delete(producerId)
         }
+    }
 
-        this.consumers.set(consumer.id, consumer)
-
-        consumer.on('transportclose', function() {
-            console.log(`---consumer transport close--- name: ${this.name} consumer_id: ${consumer.id}`)
-            this.consumers.delete(consumer.id)
-        }.bind(this))
-
-
-
-        return {
-            consumer,
-            params: {
-                producerId: producer_id,
-                id: consumer.id,
-                kind: consumer.kind,
-                rtpParameters: consumer.rtpParameters,
-                type: consumer.type,
-                producerPaused: consumer.producerPaused
+    async pauseProducer(producerId: string) {
+        const producer = this.producers.get(producerId)
+        if (producer) {
+            try {
+                await producer.pause();
+            } catch (e) {
+                console.error(e)
             }
         }
     }
 
-    closeProducer(producer_id) {
-        try {
-            if(this.producers.get(producer_id)){
-                this.producers.get(producer_id).close()
-            }else {
-                console.dir(`get a null producer by producer_id = ${producer_id}`);
+    async resumeProducer(producerId: string) {
+        const producer = this.producers.get(producerId)
+        if (producer) {
+            try {
+                await producer.resume();
+            } catch (e) {
+                console.error(e)
             }
-        } catch(e) {
-            console.warn(e)
         }
-        this.producers.delete(producer_id)
     }
 
-    async pauseProducer(producer_id) {
-        try {
-           await this.producers.get(producer_id).pause();
-        } catch(e) {
-            console.error(e)
-        }
-
+    getConsumer(consumerId:string) {
+        return this.consumers.get(consumerId)
     }
 
-    async resumeProducer(producer_id) {
-        try {
-           await this.producers.get(producer_id).resume();
-        } catch(e) {
-            console.error(e)
-        }
-
-    }
-
-    getConsumer(consumer_id){
-        return this.consumers.get(consumer_id)
-    }
-
-    getProducer(producer_id) {
-        return this.producers.get(producer_id)
+    getProducer(producerId: string) {
+        return this.producers.get(producerId)
     }
 
     close() {
         this.transports.forEach(transport => transport.close())
     }
 
-    removeConsumer(consumer_id) {
-        this.consumers.delete(consumer_id)
+    removeConsumer(consumerId: string) {
+        this.consumers.delete(consumerId)
     }
-
-
-
 }
