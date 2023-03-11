@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 const { app } = require("@electron/remote");
 import { Device } from 'mediasoup-client';
-import { ProducerCodecOptions, ProducerOptions, Transport } from 'mediasoup-client/lib/types';
+import { ConsumerOptions, ProducerCodecOptions, ProducerOptions, Transport } from 'mediasoup-client/lib/types';
 
 
 export default class RoomClient {
@@ -29,26 +29,26 @@ export default class RoomClient {
     }
 
 
-    private name;
+    private name:any;
 
-    private localMediaEl;
-    private remoteVideoEl;
+    private localMediaEl:any;
+    private remoteVideoEl:any;
 
-    private mediasoupClient;
+    private mediasoupClient:any;
 
-    private socket;
-    private producerTransport:Transport;
-    private consumerTransport;
-    private device;
-    private room_id;
+    private socket:any;
+    private producerTransport: Transport | null;
+    private consumerTransport: Transport | null;
+    private device: { canProduce?: any; rtpCapabilities: any; } | null;
+    private room_id:any;
 
-    private consumers;
-    private producers;
-    private producerLabel;
+    private consumers:any;
+    private producers:any;
+    private producerLabel:any;
 
-    private _isOpen;
-    private eventListeners;
-    private password
+    private _isOpen:any;
+    private eventListeners:Map<any, any>;
+    private password:any
     /**
      *
      * @param localMediaEl 用于存放本地流的div
@@ -59,8 +59,8 @@ export default class RoomClient {
      * @param name 自己的名字
      * @param successCallback 回调
      */
-    constructor(localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, password,successCallback) {
-        console.log(`constructor  `, localMediaEl, remoteVideoEl,   mediasoupClient, socket, room_id, name, successCallback)
+    constructor(localMediaEl: any, remoteVideoEl: any, mediasoupClient: any, socket: any, room_id: any, name: any, password: any, successCallback: { (): void; (): void; }) {
+        console.log(`constructor  `, localMediaEl, remoteVideoEl, mediasoupClient, socket, room_id, name, successCallback)
         this.name = name
         this.password = password
         this.localMediaEl = localMediaEl
@@ -84,17 +84,17 @@ export default class RoomClient {
 
         this._isOpen = false
         this.eventListeners = new Map()
-        Object.keys(RoomClient._EVENTS).forEach(function (evt) {
+        Object.keys(RoomClient._EVENTS).forEach((evt: any) => {
             this.eventListeners.set(evt, [])
-        }.bind(this))
+        })
 
 
-        this.createRoom(room_id, password).then(async function () {
+        this.createRoom(room_id, password).then(async () => {
             await this.join(name, room_id, password)
             this.initSockets()
             this._isOpen = true
             successCallback()
-        }.bind(this))
+        })
 
 
 
@@ -103,57 +103,59 @@ export default class RoomClient {
 
     ////////// INIT /////////
 
-    async createRoom(room_id, password) {
+    async createRoom(room_id: any, password: any) {
         console.log(`createRoom`)
         await this.socket.request('createRoom', {
             room_id,
             password
-        }).catch(err => {
+        }).catch((err: any) => {
             console.log(err)
         })
     }
 
-    async join(name, room_id, password) {
+    async join(name: any, room_id: any, password: any) {
         console.log(`join`)
         this.socket.request('join', {
             name,
             room_id,
             password
-        }).then(async function (e) {
+        }).then(async (e: { socketid: any; }) => {
             console.log(e)
             const data = await this.socket.request('getRouterRtpCapabilities');
             console.log('getRouterRtpCapabilities', data)
             let device = await this.loadDevice(data)
             this.device = device
-            ;(window as any).device = device
+                ; (window as any).device = device
             await this.initTransports(device);
             this.socket.emit('getProducers');
             (window as any).socketid = e.socketid;
-        }.bind(this)).catch(e => {
+        }).catch((e: any) => {
             console.log(e)
         })
     }
 
-    async loadDevice(routerRtpCapabilities):Promise<Device> {
+    async loadDevice(routerRtpCapabilities: any): Promise<Device> {
         console.log(`loadDevice`)
-        let device:Device;
+        let device: Device | any;
         try {
             device = new this.mediasoupClient.Device();
             // device = new Device();
         } catch (error) {
-            if (error.name === 'UnsupportedError') {
+            if ((error as any).name && (error as any).name === 'UnsupportedError') {
                 console.error('browser not supported');
             }
             console.error(error)
         }
-        await device.load({
-            routerRtpCapabilities
-        })
+        if (device) {
+            await device.load({
+                routerRtpCapabilities
+            })
+        }
         return device;
 
     }
 
-    async initTransports(device:Device) {
+    async initTransports(device: Device) {
         console.log(`initTransports`)
         // init producerTransport
         {
@@ -169,9 +171,9 @@ export default class RoomClient {
 
             this.producerTransport = device.createSendTransport(data);
 
-            this.producerTransport.on('connect', async function ({
+            this.producerTransport.on('connect', async ({
                 dtlsParameters
-            }, callback, errback) {
+            }: any, callback: any, errback: any) => {
                 console.log(`producer request connectTransport`)
                 this.socket.request('connectTransport', {
                     dtlsParameters,
@@ -179,17 +181,17 @@ export default class RoomClient {
                 })
                     .then(callback)
                     .catch(errback)
-            }.bind(this));
+            });
 
-            this.producerTransport.on('produce', async function ({
+            this.producerTransport.on('produce', async   ({
                 kind,
                 rtpParameters
-            }, callback, errback) {
+            }: any, callback: (arg0: { id: string; }) => void, errback: (arg0: Error) => void) => {
                 try {
                     const {
                         producer_id
                     } = await this.socket.request('produce', {
-                        producerTransportId: this.producerTransport.id,
+                        producerTransportId: this.producerTransport?.id,
                         kind,
                         rtpParameters,
                     });
@@ -197,11 +199,11 @@ export default class RoomClient {
                         id: producer_id
                     });
                 } catch (err) {
-                    errback(err);
+                    errback(err as Error);
                 }
-            }.bind(this))
+            })
 
-            this.producerTransport.on('connectionstatechange', function (state) {
+            this.producerTransport.on('connectionstatechange', (state: any) => {
                 switch (state) {
                     case 'connecting':
 
@@ -212,13 +214,15 @@ export default class RoomClient {
                         break;
 
                     case 'failed':
-                        this.producerTransport.close();
+                        if (this.producerTransport) {
+                            this.producerTransport.close();
+                        }
                         break;
 
                     default:
                         break;
                 }
-            }.bind(this));
+            });
         }
 
         // init consumerTransport
@@ -233,19 +237,19 @@ export default class RoomClient {
 
             // only one needed
             this.consumerTransport = device.createRecvTransport(data);
-            this.consumerTransport.on('connect', function ({
+            this.consumerTransport.on('connect',   ({
                 dtlsParameters
-            }, callback, errback) {
+            }: any, callback: any, errback: any) => {
                 console.log(`connect request connectTransport`)
                 this.socket.request('connectTransport', {
-                    transport_id: this.consumerTransport.id,
+                    transport_id: this.consumerTransport?.id,
                     dtlsParameters
                 })
                     .then(callback)
                     .catch(errback);
-            }.bind(this));
+            });
 
-            this.consumerTransport.on('connectionstatechange', async function (state) {
+            this.consumerTransport.on('connectionstatechange', async (state: any) => {
                 switch (state) {
                     case 'connecting':
                         break;
@@ -256,24 +260,27 @@ export default class RoomClient {
                         break;
 
                     case 'failed':
-                        this.consumerTransport.close();
+                        if (this.consumerTransport) {
+                            this.consumerTransport.close();
+                        }
+                       
                         break;
 
                     default:
                         break;
                 }
-            }.bind(this));
+            });
         }
 
     }
 
     initSockets() {
-        this.socket.on('consumerClosed', function ({
+        this.socket.on('consumerClosed', ({
             consumer_id
-        }) {
+        }:{consumer_id:any}) => {
             console.log('closing consumer:', consumer_id)
             this.removeConsumer(consumer_id)
-        }.bind(this))
+        })
 
         /**
          * data: [ {
@@ -281,7 +288,7 @@ export default class RoomClient {
          *  producer_socket_id:
          * }]
          */
-        this.socket.on('newProducers', async function (data) {
+        this.socket.on('newProducers', async  (data: any) => {
             console.log('new producers', data)
             for (let {
                 producer_id,
@@ -289,34 +296,37 @@ export default class RoomClient {
             } of data) {
                 await this.consume(producer_id, producer_socket_id)
             }
-        }.bind(this))
+        })
 
-        this.socket.on('disconnect', function () {
+        this.socket.on('disconnect',   () => {
             this.exit(true)
-        }.bind(this))
+        })
 
         // 自定义方法
-        this.socket.on('joined', function (data) {
+        this.socket.on('joined', function (data: { name: any; socketid: any; }) {
             console.log(`一个用户${data.name}加入了房间`);
 
             (window as any).personMap.set(data.socketid, data.name);
 
         }.bind(this));
         // 自定义方法
-        this.socket.on('othersInRoom', function (data) {
+        this.socket.on('othersInRoom', function (data: any) {
 
-            for(let item of data){
+            for (let item of data) {
                 (window as any).personMap.set(item.socketid, item.name);
             }
 
         }.bind(this));
 
         // 自定义方法
-        this.socket.on('a user is disconnected', function (data) {
+        this.socket.on('a user is disconnected', function (data: { sockerid: string; }) {
             ((window as any).personMap as Map<string, string>).delete(data.sockerid);
             let personVideoItem = document.getElementById(data.sockerid);
             if (personVideoItem) {
-                personVideoItem.parentNode.removeChild(personVideoItem);
+               const parentNodeTmp = personVideoItem.parentNode
+               if (parentNodeTmp) {
+                parentNodeTmp.removeChild(personVideoItem);
+               }
             }
         }.bind(this))
 
@@ -329,7 +339,7 @@ export default class RoomClient {
     //////// MAIN FUNCTIONS /////////////
 
 
-    async produce(type, deviceId = null) {
+    async produce(type: string, deviceId = undefined) {
         console.log(`produce: ${type} ${deviceId}`)
         let mediaConstraints = {} as MediaStreamConstraints
         let audio = false
@@ -352,13 +362,13 @@ export default class RoomClient {
                 let resolution = document.getElementById('video-resolution');
                 let defaultWidth = 1280;
                 let defaultHeight = 760;
-                if(resolution){
+                if (resolution) {
                     //@ts-ignore
                     let value = resolution.value;
-                    if(value === '1280*768'){
+                    if (value === '1280*768') {
                         defaultWidth = 1280;
                         defaultHeight = 760;
-                    }else if(value === '1920*1080'){
+                    } else if (value === '1920*1080') {
                         defaultWidth = 1920;
                         defaultHeight = 1080;
                     }
@@ -396,7 +406,7 @@ export default class RoomClient {
                 return
                 break;
         }
-        if (!this.device.canProduce('video') && !audio) {
+        if (this.device && !this.device.canProduce('video') && !audio) {
             console.error('cannot produce video');
             return;
         }
@@ -405,7 +415,7 @@ export default class RoomClient {
             return
         }
         console.log('mediacontraints:', mediaConstraints)
-        let stream:MediaStream;
+        let stream: MediaStream | undefined;
         try {
             // 获取流
             if (screen) {
@@ -415,12 +425,12 @@ export default class RoomClient {
 
             } else if (audio) {
                 let audioUtil = new AudioUtil();
-                if(deviceId === 'system'){
+                if (deviceId === 'system') {
 
                     // 判断目标是获取系统的声音
                     try {
                         (window as any).toastr.info('获取屏幕声音');
-                        let _stream = await audioUtil.getSystemStream();
+                        let _stream = await audioUtil.getSystemStream() as MediaStream;
                         (window as any)._stream = _stream;
                         console.log(_stream);
                         // 获取整个流之后只取音轨部分
@@ -429,7 +439,7 @@ export default class RoomClient {
                         console.error(error);
                         (window as any).toastr.error('获取屏幕声音失败');
                     }
-                    
+
                 } else {
                     try {
                         stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
@@ -439,7 +449,7 @@ export default class RoomClient {
                         try {
 
                             (window as any).toastr.info('更改为获取系统声音');
-                            let _stream = await audioUtil.getSystemStream();
+                            let _stream = await audioUtil.getSystemStream() as MediaStream ;
                             (window as any)._stream = _stream;
                             console.log(_stream);
 
@@ -473,20 +483,20 @@ export default class RoomClient {
 
             console.log("audio ? ", audio ? 'YES' : "NO");
 
-            const track = audio ? stream.getAudioTracks()[0] : stream.getVideoTracks()[0];
-   
+            const track = audio ? stream?.getAudioTracks()[0] : stream?.getVideoTracks()[0];
+
             const params: ProducerOptions = {
                 track: track
             };
-       
+
             if (!audio && !screen) {
                 // 强制使用h264
                 let config = this.readJsonFromFile(path.join(app.getAppPath(), './config.json'));
                 debugger
                 if (config && config.videoCodec === 'h264') {
-                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
+                    params.codec = this.device?.rtpCapabilities.codecs.find((codec: { mimeType: string; }) => codec.mimeType.toLowerCase() === 'video/h264')
                 } else {
-                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
+                    params.codec = this.device?.rtpCapabilities.codecs.find((codec: { mimeType: string; }) => codec.mimeType.toLowerCase() === 'video/vp8')
                 }
                 params.encodings = [{
                     rid: 'r0',
@@ -506,26 +516,26 @@ export default class RoomClient {
                 }
                 ];
 
-                const codecOptions:ProducerCodecOptions = {
+                const codecOptions: ProducerCodecOptions = {
                     videoGoogleStartBitrate: 4000,
                     videoGoogleMaxBitrate: 4000,
                     videoGoogleMinBitrate: 4000
-                } ;
+                };
                 params.codecOptions = codecOptions;
             } else if (screen) {
                 // params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
                 // 强制使用h264
                 let config = this.readJsonFromFile(path.join(app.getAppPath(), './config.json'));
                 if (config && config.videoCodec === 'h264') {
-                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/h264')
-                } else if(config && config.videoCodec === 'vp9'){
+                    params.codec = this.device?.rtpCapabilities.codecs.find((codec: { mimeType: string; }) => codec.mimeType.toLowerCase() === 'video/h264')
+                } else if (config && config.videoCodec === 'vp9') {
                     // @ts-ignore
                     // params.codec = RTCRtpSender.getCapabilities("video").codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp9')
                     params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp9')
                 } else {
-                    params.codec = this.device.rtpCapabilities.codecs.find((codec) => codec.mimeType.toLowerCase() === 'video/vp8')
+                    params.codec = this.device?.rtpCapabilities.codecs.find((codec: { mimeType: string; }) => codec.mimeType.toLowerCase() === 'video/vp8')
                 }
-  
+
                 // params.encodings = [{
                 //     maxBitrate: 900000,
                 //     maxFramerate: 120,
@@ -534,61 +544,74 @@ export default class RoomClient {
                 // }]
 
                 // params.codecOptions = codecOptions;
-                const codecOptions:ProducerCodecOptions = {
+                const codecOptions: ProducerCodecOptions = {
                     videoGoogleStartBitrate: 4000,
                     videoGoogleMaxBitrate: 4000,
                     videoGoogleMinBitrate: 4000
-                } ;
+                };
                 params.codecOptions = codecOptions;
             }
-            console.log('params = ' , params)
-            let producer = await this.producerTransport.produce(params);
+            console.log('params = ', params)
+            let producer = await this.producerTransport?.produce(params);
             (window as any).currentProducer = producer;
             console.log('producer', producer)
 
-            this.producers.set(producer.id, producer)
+            this.producers.set(producer?.id, producer)
 
-            let elem;
+            let elem: HTMLVideoElement;
             if (!audio) {
                 elem = document.createElement('video')
-                elem.srcObject = stream;
-                elem.id = producer.id;
-                elem.playsinline = false;
+                elem.srcObject = stream as MediaProvider ;
+                elem.id = producer?.id as string;
+                (elem as any).playsinline = false;
+                (elem as any).playsInline = false;
                 elem.autoplay = true;
                 elem.className = "vid";
                 elem.muted = true;
                 this.localMediaEl.appendChild(elem);
             }
 
-            producer.on('trackended', () => {
+            producer?.on('trackended', () => {
                 this.closeProducer(type)
             })
 
-            producer.on('transportclose', () => {
+            producer?.on('transportclose', () => {
                 console.log('producer transport close')
                 if (!audio) {
-                    elem.srcObject.getTracks().forEach(function (track) {
+                    ((elem.srcObject) as  MediaStream).getTracks().forEach(function (track: { stop: () => void; }) {
                         track.stop()
                     })
-                    elem.parentNode.removeChild(elem)
+                    elem.parentNode?.removeChild(elem)
                 }
-                this.producers.delete(producer.id)
+                this.producers.delete(producer?.id)
 
             })
 
-            producer.on('close', () => {
+            producer?.on('@close', () => {
                 console.log('closing producer')
                 if (!audio) {
-                    elem.srcObject.getTracks().forEach(function (track) {
+                    ((elem.srcObject) as  MediaStream).getTracks().forEach(function (track: { stop: () => void; }) {
                         track.stop()
                     })
-                    elem.parentNode.removeChild(elem)
+                    elem.parentNode?.removeChild(elem)
                 }
-                this.producers.delete(producer.id)
+                this.producers.delete(producer?.id)
+
+            });
+
+            (producer as any).on('close', () => {
+                console.log('closing producer')
+                if (!audio) {
+                    ((elem.srcObject) as  MediaStream).getTracks().forEach(function (track: { stop: () => void; }) {
+                        track.stop()
+                    })
+                    elem.parentNode?.removeChild(elem)
+                }
+                this.producers.delete(producer?.id)
 
             })
 
-            this.producerLabel.set(type, producer.id)
+            this.producerLabel.set(type, producer?.id)
             console.log(`switch (${type})`)
             switch (type) {
                 case RoomClient.mediaType.audio:
@@ -609,17 +632,17 @@ export default class RoomClient {
         }
     }
 
-    async consume(producer_id, producer_socket_id?) {
+    async consume(producer_id: string, producer_socket_id?: string) {
         console.log(`consume ${producer_id}`)
         //let info = await roomInfo()
 
-        this.getConsumeStream(producer_id).then(function ({
+        this.getConsumeStream(producer_id).then( ({
             consumer,
             stream,
             kind
-        }) {
+        }) => {
 
-            this.consumers.set(consumer.id, consumer)
+            this.consumers.set(consumer?.id, consumer)
 
             let elem;
             if (kind === 'video') {
@@ -629,18 +652,18 @@ export default class RoomClient {
                 elem = document.createElement('video');
 
                 elem.srcObject = stream;
-                elem.id = consumer.id;
-                elem.playsinline = false;
+                elem.id = consumer?.id as string;
+                (elem as any).playsinline = false;
                 elem.autoplay = true;
                 elem.className = "vid";
                 elem.setAttribute('producer_id', producer_id);
 
-                if (document.getElementById(producer_socket_id)) {
-                    document.getElementById(producer_socket_id).appendChild(elem);
+                if (document.getElementById(producer_socket_id as string)) {
+                    document.getElementById(producer_socket_id as string)?.appendChild(elem);
                 } else {
                     let div = document.createElement('div');
                     div.className = 'person-video-item';
-                    div.id = producer_socket_id;
+                    div.id = producer_socket_id as string;
 
                     let personInfo = document.createElement('div');
                     personInfo.setAttribute('class', 'person-info');
@@ -648,7 +671,7 @@ export default class RoomClient {
                     personName.className = 'person-name';
                     let personStatus = document.createElement('span');
                     personStatus.className = 'person-status';
-                    personName.innerHTML = (window as any).personMap.get(producer_socket_id)+"：";
+                    personName.innerHTML = (window as any).personMap.get(producer_socket_id) + "：";
                     personStatus.innerHTML = '';
                     personInfo.appendChild(personName);
                     personInfo.appendChild(personStatus);
@@ -657,23 +680,28 @@ export default class RoomClient {
                     div.appendChild(elem);
                     this.remoteVideoEl.appendChild(div);
 
-                    div.setAttribute('onclick','videoMax(this)');
+                    div.setAttribute('onclick', 'videoMax(this)');
                 }
 
             } else {
                 elem = document.createElement('audio');
                 elem.srcObject = stream;
-                elem.id = consumer.id;
-                elem.playsinline = false;
+                elem.id = consumer?.id as string;
+                (elem as any).playsinline = false;
+                (elem as any).playsInline = false;
                 elem.autoplay = true;
-                if (document.getElementById(producer_socket_id)) {
-                    let personItem = document.getElementById(producer_socket_id);
-                    personItem.appendChild(elem);
-                    personItem.querySelector('.person-status').innerHTML= '发言中...';
+                if (document.getElementById(producer_socket_id as string)) {
+                    let personItem = document.getElementById(producer_socket_id as string);
+                    personItem?.appendChild(elem);
+                    const personStatusElement = personItem?.querySelector('.person-status')
+                    if(personStatusElement) {
+                        personStatusElement.innerHTML = '发言中...';
+                    }
+                    
                 } else {
                     let div = document.createElement('div');
                     div.className = 'person-video-item';
-                    div.id = producer_socket_id;
+                    div.id = producer_socket_id as string;
                     div.appendChild(elem);
 
                     let personInfo = document.createElement('div');
@@ -682,40 +710,40 @@ export default class RoomClient {
                     personName.className = 'person-name';
                     let personStatus = document.createElement('span');
                     personStatus.className = 'person-status';
-                    personName.innerHTML = (window as any).personMap.get(producer_socket_id)+"：";
+                    personName.innerHTML = (window as any).personMap.get(producer_socket_id) + "：";
                     personStatus.innerHTML = '发言中...';
                     personInfo.appendChild(personName);
                     personInfo.appendChild(personStatus);
                     div.appendChild(personInfo);
 
-                    div.setAttribute('onclick','videoMax(this)');
+                    div.setAttribute('onclick', 'videoMax(this)');
                     this.remoteVideoEl.appendChild(div);
                 }
 
             }
 
-            consumer.on('trackended', function () {
+            consumer?.on('trackended',   () => {
                 this.removeConsumer(consumer.id)
-            }.bind(this))
-            consumer.on('transportclose', function () {
+            })
+            consumer?.on('transportclose',  () => {
                 this.removeConsumer(consumer.id)
-            }.bind(this))
+            })
 
 
 
-        }.bind(this))
+        })
     }
 
-    async getConsumeStream(producerId) {
+    async getConsumeStream(producerId: any) {
         console.log(`getConsumeStream by producerId:${producerId}`)
         const {
             rtpCapabilities
-        } = this.device
+        } = this.device as Device
         console.log(`request consume`);
         // rtpCapabilities = 
         const data = await this.socket.request('consume', {
             rtpCapabilities,
-            consumerTransportId: this.consumerTransport.id, // might be
+            consumerTransportId: this.consumerTransport?.id, // might be
             producerId
         });
         // 从返回的结果中解构赋值
@@ -727,16 +755,16 @@ export default class RoomClient {
 
         let codecOptions = {};
         console.log('Create a Consumer to consume a remote Producer.');
-        const consumer = await this.consumerTransport.consume({
+        const consumer = await this.consumerTransport?.consume({
             id,
             producerId,
             kind,
             rtpParameters,
             codecOptions,
-        });
+        } as ConsumerOptions);
 
         const stream = new MediaStream();
-        stream.addTrack(consumer.track);
+        stream.addTrack(consumer?.track as MediaStreamTrack);
         return {
             consumer,
             stream,
@@ -744,7 +772,7 @@ export default class RoomClient {
         }
     }
 
-    closeProducer(type) {
+    closeProducer(type: string) {
         if (!this.producerLabel.has(type)) {
             console.log('there is no producer for this type ' + type)
             return
@@ -764,7 +792,11 @@ export default class RoomClient {
             elem.srcObject.getTracks().forEach(function (track) {
                 track.stop()
             })
-            elem.parentNode.removeChild(elem)
+            const parentNodeTmp = elem?.parentNode
+            if (elem && parentNodeTmp) {
+                parentNodeTmp.removeChild(elem)
+            }
+            
         }
 
         switch (type) {
@@ -784,7 +816,7 @@ export default class RoomClient {
 
     }
 
-    pauseProducer(type) {
+    pauseProducer(type: string) {
         if (!this.producerLabel.has(type)) {
             console.log('there is no producer for this type ' + type)
             return
@@ -794,7 +826,7 @@ export default class RoomClient {
 
     }
 
-    resumeProducer(type) {
+    resumeProducer(type: string) {
         if (!this.producerLabel.has(type)) {
             console.log('there is no producer for this type ' + type)
             return
@@ -804,12 +836,12 @@ export default class RoomClient {
 
     }
 
-    removeConsumer(consumer_id) {
+    removeConsumer(consumer_id: string) {
 
         let elem = document.getElementById(consumer_id);
-        if(elem == null) return;
+        if (elem == null) return;
         //@ts-ignore
-        if(elem.srcObject && elem.srcObject != null){
+        if (elem.srcObject && elem.srcObject != null) {
             //@ts-ignore
             elem.srcObject.getTracks().forEach(function (track) {
                 track.stop()
@@ -819,12 +851,18 @@ export default class RoomClient {
 
 
         let parent = elem.parentNode;
-        parent.removeChild(elem);
-        if(nodeName == 'AUDIO'){
-            parent.querySelector('.person-status').innerHTML = '';
+        parent?.removeChild(elem);
+        if (nodeName == 'AUDIO') {
+            const personStatusElement = parent?.querySelector('.person-status')
+            if (personStatusElement) {
+                personStatusElement.innerHTML = '';
+            }
         }
-        if(parent.querySelectorAll('audio').length == 0 && parent.querySelectorAll('video').length == 0){
-            parent.parentNode.removeChild(parent);
+        if (parent?.querySelectorAll('audio').length == 0 && parent.querySelectorAll('video').length == 0) {
+            const parentNodeTmp = parent.parentNode
+            if (parentNodeTmp) {
+                parentNodeTmp.removeChild(parent);
+            }
         }
         this.consumers.delete(consumer_id)
 
@@ -832,17 +870,17 @@ export default class RoomClient {
 
     exit(offline = false) {
 
-        let clean = function () {
+        let clean = () => {
             this._isOpen = false
-            this.consumerTransport.close()
-            this.producerTransport.close()
+            this.consumerTransport?.close()
+            this.producerTransport?.close()
             this.socket.off('disconnect')
             this.socket.off('newProducers')
             this.socket.off('consumerClosed')
-        }.bind(this)
+        }
 
         if (!offline) {
-            this.socket.request('exitRoom').then(e => console.log(e)).catch(e => console.warn(e)).finally(function () {
+            this.socket.request('exitRoom').then((e: any) => console.log(e)).catch((e: any) => console.warn(e)).finally(function () {
                 clean()
             }.bind(this))
         } else {
@@ -864,13 +902,13 @@ export default class RoomClient {
     //     return mediaType
     // }
 
-    event(evt) {
+    event(evt: any) {
         if (this.eventListeners.has(evt)) {
-            this.eventListeners.get(evt).forEach(callback => callback())
+            this.eventListeners.get(evt).forEach((callback: () => any) => callback())
         }
     }
 
-    on(evt, callback) {
+    on(evt: any, callback: any) {
         this.eventListeners.get(evt).push(callback)
     }
 
@@ -887,5 +925,5 @@ export default class RoomClient {
     readJsonFromFile(jsonFilePath: string) {
         return JSON.parse(fs.readFileSync(jsonFilePath).toString());
     }
-    
+
 }

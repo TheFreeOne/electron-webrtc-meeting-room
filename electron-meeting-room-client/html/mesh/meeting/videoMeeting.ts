@@ -31,6 +31,6 @@ export default class VideoMeeting {
             console.dir(error);
             (window as any).toastr.error('无法获取摄像头<br>请检查麦克风权限和摄像头！！！');
         }
-
+        throw new Error("获取流失败")
     }
 }

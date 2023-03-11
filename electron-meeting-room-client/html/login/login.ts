@@ -87,7 +87,7 @@ layui.use(['form'], () => {
 });
 
 
-function writeJsonToFile(params: any, fileAbsolutePath: string, callback?) {
+function writeJsonToFile(params: any, fileAbsolutePath: string) {
     console.log(params);
     
    //现将json文件读出来

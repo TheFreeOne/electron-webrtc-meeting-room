@@ -59,7 +59,10 @@ function createWindow() {
 
         // 注册调试快捷键
         globalShortcut.register('CommandOrControl+Alt+O', function () {
-            BrowserWindow.getFocusedWindow().webContents.openDevTools();
+            const focusedWindow = BrowserWindow.getFocusedWindow()
+            if (focusedWindow) {
+                focusedWindow.webContents.openDevTools();
+            }
         });
         log.debug('创建了一个窗口');
         try {

@@ -228,7 +228,7 @@ layui.use(['form'], () => {
  * @param fileAbsolutePath 目标文件的路径
  * @param callback 回调函数，未使用
  */
-function writeJsonToFile(params: any, fileAbsolutePath: string, callback?) {
+function writeJsonToFile(params: any, fileAbsolutePath: string) {
     console.log(params);
 
     //现将json文件读出来

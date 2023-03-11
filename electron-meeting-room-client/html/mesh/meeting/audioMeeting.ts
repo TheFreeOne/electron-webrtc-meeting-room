@@ -23,9 +23,9 @@ export default class AudioMeeting {
         audioStream = await navigator.mediaDevices.getUserMedia(constraints);
         let emptyStream = await this.getEmptyStream();
         // 链家两个视频轨道
-        audioStream.addTrack(emptyStream);
-        audioStream.addTrack(emptyStream.clone());
-        console.log(emptyStream.getSettings());
+        audioStream.addTrack(emptyStream as MediaStreamTrack );
+        audioStream.addTrack((emptyStream as MediaStreamTrack ).clone());
+        console.log((emptyStream as MediaStreamTrack ).getSettings());
 
         return audioStream;
         // 可选的方式获取麦克风

@@ -18,11 +18,11 @@ toastr.options = {
     "progressBar": true,
     "positionClass": "toast-top-right",
     "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": "300",
-    "hideDuration": "1000",
-    "timeOut": "5000",
-    "extendedTimeOut": "1000",
+    "onclick": undefined,
+    "showDuration": 300,
+    "hideDuration": 1000,
+    "timeOut": 5000,
+    "extendedTimeOut": 1000,
     "showEasing": "swing",
     "hideEasing": "linear",
     "showMethod": "fadeIn",
@@ -43,7 +43,7 @@ var videoMeeting: VideoMeeting;
 var screenMeeting: ScreenMeeting;
 var boardMeeting: BoardMeeting;
 var streamToWebRTC: StreamToWebRTC;
-var disabledVideoTrack: MediaStreamTrack = null;
+var disabledVideoTrack: MediaStreamTrack ;
 var config = require('../../../config.json');
 (window as any).config = config;
 var audioStream: MediaStream;
@@ -83,7 +83,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             disabledVideoTrack = audioStream.getVideoTracks()[0].clone();
         } catch (error) {
             toastr.info('无法获取麦克风，切换为系统声音');
-            audioStream = await audioMeeting.getSystemStream();
+            audioStream = await audioMeeting.getSystemStream() as MediaStream ;
             (document.getElementById('voice-select') as any).value = 'default';
             layui.form.render();
         }
@@ -109,7 +109,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
         for (let rtcPeerConnection of rtcPcMap.values()) {
             if (rtcPeerConnection) {
                 let sender = rtcPeerConnection.getSenders().find(s => {
-                    return s.track.kind == 'audio';
+                    return s?.track?.kind == 'audio';
                 });
                 if (sender) {
                     sender.replaceTrack(audioStream.getAudioTracks()[0]);
@@ -128,7 +128,7 @@ ipcRenderer.once(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _r
             for (let rtcPeerConnection of rtcPcMap.values()) {
                 if (rtcPeerConnection) {
                     let sender = rtcPeerConnection.getSenders().find(s => {
-                        return s.track.kind == disabledVideoTrack.kind;
+                        return s?.track?.kind == disabledVideoTrack.kind;
                     });
                     if (sender) {
                         sender.replaceTrack(disabledVideoTrack.clone());

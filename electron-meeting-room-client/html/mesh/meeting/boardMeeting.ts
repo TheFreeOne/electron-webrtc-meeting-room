@@ -10,7 +10,7 @@ export default class BoardMeeting {
 
         let sources = await desktopCapturer.getSources({ types: ['window'] });
 
-        let source = sources.find(s =>{
+        let source = sources.find((s: { name: any; }) =>{
             return s.name == uuid;
         });
         let boardStream = await navigator.mediaDevices.getUserMedia({

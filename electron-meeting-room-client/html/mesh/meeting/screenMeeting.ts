@@ -28,7 +28,7 @@ export default class ScreenMeeting {
         var supported = navigator.mediaDevices.getSupportedConstraints();
         (window as any).supported = supported;
         // 这个方法不会不做最小化的软件窗口，即使任务栏有图标
-        desktopCapturer.getSources({ types: ['window', 'screen'], fetchWindowIcons: true }).then(async sources => {
+        desktopCapturer.getSources({ types: ['window', 'screen'], fetchWindowIcons: true }).then(async (sources: any) => {
             console.log(sources);
 
 
@@ -168,7 +168,7 @@ export default class ScreenMeeting {
                         leftVideo.volume = 0.0;
                         // @ts-ignore
                        try {
-                            leftVideo.onloadedmetadata = (e) => leftVideo.play();
+                            leftVideo.onloadedmetadata = (e: any) => leftVideo.play();
                        } catch (error) {
                            console.error(error)
                        }

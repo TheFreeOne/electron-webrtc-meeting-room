@@ -13,17 +13,17 @@ toastr.options = {
     "progressBar": true,
     "positionClass": "toast-top-right",
     "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": "300",
-    "hideDuration": "1000",
-    "timeOut": "5000",
-    "extendedTimeOut": "1000",
+    "onclick": undefined,
+    "showDuration": 300,
+    "hideDuration": 1000,
+    "timeOut": 5000,
+    "extendedTimeOut": 1000,
     "showEasing": "swing",
     "hideEasing": "linear",
     "showMethod": "fadeIn",
     "hideMethod": "fadeOut"
 };
-var roomNumber ;
+var roomNumber :any;
 (window as any).toastr = toastr;
 (window as any).RoomClient = RoomClient;
 (window as any).$ = $;
@@ -47,9 +47,9 @@ ipcRenderer.on(ChannelConstant.CREATE_MEETING_WINDOW_SUCCESS, async (event, _roo
 
 let producer = null;
 // socketIo 同步设置
-socket.request = function request(type, data = {}) {
+socket.request = function request(type: any, data = {}) {
   return new Promise((resolve, reject) => {
-    socket.emit(type, data, (data) => {
+    socket.emit(type, data, (data: any) => {
       if (data.error) {
         reject(data.error)
       } else {
@@ -59,7 +59,7 @@ socket.request = function request(type, data = {}) {
   })
 }
 
-let roomClient = null;
+let roomClient: RoomClient | null = null;
 
 /**
  * 加入房间
@@ -67,7 +67,7 @@ let roomClient = null;
  * @param roomId 房间号
  * @param password 房间的密码
  */
-function joinRoom(name, roomId, password) {
+function joinRoom(name: any, roomId: any, password: any) {
   if (roomClient && roomClient.isOpen()) {
     console.log('already connected to a room')
   } else {
@@ -108,7 +108,7 @@ function roomOpen() {
  * 隐藏元素
  * @param elem
  */
-function hide(elem) {
+function hide(elem:any) {
   $(elem).hide();
 }
 
@@ -116,20 +116,20 @@ function hide(elem) {
  * 显示元素
  * @param elem 
  */
-function reveal(elem) {
+function reveal(elem:any) {
   $(elem).show();
 }
 
 
 function addListeners() {
-  roomClient.on(RoomClient.EVENTS.startScreen, () => {
+  roomClient?.on(RoomClient.EVENTS.startScreen, () => {
     //@ts-ignore
     hide(startScreenButton)
     //@ts-ignore
     reveal(stopScreenButton)
   })
 
-  roomClient.on(RoomClient.EVENTS.stopScreen, () => {
+  roomClient?.on(RoomClient.EVENTS.stopScreen, () => {
     //@ts-ignore
     hide(stopScreenButton)
     //@ts-ignore
@@ -137,33 +137,33 @@ function addListeners() {
 
   })
 
-  roomClient.on(RoomClient.EVENTS.stopAudio, () => {
+  roomClient?.on(RoomClient.EVENTS.stopAudio, () => {
     //@ts-ignore
     hide(stopAudioButton)
     //@ts-ignore
     reveal(startAudioButton)
 
   })
-  roomClient.on(RoomClient.EVENTS.startAudio, () => {
+  roomClient?.on(RoomClient.EVENTS.startAudio, () => {
     //@ts-ignore
     hide(startAudioButton)
     //@ts-ignore
     reveal(stopAudioButton)
   })
 
-  roomClient.on(RoomClient.EVENTS.startVideo, () => {
+  roomClient?.on(RoomClient.EVENTS.startVideo, () => {
     //@ts-ignore
     hide(startVideoButton)
     //@ts-ignore
     reveal(stopVideoButton)
   })
-  roomClient.on(RoomClient.EVENTS.stopVideo, () => {
+  roomClient?.on(RoomClient.EVENTS.stopVideo, () => {
     //@ts-ignore
     hide(stopVideoButton)
     //@ts-ignore
     reveal(startVideoButton)
   })
-  roomClient.on(RoomClient.EVENTS.exitRoom, () => {
+  roomClient?.on(RoomClient.EVENTS.exitRoom, () => {
     //@ts-ignore
     hide(control)
     //@ts-ignore
@@ -202,10 +202,14 @@ navigator.mediaDevices.enumerateDevices().then(devices => {
   })
 });
 // 复制文本
-document.getElementById('copyRoomNumberButton').onclick = function(){
-  clipboard.writeText(roomNumber, 'clipboard');
-  layui.layer.msg('复制房间号成功');
+const copyRoomNumberButton = document.getElementById('copyRoomNumberButton')
+if(copyRoomNumberButton) {
+  copyRoomNumberButton.onclick = function(){
+    clipboard.writeText(roomNumber as string, 'clipboard');
+    layui.layer.msg('复制房间号成功');
+  }
 }
+
 /**
  *
  * @param audioStream 绘制音频声波
@@ -323,7 +327,7 @@ layui.use(['form'],()=>{
 })
 
 
-function videoMax(e){
+function videoMax(e:any){
   console.log(e);
  
     $(e).toggleClass('video-max')

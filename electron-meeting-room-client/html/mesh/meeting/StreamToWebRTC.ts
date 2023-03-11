@@ -5,7 +5,7 @@ export default class StreamToWebRTC {
 
 
 
-    public run(_localStream) {
+    public run(_localStream: MediaStream) {
 
 
 
@@ -21,7 +21,7 @@ export default class StreamToWebRTC {
 
     }
 
-    constructor(number) {
+    constructor(number: string) {
 
         // 此处使用(window as any)是为了避免无法调用相关变量
 
@@ -68,7 +68,7 @@ export default class StreamToWebRTC {
         (window as any).socket = _socket;
 
         // 收到created，说明房间已经创建好了
-        (window as any).socket.on('created', data => {
+        (window as any).socket.on('created', (data: { socketId: any; personInRoom: any; room: any; }) => {
             console.log('created');
             console.log(data);
             (window as any).socketId = data.socketId;
@@ -78,7 +78,7 @@ export default class StreamToWebRTC {
 
         });
         // 收到joined，说明成功加入一个房间
-        (window as any).socket.on('joined', data => {
+        (window as any).socket.on('joined', (data: { socketId: any; personInRoom: any; room: any; }) => {
             console.log('joined');
             console.log(data);
             (window as any).socketId = data.socketId;
@@ -88,7 +88,7 @@ export default class StreamToWebRTC {
             (window as any).socket.emit('ready', {room:(window as any).roomNumber,fromNickName: (window as any).nickname});
         });
         // 房间已经满
-        (window as any).socket.on('full', room => {
+        (window as any).socket.on('full', (room: any) => {
             (window as any).toastr.info('加入失败，房间已满');
             // remote.dialog.showMessageBoxSync({ type: 'info', message: '房间已满', title: '提示' });
             alert('房间已满')
@@ -96,7 +96,7 @@ export default class StreamToWebRTC {
         });
 
         // 房间创建者/发起方/主人  收到已经准备好的消息，
-        (window as any).socket.on('ready', (data) => {
+        (window as any).socket.on('ready', (data:any) => {
             console.log('this');
             console.log(this);
             console.log(`对方准备完成`);
@@ -106,7 +106,7 @@ export default class StreamToWebRTC {
         });
 
         // 收到邀请的一方收到offer
-        (window as any).socket.on('offer',  (event) => {
+        (window as any).socket.on('offer',  (event:any) => {
             console.log(` socket.on('offer'`);
 
             this.newerCreateRTCPeerConnection(  event.fromSocketId,event.fromNickName, event);
@@ -115,7 +115,7 @@ export default class StreamToWebRTC {
 
 
 
-        (window as any).socket.on('answer', (event) => {
+        (window as any).socket.on('answer', (event:any) => {
 
             console.log(`socket.on('answer'`);
             console.log(event);
@@ -123,7 +123,7 @@ export default class StreamToWebRTC {
             try {
                 // console.log('answered done');
                 let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
-                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
+                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId) as RTCPeerConnection;
                 rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
             } catch (error) {
                 console.log(`rtcPcMap`,(window as any).rtcPcMap);
@@ -132,12 +132,12 @@ export default class StreamToWebRTC {
             }
         });
 
-        (window as any).socket.on('candidate', event => {
+        (window as any).socket.on('candidate', (event:any) => {
 
 
             try {
                 let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
-                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId);
+                let rtcPeerConnection: RTCPeerConnection = rtcPcMap.get(event.fromSocketId) as RTCPeerConnection;
                 // console.log(`socket.on('candidate'`);
                 // console.log('am her for Ice', event);
                 const candidate = new RTCIceCandidate({
@@ -154,14 +154,14 @@ export default class StreamToWebRTC {
             }
         });
 
-        (window as any).socket.on('out of room', (event) => {
+        (window as any).socket.on('out of room', (event:any) => {
             let fromSocketId = event.fromSocketId;
             try {
 
                 let rtcPcMap = (window as any).rtcPcMap as Map<string, RTCPeerConnection>;
                 let rtcPeerConnection = rtcPcMap.get(fromSocketId);
-                rtcPeerConnection.close();
-                rtcPeerConnection = null;
+                rtcPeerConnection?.close();
+                rtcPeerConnection = undefined;
                 rtcPcMap.delete(fromSocketId);
             } catch (error) {
                 console.error(error);
@@ -222,7 +222,7 @@ export default class StreamToWebRTC {
         // @ts-ignore
         let rtcPeerConnection: RTCPeerConnection = new RTCPeerConnection((window as any).iceServers, { 'optional': [{ 'DtlsSrtpKeyAgreement': true }, { 'RtpDataChannels': true }] });
         rtcPcMap.set(fromSocketId, rtcPeerConnection);
-        document.getElementById('main-video-content').appendChild(personVideoItem);
+        document.getElementById('main-video-content')?.appendChild(personVideoItem);
         // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/onicecandidate
         // 只要本地代理ICE 需要通过信令服务器传递信息给其他对等端时就会触发
         rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
@@ -434,7 +434,7 @@ export default class StreamToWebRTC {
         // @ts-ignore
         let rtcPeerConnection = new RTCPeerConnection((window as any).iceServers, { optional: [{ RtpDataChannels: true }] });
         rtcPcMap.set(fromSocketId, rtcPeerConnection);
-        document.getElementById('main-video-content').appendChild(personVideoItem);
+        document.getElementById('main-video-content')?.appendChild(personVideoItem);
         rtcPeerConnection.onicecandidate = function onIceCandidate(event) {
             if (event.candidate) {
                 // console.log('sending ice candidate', event.candidate);

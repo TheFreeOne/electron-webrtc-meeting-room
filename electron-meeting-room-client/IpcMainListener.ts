@@ -4,13 +4,13 @@ import * as fs from 'fs';
 import * as path from 'path';
 export default class IpcMainListener{
 
-    private _token;
+    private _token?:string|null;
 
-    private _nickname;
+    private _nickname?:string|null;
 
     private _mainWindow:BrowserWindow;
 
-    private _meetingWindow:BrowserWindow ;
+    private _meetingWindow?:BrowserWindow ;
 
 
 
@@ -139,16 +139,19 @@ export default class IpcMainListener{
             boardWindow.on('close',()=>{
                 this._meetingWindow &&  this._meetingWindow.webContents.send(ChannelConstant.BOARDWINDOW_CLOSED);
             });
+            if (this._meetingWindow) {
+                this._meetingWindow.webContents.send(ChannelConstant.CREATE_BOARD_WINODW)
+                this._meetingWindow.on('close',()=>{
+                    // fix: https://gitee.com/TheFreeOne/electron-webrtc-meeting-room/issues/I4OTP4
+                    // mesh模式会议窗口关闭的时候，如果白板窗口没有被销毁，则同时销毁白板窗口
+                    if(!boardWindow.isDestroyed()){
+                        boardWindow.close();
+                    }
+                });
+            }
+            
 
-            this._meetingWindow.webContents.send(ChannelConstant.CREATE_BOARD_WINODW)
-
-            this._meetingWindow.on('close',()=>{
-                // fix: https://gitee.com/TheFreeOne/electron-webrtc-meeting-room/issues/I4OTP4
-                // mesh模式会议窗口关闭的时候，如果白板窗口没有被销毁，则同时销毁白板窗口
-                if(!boardWindow.isDestroyed()){
-                    boardWindow.close();
-                }
-            });
+            
 
         });
         /**
