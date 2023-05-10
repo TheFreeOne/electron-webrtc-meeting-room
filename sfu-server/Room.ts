@@ -5,6 +5,7 @@ import { Worker } from 'mediasoup/node/lib/Worker';
 import { Router } from 'mediasoup/node/lib/Router';
 import { DtlsParameters, DtlsState, WebRtcTransport } from 'mediasoup/node/lib/WebRtcTransport';
 import { MediaKind, RtpCapabilities, RtpParameters } from 'mediasoup/node/lib/RtpParameters';
+import { AudioLevelObserver, AudioLevelObserverVolume } from 'mediasoup/node/lib/AudioLevelObserver';
 
 
 export default class Room {
@@ -20,13 +21,43 @@ export default class Room {
 
     private router?: Router;
 
+    private audioLevelObserver?: AudioLevelObserver;
+
     constructor(room_id: string, worker: Worker, io: SocketIO.Server) {
         this.id = room_id
         const mediaCodecs = config.mediasoup.router.mediaCodecs
         worker.createRouter({
             mediaCodecs
-        }).then((router) => {
+        }).then(async (router) => {
             this.router = router
+            this.audioLevelObserver = await router.createAudioLevelObserver(
+                {
+                  maxEntries : 1,
+                  threshold  : -70,
+                  interval   : 1000
+                });
+                
+            
+
+                this.audioLevelObserver.on('volumes', (volumes: AudioLevelObserverVolume[]) => {
+                    const { producer, volume } = volumes[0];
+                  console.info('audio-level volumes event');
+                  console.log('producer = ', producer.id)
+                  console.log('volume = ', volume)
+                });
+                this.audioLevelObserver.on('silence', () => {
+                    console.info('audio-level silence event');
+                   
+                     
+                });
+                this.audioLevelObserver.on('@close' , () => {
+                    console.info('audio-level @close event');
+                })
+
+                this.audioLevelObserver.on('routerclose' , () => {
+                    console.info('audio-level routerclose event');
+                })
+                
         })
 
         this.peers = new Map()
