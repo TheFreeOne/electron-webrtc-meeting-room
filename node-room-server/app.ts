@@ -30,6 +30,10 @@ app.get('/createValidRoomId',(req,resp)=>{
     resp.send({ roomId: createValidRoomId() });
 });
 
+app.post('/createValidRoomId',(req,resp)=>{
+    resp.send({ roomId: createValidRoomId() });
+});
+
 app.post('/isRoomExisted',(req,resp)=>{
     try {
         //   console.log(req.query)
