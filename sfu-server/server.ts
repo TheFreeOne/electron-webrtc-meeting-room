@@ -745,9 +745,11 @@ function randomNumber(time = 9): string {
     }
     return result;
 }
+
 /**
- *
- * @returns 生成房间号
+ * 生成房间号
+ * @param password 密码
+ * @returns 房间号
  */
 function createValidRoomId(password: string): string {
 
