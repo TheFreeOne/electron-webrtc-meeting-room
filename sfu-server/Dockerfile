@@ -1,6 +1,6 @@
-# only test
+# only test , do not use 
 
-FROM node:14-buster
+FROM node:16-buster
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ RUN wget http://bootstrap.pypa.io/get-pip.py
 
 RUN /usr/bin/python3 get-pip.py
 
-# RUN npm i -g typescript
+RUN npm i -g typescript
 
 RUN npm install
 

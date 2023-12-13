@@ -1,4 +1,10 @@
-#### linux上编译,本人使用kali(python3)
+### sfu-server
+
+忘记从哪里复制来的代码了，乱改了一下，基于`mediasoup`的 webrtc sfu服务器
+
+### 使用mediasoup前请阅读 https://mediasoup.org/documentation/v3/mediasoup/installation/
+
+#### 自动编译不过的时候参考下面的放肆 ~~linux上编译,本人使用kali(python3)~~ 最新的测试过
 
 - 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题
 
@@ -8,7 +14,7 @@
 
 - 由于网络问题，建议提前下载相关文件，具体文件请浏览`~/…/node_modules/mediasoup/worker/subprojects`下的`*.warp`文件，下载后放到`packagecache`文件下, 没有文件夹就在subprojects下新建一个
 
-> 或从 链接：https://pan.baidu.com/s/1xdEEyOQTY4Sxyernsu0XDw  提取码：gd7x  下载相关文件
+ ~~或从 链接：https://pan.baidu.com/s/1xdEEyOQTY4Sxyernsu0XDw  提取码：gd7x  下载相关文件~~
 
 - 之后运行
   
@@ -17,45 +23,9 @@
   $ node npm-scripts.js worker:build
   ```
 
-**以下只作为window上mediasoup3.7.0的编译记录，不推荐使用**
+#### window上使用mediasoup请到mediasoup的官网下载mediasoup-worker-window并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
 
-#### mediasoup 3.7.0 windows 编译
-
- [windows平台安装](https://mediasoup.discourse.group/t/mediasoup-unable-to-install-in-windows/551/4)
-
-    npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts
-    cd node_modules/mediasoup
-    python ./worker/scripts/configure.py --format=msvs -R mediasoup-worker
-    cd worker
-    msbuild
-
-运行msbuild
-
-或
-
-打开 vs2019 打开'mediasoup-worker.sln' 编译 ：选择 Release|Win32 
-
-菜单栏 - 生成 - 生成解决方案 
-
-菜单栏 - 生成 - 批生成 Relase
-
-##### 如果提示MSVSVersion.py keyError:${MSBuild.exe的路径}
-
-那么找到报错的地方versions[str(name)] -> versions[str('2017')]
-
-##### 无法找到 Visual Studio 2010 的生成工具(平台工具集 =“v100”)
-
-使用visual studio  2017/2019 打开项目，点击菜单栏-项目-重定目标解决方案，然后会提示修改版本，然后只修改版本
-
-##### Release|x64不是..
-
-MSBuild mediasoup-worker.sln /p:Configuration=Release /p:plat(忘记了)
-
-#### [centos 编译报gcc版本过低]
-
-    可参考https://www.cnblogs.com/jixiaohua/p/11732225.html
-
-#### 客户端与服务器websocket交互流程(省略返回)
+- 客户端与服务器websocket交互流程(省略返回)
 
 ```sequence
 client ->> server : createRoom 创建房间
