@@ -7,7 +7,7 @@ const config = require("./config");
 import * as path from "path";
 import Room from "./Room";
 import Peer from "./Peer";
-import * as SocketIO from "socket.io";
+import * as SocketIO from "socket.io/dist/index";
 import { Worker } from "mediasoup/node/lib/Worker";
 const bodyParser = require("body-parser");
 (async () => {
@@ -171,7 +171,7 @@ async function createWorkers() {
         //     const usage = await worker.getResourceUsage();
         //     console.info('mediasoup Worker resource usage [pid:%d]: %o', worker.pid, usage);
         // }, 120000);
-      } catch (error) { }
+      } catch (error) {}
     } catch (error) {
       console.log("捕获到异常");
 
@@ -194,110 +194,123 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
   /**
    * 监听 创建房间
    */
-  socket.on("createRoom", async ({ room_id, password }, callback) => {
-    console.dir("---try create room ---");
-    try {
-      // 保证在传输了房间号之后再处理
-      if (room_id) {
-        if (roomList.has(room_id)) {
-          if (callback) {
-            callback("already exists");
+  socket.on(
+    "createRoom",
+    async ({ room_id, password }: any, callback: (arg0: string) => void) => {
+      console.dir("---try create room ---");
+      try {
+        // 保证在传输了房间号之后再处理
+        if (room_id) {
+          if (roomList.has(room_id)) {
+            if (callback) {
+              callback("already exists");
+            } else {
+              (socket as SocketIO.Socket).emit(
+                "createRoom callback",
+                "already exists"
+              );
+            }
           } else {
-            socket.emit("createRoom callback", "already exists");
+            let passwordInMap = room2Password.get(room_id);
+            if (
+              passwordInMap === undefined ||
+              passwordInMap === null ||
+              passwordInMap === "" ||
+              passwordInMap === password
+            ) {
+              // 如果没有密码就直接创建,又或者密码相同
+              console.log("---created room--- ", room_id);
+              let worker = await getMediasoupWorker();
+              let room = new Room(room_id, worker, io);
+              roomList.set(room_id, room);
+              if (callback) {
+                callback(room_id);
+              } else {
+                socket.emit("createRoom callback", room_id);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("创建房间异常", error);
+      }
+    }
+  );
+  /**
+   *  加入房间
+   */
+  socket.on(
+    "join",
+    (
+      { room_id, name, password }: any,
+      cb: (arg0: { id: string; peers: string } | undefined | any) => void
+    ) => {
+      console.log(cb);
+
+      try {
+        console.log('---user joined--- "' + room_id + '": ' + name);
+        if (!roomList.has(room_id)) {
+          if (cb) {
+            return cb({
+              error: "room does not exist",
+            });
+          } else {
+            socket.emit("join callback", {
+              error: "room does not exist",
+            });
           }
         } else {
           let passwordInMap = room2Password.get(room_id);
           if (
-            passwordInMap === undefined ||
+            typeof passwordInMap === "undefined" ||
             passwordInMap === null ||
             passwordInMap === "" ||
             passwordInMap === password
           ) {
-            // 如果没有密码就直接创建,又或者密码相同
-            console.log("---created room--- ", room_id);
-            let worker = await getMediasoupWorker();
-            let room = new Room(room_id, worker, io);
-            roomList.set(room_id, room);
-            if (callback) {
-              callback(room_id);
+            // 获取进入房间之前的人
+            let peers = roomList.get(room_id)?.getPeers();
+            let peerInfos = new Array();
+            if (peers) {
+              for (let peerid of Array.from(peers.keys())) {
+                peerInfos.push({
+                  socketid: peerid,
+                  name: peers.get(peerid)?.name,
+                });
+              }
+            }
+
+            roomList.get(room_id)?.addPeer(new Peer(socket.id, name));
+            socket.room_id = room_id;
+            // 广播
+            roomList.get(room_id)?.broadCast(socket.id, "joined", {
+              room_id: room_id,
+              name: name,
+              socketid: socket.id,
+            });
+            let jsonObject = roomList.get(room_id)?.toJson();
+            (jsonObject as any).socketid = socket.id;
+            if (cb) {
+              cb(jsonObject);
             } else {
-              socket.emit("createRoom callback", room_id);
+              socket.emit("join callback", jsonObject);
             }
+            setTimeout(() => {
+              socket.emit("othersInRoom", peerInfos);
+            }, 1);
           }
         }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error("创建房间异常", error);
     }
-  });
-  /**
-   *  加入房间
-   */
-  socket.on("join", ({ room_id, name, password }, cb) => {
-    console.log(cb);
-
-    try {
-      console.log('---user joined--- "' + room_id + '": ' + name);
-      if (!roomList.has(room_id)) {
-        if (cb) {
-          return cb({
-            error: "room does not exist",
-          });
-        } else {
-          socket.emit("join callback", {
-            error: "room does not exist",
-          });
-        }
-      } else {
-        let passwordInMap = room2Password.get(room_id);
-        if (
-          typeof passwordInMap === "undefined" ||
-          passwordInMap === null ||
-          passwordInMap === "" ||
-          passwordInMap === password
-        ) {
-          // 获取进入房间之前的人
-          let peers = roomList.get(room_id)?.getPeers();
-          let peerInfos = new Array();
-          if (peers) {
-            for (let peerid of Array.from(peers.keys())) {
-              peerInfos.push({
-                socketid: peerid,
-                name: peers.get(peerid)?.name,
-              });
-            }
-          }
-
-          roomList.get(room_id)?.addPeer(new Peer(socket.id, name));
-          socket.room_id = room_id;
-          // 广播
-          roomList.get(room_id)?.broadCast(socket.id, "joined", {
-            room_id: room_id,
-            name: name,
-            socketid: socket.id,
-          });
-          let jsonObject = roomList.get(room_id)?.toJson();
-          (jsonObject as any).socketid = socket.id;
-          if (cb) {
-            cb(jsonObject);
-          } else {
-            socket.emit("join callback", jsonObject);
-          }
-          setTimeout(() => {
-            socket.emit("othersInRoom", peerInfos);
-          }, 1);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  );
   /**
    * 监听消息  获取生产者
    */
   socket.on("getProducers", () => {
     console.log(
-      `---get producers--- name:${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+      `---get producers--- name:${
+        roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
       }`
     );
     // send all the current producer to newly joined member
@@ -314,125 +327,180 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
   /**
    * 获取路由能力，编码器和解码器的相关信息
    */
-  socket.on("getRouterRtpCapabilities", (_, callback) => {
-    console.log(
-      `---get RouterRtpCapabilities--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
-      }`
-    );
-    try {
-      if (callback) {
-        callback(roomList.get(socket.room_id)?.getRtpCapabilities());
-      } else {
-        socket.emit(
-          "getRouterRtpCapabilities callback",
-          roomList.get(socket.room_id)?.getRtpCapabilities()
-        );
-      }
-    } catch (e: any) {
-      callback &&
-        callback({
-          error: e.message,
-        });
-    }
-  });
-
-  socket.on("createWebRtcTransport", async (_, callback) => {
-    console.log(
-      `---create webrtc transport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
-      }`
-    );
-    try {
-      const result = await roomList
-        .get(socket.room_id)
-        ?.createWebRtcTransport(socket.id);
-      if (result) {
-        const { params } = result;
-
+  socket.on(
+    "getRouterRtpCapabilities",
+    (
+      _: any,
+      callback: (
+        arg0: mediasoup.types.RtpCapabilities | undefined | { error: string }
+      ) => void
+    ) => {
+      console.log(
+        `---get RouterRtpCapabilities--- name: ${
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        }`
+      );
+      try {
         if (callback) {
-          callback(params);
+          callback(roomList.get(socket.room_id)?.getRtpCapabilities());
         } else {
-          socket.emit("createWebRtcTransport callback", params);
+          socket.emit(
+            "getRouterRtpCapabilities callback",
+            roomList.get(socket.room_id)?.getRtpCapabilities()
+          );
         }
+      } catch (e: any) {
+        callback &&
+          callback({
+            error: e.message,
+          });
       }
-    } catch (err: any) {
-      console.error(err);
-      callback &&
-        callback({
-          error: err.message,
-        });
     }
-  });
+  );
+
+  socket.on(
+    "createWebRtcTransport",
+    async (
+      _: any,
+      callback: (arg0: {
+        id?: string;
+        iceParameters?: mediasoup.types.IceParameters;
+        iceCandidates?: mediasoup.types.IceCandidate[];
+        dtlsParameters?: mediasoup.types.DtlsParameters;
+        sctpParameters?: mediasoup.types.SctpParameters | undefined;
+        error?: any;
+      }) => void
+    ) => {
+      console.log(
+        `---create webrtc transport--- name: ${
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        }`
+      );
+      try {
+        const result = await roomList
+          .get(socket.room_id)
+          ?.createWebRtcTransport(socket.id);
+        if (result) {
+          const { params } = result;
+
+          if (callback) {
+            callback(params);
+          } else {
+            socket.emit("createWebRtcTransport callback", params);
+          }
+        }
+      } catch (err: any) {
+        console.error(err);
+        callback &&
+          callback({
+            error: err.message,
+          });
+      }
+    }
+  );
   /**
    * 异步的写法
    * 一般情况下只要createWebRtcTransport就可以了
    * @deprecated
    */
-  socket.on("createSendTransport", async (_, callback) => {
-    console.log(
-      `---createSendTransport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
-      }`
-    );
-    try {
-      const result = await roomList
-        .get(socket.room_id)
-        ?.createWebRtcTransport(socket.id);
-      if (result) {
-        const params = result.params;
-        if (callback) {
-          callback(params);
-        } else {
-          socket.emit("createSendTransport callback", params);
+  socket.on(
+    "createSendTransport",
+    async (
+      _: any,
+      callback: (arg0: {
+        id?: string;
+        iceParameters?: mediasoup.types.IceParameters;
+        iceCandidates?: mediasoup.types.IceCandidate[];
+        dtlsParameters?: mediasoup.types.DtlsParameters;
+        sctpParameters?: mediasoup.types.SctpParameters | undefined;
+        error?: any;
+      }) => void
+    ) => {
+      console.log(
+        `---createSendTransport--- name: ${
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        }`
+      );
+      try {
+        const result = await roomList
+          .get(socket.room_id)
+          ?.createWebRtcTransport(socket.id);
+        if (result) {
+          const params = result.params;
+          if (callback) {
+            callback(params);
+          } else {
+            socket.emit("createSendTransport callback", params);
+          }
         }
+      } catch (err: any) {
+        console.error(err);
+        callback &&
+          callback({
+            error: err.message,
+          });
       }
-    } catch (err: any) {
-      console.error(err);
-      callback &&
-        callback({
-          error: err.message,
-        });
     }
-  });
+  );
 
   /**
    * 异步的写法
    * 一般情况下只要createWebRtcTransport就可以了
    * @deprecated
    */
-  socket.on("createRecvTransport", async (_, callback) => {
-    console.log(
-      `---createRecvTransport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
-      }`
-    );
-    try {
-      const result = await roomList
-        .get(socket.room_id)
-        ?.createWebRtcTransport(socket.id);
-      if (result) {
-        const { params } = result;
-        if (callback) {
-          callback(params);
-        } else {
-          socket.emit("createRecvTransport callback", params);
+  socket.on(
+    "createRecvTransport",
+    async (
+      _: any,
+      callback: (arg0: {
+        id?: string;
+        iceParameters?: mediasoup.types.IceParameters;
+        iceCandidates?: mediasoup.types.IceCandidate[];
+        dtlsParameters?: mediasoup.types.DtlsParameters;
+        sctpParameters?: mediasoup.types.SctpParameters | undefined;
+        error?: any;
+      }) => void
+    ) => {
+      console.log(
+        `---createRecvTransport--- name: ${
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        }`
+      );
+      try {
+        const result = await roomList
+          .get(socket.room_id)
+          ?.createWebRtcTransport(socket.id);
+        if (result) {
+          const { params } = result;
+          if (callback) {
+            callback(params);
+          } else {
+            socket.emit("createRecvTransport callback", params);
+          }
         }
+      } catch (err: any) {
+        console.error(err);
+        callback &&
+          callback({
+            error: err?.message || "",
+          });
       }
-    } catch (err: any) {
-      console.error(err);
-      callback &&
-        callback({
-          error: err?.message || "",
-        });
     }
-  });
+  );
 
   /**
    * 监听消息  连接传输通道
    */
   socket.on(
     "connectTransport",
-    async ({ transport_id, dtlsParameters }, callback) => {
+    async (
+      { transport_id, dtlsParameters }: any,
+      callback: (arg0: string) => any
+    ) => {
       try {
         console.log(
-          `---connect transport--- name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+          `---connect transport--- name: ${
+            roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
           }`
         );
         console.log(`---connect transport--- transport_id: ${transport_id}`);
@@ -457,7 +525,10 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
    */
   socket.on(
     "produce",
-    async ({ kind, rtpParameters, producerTransportId }, callback) => {
+    async (
+      { kind, rtpParameters, producerTransportId }: any,
+      callback: (arg0: { error?: string; producer_id?: unknown }) => void
+    ) => {
       console.log(`---produce --- kind = ${kind}`);
       console.log(
         `---produce --- rtpParameters = ${JSON.stringify(rtpParameters)}`
@@ -474,7 +545,8 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
         .get(socket.room_id)
         ?.produce(socket.id, producerTransportId, rtpParameters, kind);
       console.log(
-        `---produce--- type: ${kind} name: ${roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        `---produce--- type: ${kind} name: ${
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
         } id: ${producer_id}`
       );
 
@@ -494,7 +566,21 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
    */
   socket.on(
     "consume",
-    async ({ consumerTransportId, producerId, rtpCapabilities }, callback) => {
+    async (
+      { consumerTransportId, producerId, rtpCapabilities }: any,
+      callback: (
+        arg0:
+          | {
+              producerId: string;
+              id: string;
+              kind: mediasoup.types.MediaKind;
+              rtpParameters: mediasoup.types.RtpParameters;
+              type: mediasoup.types.ConsumerType;
+              producerPaused: boolean;
+            }
+          | undefined
+      ) => void
+    ) => {
       //TODO null handling
       // console.log(`---consume consumerTransportId = ${consumerTransportId}`);
       // console.log(`---consume producerId = ${producerId}`);
@@ -503,7 +589,7 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
       if (typeof rtpCapabilities == "string") {
         try {
           rtpCapabilities = JSON.parse(rtpCapabilities);
-        } catch (error) { }
+        } catch (error) {}
       }
 
       try {
@@ -516,8 +602,9 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
             rtpCapabilities
           );
         console.log(
-          `---consuming--- name: ${roomList.get(socket.room_id) &&
-          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+          `---consuming--- name: ${
+            roomList.get(socket.room_id) &&
+            roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
           } prod_id:${producerId} consumer_id:${params?.id}`
         );
         if (callback) {
@@ -532,25 +619,29 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
     }
   );
 
-  socket.on("resume", async (data, callback) => {
+  socket.on("resume", async (data: any, callback: () => void) => {
     // await consumer.resume();
     callback();
   });
 
-  socket.on("getMyRoomInfo", (_, cb) => {
-    try {
-      cb(roomList.get(socket.room_id)?.toJson());
-    } catch (error) {
-      console.error(error);
+  socket.on(
+    "getMyRoomInfo",
+    (_: any, cb: (arg0: { id: string; peers: string } | undefined) => void) => {
+      try {
+        cb(roomList.get(socket.room_id)?.toJson());
+      } catch (error) {
+        console.error(error);
+      }
     }
-  });
+  );
   /**
    * 断开连接，关掉窗口之类的
    */
   socket.on("disconnect", () => {
     console.log(
-      `---disconnect--- name: ${roomList.get(socket.room_id) &&
-      roomList.get(socket.room_id)?.getPeers()?.get(socket.id)?.name
+      `---disconnect--- name: ${
+        roomList.get(socket.room_id) &&
+        roomList.get(socket.room_id)?.getPeers()?.get(socket.id)?.name
       }`
     );
     if (!socket.room_id) return;
@@ -575,7 +666,7 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
           console.log("room2Password", room2Password);
         }
       }
-    } catch (error) { }
+    } catch (error) {}
   });
 
   /**
@@ -586,8 +677,9 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
 
     try {
       console.log(
-        `---producer close--- name: ${roomList.get(socket.room_id) &&
-        roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
+        `---producer close--- name: ${
+          roomList.get(socket.room_id) &&
+          roomList.get(socket.room_id)?.getPeers().get(socket.id)?.name
         }`
       );
       roomList.get(socket.room_id)?.closeProducer(socket.id, producer_id);
@@ -598,88 +690,107 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
   /**
    * 暂停生产
    */
-  socket.on("pauseProducer", ({ producer_id }, callback) => {
-    try {
-      const room = roomList.get(socket.room_id);
-      if (room) {
-        console.log(
-          `---producer pause--- name: ${room.getPeers()?.get(socket.id)?.name}`
-        );
-        producer_id && room.pauseProducer(socket.id, producer_id);
-        callback && callback("success");
+  socket.on(
+    "pauseProducer",
+    ({ producer_id }: any, callback: (arg0: string) => any) => {
+      try {
+        const room = roomList.get(socket.room_id);
+        if (room) {
+          console.log(
+            `---producer pause--- name: ${
+              room.getPeers()?.get(socket.id)?.name
+            }`
+          );
+          producer_id && room.pauseProducer(socket.id, producer_id);
+          callback && callback("success");
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
-  });
+  );
 
   /**
    * 继续生产
    */
-  socket.on("resumeProducer", ({ producer_id }, callback) => {
-    try {
-      const room = roomList.get(socket.room_id);
-      if (room) {
-        console.log(
-          `---producer resume--- name: ${room.getPeers()?.get(socket.id)?.name}`
-        );
-        producer_id && room.resumeProducer(socket.id, producer_id);
-        callback && callback("success");
+  socket.on(
+    "resumeProducer",
+    ({ producer_id }: any, callback: (arg0: string) => any) => {
+      try {
+        const room = roomList.get(socket.room_id);
+        if (room) {
+          console.log(
+            `---producer resume--- name: ${
+              room.getPeers()?.get(socket.id)?.name
+            }`
+          );
+          producer_id && room.resumeProducer(socket.id, producer_id);
+          callback && callback("success");
+        }
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      console.error(error);
     }
-  });
+  );
 
   /**
    * 暂停消费
    */
-  socket.on("pauseConsumer", ({ consumer_id }, callback) => {
-    if (consumer_id) {
-      const room = roomList.get(socket.room_id);
-      if (room) {
-        console.log(
-          `---consumer pause--- name: ${room && room.getPeers()?.get(socket.id)?.name
-          }`
-        );
-        let consumer = room
-          .getPeers()
-          ?.get(socket.id)
-          ?.getConsumer(consumer_id);
-        if (consumer) {
-          consumer.pause();
-          callback("success");
+  socket.on(
+    "pauseConsumer",
+    ({ consumer_id }: any, callback: (arg0: string) => void) => {
+      if (consumer_id) {
+        const room = roomList.get(socket.room_id);
+        if (room) {
+          console.log(
+            `---consumer pause--- name: ${
+              room && room.getPeers()?.get(socket.id)?.name
+            }`
+          );
+          let consumer = room
+            .getPeers()
+            ?.get(socket.id)
+            ?.getConsumer(consumer_id);
+          if (consumer) {
+            consumer.pause();
+            callback("success");
+          }
         }
       }
     }
-  });
+  );
 
   /**
    * 继续消费
    */
-  socket.on("resumeConsumer", ({ consumer_id }, callback) => {
-    if (consumer_id) {
-      const room = roomList.get(socket.room_id);
-      if (room) {
-        console.log(
-          `---consumer resume--- name: ${room.getPeers()?.get(socket.id)?.name}`
-        );
-        let consumer = room
-          .getPeers()
-          ?.get(socket.id)
-          ?.getConsumer(consumer_id);
-        if (consumer) {
-          consumer.resume();
-          callback("success");
+  socket.on(
+    "resumeConsumer",
+    ({ consumer_id }: any, callback: (arg0: string) => void) => {
+      if (consumer_id) {
+        const room = roomList.get(socket.room_id);
+        if (room) {
+          console.log(
+            `---consumer resume--- name: ${
+              room.getPeers()?.get(socket.id)?.name
+            }`
+          );
+          let consumer = room
+            .getPeers()
+            ?.get(socket.id)
+            ?.getConsumer(consumer_id);
+          if (consumer) {
+            consumer.resume();
+            callback("success");
+          }
         }
       }
     }
-  });
+  );
 
   /**
    * 点击了退出房间,此时检测并销毁房间
    */
-  socket.on("exitRoom", async (_, callback) => {
+  socket.on("exitRoom", async (_: any, callback: (arg0: string| {error:string}) => void) => {
     const room = roomList.get(socket.room_id);
     console.log(
       `---exit room--- name: ${room && room.getPeers()?.get(socket.id)?.name}`
@@ -708,29 +819,35 @@ io.on("connection", (originSocket: SocketIO.Socket) => {
           });
         }
       }
-    } catch (error) { }
+    } catch (error) {}
     socket.room_id = null;
     callback("successfully exited room");
   });
 
-  socket.on("restartIce", async ({ transport_id }, callback) => {
-    try {
-      console.log(`---restartIce---transport_id = ` + transport_id);
-      const transport = roomList
-        .get(socket.room_id)
-        ?.getPeers()
-        ?.get(socket.id)
-        ?.transports.get(transport_id);
-      if (transport) {
-        const iceParameters = await transport.restartIce();
-        console.log(`---restartIce --- iceParameters = ${iceParameters}`);
+  socket.on(
+    "restartIce",
+    async (
+      { transport_id }: { transport_id: string },
+      callback: (arg0: any) => void
+    ) => {
+      try {
+        console.log(`---restartIce---transport_id = ` + transport_id);
+        const transport = roomList
+          .get(socket.room_id)
+          ?.getPeers()
+          ?.get(socket.id)
+          ?.transports.get(transport_id);
+        if (transport) {
+          const iceParameters = await transport.restartIce();
+          console.log(`---restartIce --- iceParameters = ${iceParameters}`);
 
-        callback(iceParameters);
-      } else {
-        console.log(`transport unknow`);
-      }
-    } catch (error) { }
-  });
+          callback(iceParameters);
+        } else {
+          console.log(`transport unknow`);
+        }
+      } catch (error) {}
+    }
+  );
 });
 
 function room() {

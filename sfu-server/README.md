@@ -4,7 +4,13 @@
 
 ### 使用mediasoup前请阅读 https://mediasoup.org/documentation/v3/mediasoup/installation/
 
-#### 自动编译不过的时候参考下面的放肆 ~~linux上编译,本人使用kali(python3)~~ 最新的测试过
+### window上使用mediasoup请到mediasoup的官网下载mediasoup-worker-window并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
+
+
+
+下面的方法仅适合`3.12.7`左右的`mediasoup版本`,只保留仅作不时只需
+
+##### ~~自动编译不过的时候参考下面的放肆 linux上编译,本人使用kali(python3) 最新的测试过~~
 
 - 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题
 
@@ -23,7 +29,7 @@
   $ node npm-scripts.js worker:build
   ```
 
-#### window上使用mediasoup请到mediasoup的官网下载mediasoup-worker-window并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
+##### window上使用mediasoup请到mediasoup的官网下载mediasoup-worker-window并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
 
 - 客户端与服务器websocket交互流程(省略返回)
 
