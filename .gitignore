@@ -44,3 +44,6 @@ electron-meeting-room-client/html/webSocket/webSoscket.js.map
 electron-meeting-room-client/util/ChannelConstant.js
 electron-meeting-room-client/util/ChannelConstant.js.map
 
+node-room-server/app.js
+node-room-server/app.js.map
+electron-meeting-room-client/util/ChannelConstant.js
