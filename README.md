@@ -1,5 +1,7 @@
 # electron-webrtc-meeting-room
 
+clone 仓库的时候请使用`--depth 1` 命令缩小下载体积
+
 #### 介绍
 
 sfu/mesh的服务端+electron客户端的webrtc音视频会议室方案
