@@ -4,15 +4,13 @@ clone 仓库的时候请使用`--depth 1` 命令缩小下载体积
 
 #### 介绍
 
-sfu/mesh的服务端+electron客户端的webrtc音视频会议室方案
+sfu/mesh的服务端+electron客户端的webrtc音视频会议室例子
 
-> sfu-server 基于 mediasoup，右侧发行版已经为windows编译
+> sfu-server 基于 mediasoup，window上使用mediasoup请到mediasoup的官网下载`mediasoup-worker-window`并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
 
-> 浏览器使用webrtc需要https，配置麻烦，electron比较简单
+> 浏览器使用webrtc需要https，electron比较简单
 
-> 如果在体验之后觉得还行，请麻烦点个star，觉得不行，可以在issues或者下方评论留下建议或意见
-
-> mesh模式在一台电脑下，十分不推荐自己创建会议复制房号又加入会议的操作，否则会出现高频刺耳的声音
+> 已知mesh模式在一台电脑下， 自己创建会议复制房号又加入会议的操作，会出现高频刺耳的声音
 
 
 #### 相关技术
