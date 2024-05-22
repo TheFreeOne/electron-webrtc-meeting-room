@@ -8,11 +8,11 @@
 
 
 
-下面的方法仅适合`3.12.7`左右的`mediasoup版本`,只保留仅作不时只需
+下面的方法仅适合`3.14.7`左右的`mediasoup版本`,只保留仅作不时只需
 
 ##### ~~自动编译不过的时候参考下面的放肆 linux上编译,本人使用kali(python3) 最新的测试过~~
 
-- 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题
+- 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题 可以使用devtoolset 安装 gcc 11
 
 - `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 安装相关依赖
 
