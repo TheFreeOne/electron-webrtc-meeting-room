@@ -13,7 +13,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "express": "^4.17.1",
-    "mediasoup": "^3.14.7",
+    "mediasoup": "^3.14.8",
     "socket.io": "4.7.3"
   },
   "devDependencies": {
