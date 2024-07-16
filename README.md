@@ -20,10 +20,6 @@ sfu/mesh的服务端+electron客户端的webrtc音视频会议室例子
 | node-room-server             | webrtc信令服务器           |
 | sfu-server                   | 流中转服务器               |
 | electron-meeting-room-client | electron写的客户端         |
-
-#### 计划
-
-  - [x] 创建房间可选密码
  
 #### 强烈建议在页面右侧下载最新发行版快速体验)
 
