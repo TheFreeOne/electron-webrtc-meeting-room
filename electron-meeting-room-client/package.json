@@ -1,6 +1,6 @@
 {
   "name": "electron-meeting-root-client",
-  "version": "0.4.6",
+  "version": "0.4.7-nightly",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -12,6 +12,7 @@
     "start": "chcp 65001 && electron ."
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/jquery": "^3.5.5",
     "@types/layui-src": "^2.5.0",
     "@types/toastr": "^2.1.40",
@@ -20,11 +21,22 @@
     "electron-rebuild": "^3.2.5"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.8",
+    "@electron/remote": "^2.1.2",
+    "axios": "^0.21.1",
+    "base": "^3.0.0",
+    "debug": "^4.3.4",
     "electron-log": "^4.3.1",
+    "express": "^4.17.1",
+    "httpolyglot": "^0.1.2",
     "jquery": "^3.5.1",
+    "mediasoup": "^3.13.14",
     "mediasoup-client": "^3.6.52",
-    "toastr": "^2.1.4"
+    "negotiator": "^0.6.2",
+    "netstring": "^0.3.0",
+    "random-number": "^0.0.9",
+    "socket.io": "4.7.3",
+    "toastr": "^2.1.4",
+    "uuid": "^8.3.2"
   },
   "keywords": [],
   "author": "freeone",
