@@ -1,12 +1,14 @@
 ### sfu-server
 
-忘记从哪里复制来的代码了，乱改了一下，基于`mediasoup`的 webrtc sfu服务器
+忘记从哪里复制来的代码了，乱改了一下，基于`mediasoup`的 webrtc sfu服务器，请使用linux服务器使用，windows不做支持
+
+### 安装依赖
+
+`npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` or `yarn   --ignore-scripts --verbose`
 
 ### 使用mediasoup前请阅读 https://mediasoup.org/documentation/v3/mediasoup/installation/
 
 ### window上使用mediasoup请到mediasoup的官网下载mediasoup-worker-window并参考官方文档的相关方法配置`MEDIASOUP_WORKER_BIN`
-
-
 
 下面的方法仅适合`3.14.7`左右的`mediasoup版本`,只保留仅作不时只需
 
@@ -14,7 +16,7 @@
 
 - 建议使用gcc 11等高版本编译，避免出现无法正常使用等问题 可以使用devtoolset 安装 gcc 11
 
-- `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 安装相关依赖
+- `npm install -verbose --registry=https://registry.npmmirror.com --ignore-scripts` 或者 `yarn   --ignore-scripts` 安装相关依赖
 
 - 可以提前安装好 meson
 
