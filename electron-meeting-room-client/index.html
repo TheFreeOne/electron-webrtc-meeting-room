@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./static/layui-v2.5.7/css/layui.css">
+    <script src="./static/layui-v2.5.7/layui.all.js"></script>
+    <title>会议室</title>
+    <style>
+         
+        #meeting-type-form {
+            margin-top: 26px;
+            padding-right: 10px;
+        }
+
+        .layui-layer-content,
+        .layui-layer-content * {
+            overflow: visible !important;
+        }
+
+        .layui-layer-btn {
+            position: relative;
+            top: -30px;
+        }
+    </style>
+</head>
+
+<body style="overflow-y: hidden ">
+    <div class="layui-form" id="action-form" style="margin-top: 176px;">
+        <div class="layui-form-item" style="text-align: center;">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="join-meeting">&emsp;加&emsp;入&emsp;会&emsp;议&emsp;</button>
+        </div>
+
+        <div class="layui-form-item" style="text-align: center;">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-open-meeting">创建公开会议 / 直播</button>
+        </div>
+
+
+        <div class="layui-form-item" style="text-align: center;">
+            <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="create-private-meeting">&emsp;&emsp;创建私密会议&emsp;</button>
+        </div>
+        
+
+        <div style="width: 100%;position: absolute; bottom: 0;height: 30px; background-color: #EDEDED;line-height: 30px;text-align: right;">
+            <button id="setting" class="layui-btn layui-btn-xs layui-btn-primary" style="margin-right: 10px;" ><i  class="layui-icon layui-icon-set-fill" style="font-size: 20px; "></i>设置</button>
+        </div>
+
+
+    </div>
+
+
+        <div class="layui-form" id="config-form" lay-filter="config-form" style="display: none;margin-top: 20px;margin-right: 20px; ">
+            <!-- <div class="layui-form-item">
+
+                <label class="layui-form-label" title="登陆地址">登陆地址</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="javaLoginServer" >
+                </div>
+            </div> -->
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="SFU服务器">SFU服务器</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="sfuServer" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="mesh信令服务器">mesh信令服务器</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="nodeRoomServer" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="sturnserver">sturnserver</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="sturnserver" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turnserver">turnserver</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turnserver" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turnusername">turnusername</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turnusername" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="turncredential">turncredential</label>
+                <div class="layui-input-block">
+                     <input class="layui-input" name="turncredential" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="会议模式">会议模式</label>
+                <div class="layui-input-block">
+                    <select name="meetingPattern" id="meetingPattern"  >
+                        <option value="sfu">SFU服务器模式</option>
+                        <option value="mesh">MESH-P2P模式</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" title="会议模式">视频编码</label>
+                <div class="layui-input-block">
+                    <select name="videoCodec" id="videoCodec"  >
+                        <option value="vp8">vp8(兼容)</option>
+                        <option value="h264">h264(高效)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                
+                <div class="layui-input-block" >
+                    <button type="submit" style="width:130px" class="layui-btn layui-btn-normal layui-btn-sm" id="saveConfigBtn" lay-filter="saveConfigBtn" lay-submit>保存</button>
+                </div>
+            </div>
+
+                
+        </div>
+
+
+</body>
+<script src="./index.js"></script>
+</html>

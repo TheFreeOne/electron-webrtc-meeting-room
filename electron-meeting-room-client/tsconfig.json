@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",//用commonjs模块，不用AMD、CMD、es6标准模块
+    "target": "es6",//只需翻译成es6
+    "sourceMap": true, //方便调试js时映射到ts
+    "types": ["@types/layui-src","jquery"],
+    "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
+    "strict": true /* Enable all strict type-checking options. */,
+  },
+  "exclude": ["node_modules", "test"],
+  "nocheck": ["node_modules"]
+}
